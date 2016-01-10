@@ -1,0 +1,12 @@
+#!/bin/sh
+
+set -e
+
+CLI_JAR="./build/libs/apiman-cli-1.0.0-SNAPSHOT-all.jar"
+
+if [[ ! -f ${CLI_JAR} ]]; then
+    sh ./gradlew clean shadowJar
+    clear
+fi
+
+java -jar ${CLI_JAR} %@
