@@ -15,8 +15,7 @@ public class GatewayTest extends BaseTest {
         Cli.main("gateway",
                 "create",
                 "--debug",
-                "--server",
-                APIMAN_URL,
+                "--server", APIMAN_URL,
                 "--name", "test",
                 "--description", "example",
                 "--endpoint", "http://localhost:1234",
@@ -30,8 +29,7 @@ public class GatewayTest extends BaseTest {
         Cli.main("gateway",
                 "show",
                 "--debug",
-                "--server",
-                APIMAN_URL,
+                "--server", APIMAN_URL,
                 "--name", "test");
     }
 
@@ -40,7 +38,6 @@ public class GatewayTest extends BaseTest {
         Cli.main("gateway",
                 "list",
                 "--debug",
-                "--server",
-                APIMAN_URL);
+                "--server", APIMAN_URL);
     }
 }

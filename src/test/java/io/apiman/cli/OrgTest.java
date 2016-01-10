@@ -15,8 +15,7 @@ public class OrgTest extends BaseTest {
         Cli.main("org",
                 "create",
                 "--debug",
-                "--server",
-                APIMAN_URL,
+                "--server", APIMAN_URL,
                 "--name", "test",
                 "--description", "example");
     }
@@ -26,8 +25,7 @@ public class OrgTest extends BaseTest {
         Cli.main("org",
                 "show",
                 "--debug",
-                "--server",
-                APIMAN_URL,
+                "--server", APIMAN_URL,
                 "--name", "test");
     }
 }

@@ -19,6 +19,7 @@ import retrofit.converter.JacksonConverter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -42,7 +43,7 @@ public abstract class AbstractAction implements Action {
     public void run(List<String> args) {
         final CmdLineParser parser = new CmdLineParser(this);
 
-        if (0 == args.size()) {
+        if (!permitNoArgs() && 0 == args.size()) {
             printUsage(parser, false);
             return;
         }
@@ -85,6 +86,10 @@ public abstract class AbstractAction implements Action {
         }
     }
 
+    protected boolean permitNoArgs() {
+        return false;
+    }
+
     /**
      * Default implementation will print usage and exit with an error code.
      * Subclasses should implement their custom behaviour here.
@@ -120,7 +125,11 @@ public abstract class AbstractAction implements Action {
         return builder.build().create(clazz);
     }
 
-    protected void invokeAndCheckResponse(Supplier<Response> request, int expectedStatus) throws ActionException {
+    protected void invokeAndCheckResponse(Supplier<Response> request) throws ActionException {
+        invokeAndCheckResponse(HttpURLConnection.HTTP_OK, request);
+    }
+
+    protected void invokeAndCheckResponse(int expectedStatus, Supplier<Response> request) throws ActionException {
         final Response response;
         try {
             // invoke the request

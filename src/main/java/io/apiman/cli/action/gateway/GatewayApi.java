@@ -12,13 +12,13 @@ import java.util.List;
 /**
  * @author Pete
  */
-public interface GatewayApi {
+public interface GatewayApi<T extends Gateway> {
     @POST("/gateways")
-    Response create(@Body Gateway organisation);
+    Response create(@Body T organisation);
 
     @GET("/gateways")
-    List<Gateway> list();
+    List<T> list();
 
     @GET("/gateways/{gatewayId}")
-    Gateway fetch(@Path("gatewayId") String gatewayId);
+    Response fetch(@Path("gatewayId") String gatewayId);
 }
