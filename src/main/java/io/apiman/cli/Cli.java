@@ -6,6 +6,7 @@ import io.apiman.cli.api.action.Action;
 import io.apiman.cli.core.gateway.action.GatewayAction;
 import io.apiman.cli.core.org.action.OrgAction;
 import io.apiman.cli.core.plugin.action.PluginAction;
+import io.apiman.cli.core.service.action.ServiceAction;
 
 import java.util.Map;
 
@@ -22,6 +23,7 @@ public class Cli extends AbstractAction {
         actionMap.put("org", OrgAction.class);
         actionMap.put("gateway", GatewayAction.class);
         actionMap.put("plugin", PluginAction.class);
+        actionMap.put("service", ServiceAction.class);
     }
 
     @Override

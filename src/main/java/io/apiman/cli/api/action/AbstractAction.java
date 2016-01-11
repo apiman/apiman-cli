@@ -1,6 +1,5 @@
 package io.apiman.cli.api.action;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.common.io.BaseEncoding;
 import io.apiman.cli.api.exception.ActionException;
@@ -165,10 +164,7 @@ public abstract class AbstractAction implements Action {
         System.out.println(getActionName() + " usage:");
 
         // additional usage message
-        final String additionalUsage = getAdditionalUsage();
-        if (!Strings.isNullOrEmpty(additionalUsage)) {
-            System.out.println(additionalUsage);
-        }
+        System.out.println(getAdditionalUsage());
 
         parser.printUsage(System.out);
         System.exit(success ? 0 : 255);
@@ -180,18 +176,27 @@ public abstract class AbstractAction implements Action {
      * @return additional usage information
      */
     protected String getAdditionalUsage() {
+
         final StringBuilder sb = new StringBuilder();
         sb.append(LINE_SEPARATOR);
 
         final String parentCommand = getCommandChain();
 
-        for (String actionCommand : actionMap.keySet()) {
+        if (actionMap.isEmpty()) {
             sb.append(" ");
             sb.append(parentCommand);
-            sb.append(" ");
-            sb.append(actionCommand);
             sb.append(" [args...]");
             sb.append(LINE_SEPARATOR);
+
+        } else {
+            for (String actionCommand : actionMap.keySet()) {
+                sb.append(" ");
+                sb.append(parentCommand);
+                sb.append(" ");
+                sb.append(actionCommand);
+                sb.append(" [args...]");
+                sb.append(LINE_SEPARATOR);
+            }
         }
 
         return sb.toString();
@@ -240,7 +245,7 @@ public abstract class AbstractAction implements Action {
                 .setEndpoint(getManagementApiEndpoint())
                 .setRequestInterceptor(request -> {
                     final String credentials = String.format("%s:%s", getManagementApiUsername(), getManagementApiPassword());
-                    request.addHeader("Authorization", "Basic "+ BaseEncoding.base64().encode(credentials.getBytes()));
+                    request.addHeader("Authorization", "Basic " + BaseEncoding.base64().encode(credentials.getBytes()));
                 });
 
         if (LOGGER.isDebugEnabled()) {

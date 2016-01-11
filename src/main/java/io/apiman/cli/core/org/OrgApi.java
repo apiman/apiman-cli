@@ -14,6 +14,6 @@ public interface OrgApi {
     @POST("/organizations")
     Response create(@Body Org organisation);
 
-    @GET("/organizations/{organizationId}")
-    Org fetch(@Path("organizationId") String organizationId);
+    @GET("/organizations/{orgName}")
+    Org fetch(@Path("orgName") String orgName);
 }
