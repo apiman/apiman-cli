@@ -54,11 +54,18 @@ public class ApiUtil {
     }
 
     private static void httpError(int expectedStatus, Response response) throws ActionException {
+        if (null == response) {
+            throw new IllegalArgumentException("Response was null");
+        }
+
         // obtain response body
         String body = null;
-        try (InputStream errStream = response.getBody().in()) {
-            body = CharStreams.toString(new InputStreamReader(errStream));
-        } catch (IOException ignored) {
+
+        if (null != response.getBody()) {
+            try (InputStream errStream = response.getBody().in()) {
+                body = CharStreams.toString(new InputStreamReader(errStream));
+            } catch (IOException ignored) {
+            }
         }
 
         throw new ActionException("HTTP " + response.getStatus() + " "

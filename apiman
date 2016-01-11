@@ -9,4 +9,20 @@ if [[ ! -f ${CLI_JAR} ]]; then
     clear
 fi
 
-java -jar ${CLI_JAR} "$@"
+# look for -i parameter indicating STDIN
+USE_STDIN=0
+for ARG in $@; do
+    if [[ "-i" == "${ARG}" ]]; then
+        USE_STDIN=1
+        break
+    fi
+done
+
+# pipe STDIN into command
+if [[ 1 == ${USE_STDIN} ]]; then
+    read STDIN
+    echo ${STDIN} | java -jar ${CLI_JAR} "$@"
+
+else
+    java -jar ${CLI_JAR} "$@"
+fi

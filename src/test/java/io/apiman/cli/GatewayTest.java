@@ -28,8 +28,7 @@ public class GatewayTest extends BaseTest {
 
     @Test
     public void test1_test() {
-        Cli.main("gateway",
-                "test",
+        Cli.main("gateway", "test",
                 "--debug",
                 "--server", APIMAN_URL,
                 "--serverUsername", "admin",
@@ -42,8 +41,7 @@ public class GatewayTest extends BaseTest {
 
     @Test
     public void test2_create() {
-        Cli.main("gateway",
-                "create",
+        Cli.main("gateway", "create",
                 "--debug",
                 "--server", APIMAN_URL,
                 "--serverUsername", "admin",
@@ -58,8 +56,7 @@ public class GatewayTest extends BaseTest {
 
     @Test
     public void test3_fetch() {
-        Cli.main("gateway",
-                "show",
+        Cli.main("gateway", "show",
                 "--debug",
                 "--server", APIMAN_URL,
                 "--serverUsername", "admin",
@@ -69,8 +66,7 @@ public class GatewayTest extends BaseTest {
 
     @Test
     public void test4_list() {
-        Cli.main("gateway",
-                "list",
+        Cli.main("gateway", "list",
                 "--debug",
                 "--server", APIMAN_URL,
                 "--serverUsername", "admin",

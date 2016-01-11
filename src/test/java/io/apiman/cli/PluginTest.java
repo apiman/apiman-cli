@@ -28,8 +28,7 @@ public class PluginTest extends BaseTest {
 
     @Test
     public void test1_create() {
-        Cli.main("plugin",
-                "add",
+        Cli.main("plugin", "add",
                 "--debug",
                 "--server", APIMAN_URL,
                 "--serverUsername", "admin",
@@ -41,8 +40,7 @@ public class PluginTest extends BaseTest {
 
     @Test
     public void test2_fetch() {
-        Cli.main("plugin",
-                "show",
+        Cli.main("plugin", "show",
                 "--debug",
                 "--server", APIMAN_URL,
                 "--serverUsername", "admin",
@@ -52,8 +50,7 @@ public class PluginTest extends BaseTest {
 
     @Test
     public void test3_list() {
-        Cli.main("plugin",
-                "list",
+        Cli.main("plugin", "list",
                 "--debug",
                 "--server", APIMAN_URL,
                 "--serverUsername", "admin",

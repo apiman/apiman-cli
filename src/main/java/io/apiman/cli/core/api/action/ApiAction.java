@@ -32,6 +32,7 @@ public class ApiAction extends AbstractAction {
         actionMap.put("create", ApiCreateAction.class);
         actionMap.put("list", ApiListAction.class);
         actionMap.put("publish", ApiPublishAction.class);
+        actionMap.put("policy", ApiPolicyAction.class);
     }
 
     @Override

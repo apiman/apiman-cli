@@ -14,32 +14,26 @@
  * limitations under the License.
  */
 
-package io.apiman.cli.exception;
+package io.apiman.cli.core.api.action;
+
+import io.apiman.cli.action.AbstractAction;
+import io.apiman.cli.action.Action;
+
+import java.util.Map;
 
 /**
- * Causes the application to exit with the given code and prints a message.
+ * Root Action for managing API policies.
  *
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
-public class ExitWithCodeException extends RuntimeException {
-    private final int exitCode;
-    private final boolean printUsage;
-
-    public ExitWithCodeException(int exitCode, String message) {
-        this(exitCode, message, false);
+public class ApiPolicyAction extends AbstractAction {
+    @Override
+    protected void populateActions(Map<String, Class<? extends Action>> actionMap) {
+        actionMap.put("add", ApiPolicyAddAction.class);
     }
 
-    public ExitWithCodeException(int exitCode, String message, boolean printUsage) {
-        super(message);
-        this.exitCode = exitCode;
-        this.printUsage = printUsage;
-    }
-
-    public int getExitCode() {
-        return exitCode;
-    }
-
-    public boolean isPrintUsage() {
-        return printUsage;
+    @Override
+    protected String getActionName() {
+        return "Manage API policies";
     }
 }

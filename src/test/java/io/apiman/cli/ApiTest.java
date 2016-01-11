@@ -28,8 +28,7 @@ public class ApiTest extends BaseTest {
 
     @Test
     public void test1_create() {
-        Cli.main("api",
-                "create",
+        Cli.main("api", "create",
                 "--debug",
                 "--server", APIMAN_URL,
                 "--serverUsername", "admin",
@@ -42,9 +41,22 @@ public class ApiTest extends BaseTest {
     }
 
     @Test
-    public void test2_publish() {
-        Cli.main("api",
-                "publish",
+    public void test2_addPolicy() {
+        Cli.main("api", "policy", "add",
+                "--debug",
+                "--server", APIMAN_URL,
+                "--serverUsername", "admin",
+                "--serverPassword", "admin123!",
+                "--name", "example",
+                "--version", "1.0",
+                "--policyName", "test-policy",
+                "--configFile", "examples/policies/empty-policy-config.json",
+                "--orgName", "test");
+    }
+
+    @Test
+    public void test3_publish() {
+        Cli.main("api", "publish",
                 "--debug",
                 "--server", APIMAN_URL,
                 "--serverUsername", "admin",
@@ -55,9 +67,8 @@ public class ApiTest extends BaseTest {
     }
 
     @Test
-    public void test3_list() {
-        Cli.main("api",
-                "list",
+    public void test4_list() {
+        Cli.main("api", "list",
                 "--debug",
                 "--server", APIMAN_URL,
                 "--serverUsername", "admin",

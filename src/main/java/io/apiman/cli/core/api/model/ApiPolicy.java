@@ -14,32 +14,31 @@
  * limitations under the License.
  */
 
-package io.apiman.cli.exception;
+package io.apiman.cli.core.api.model;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
- * Causes the application to exit with the given code and prints a message.
+ * Models a policy to be added to an API.
  *
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
-public class ExitWithCodeException extends RuntimeException {
-    private final int exitCode;
-    private final boolean printUsage;
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonIgnoreProperties
+public class ApiPolicy {
+    @JsonProperty
+    private String definitionId;
 
-    public ExitWithCodeException(int exitCode, String message) {
-        this(exitCode, message, false);
+    @JsonProperty
+    private String configuration;
+
+    public ApiPolicy() {
     }
 
-    public ExitWithCodeException(int exitCode, String message, boolean printUsage) {
-        super(message);
-        this.exitCode = exitCode;
-        this.printUsage = printUsage;
-    }
-
-    public int getExitCode() {
-        return exitCode;
-    }
-
-    public boolean isPrintUsage() {
-        return printUsage;
+    public ApiPolicy(String definitionId, String configuration) {
+        this.definitionId = definitionId;
+        this.configuration = configuration;
     }
 }

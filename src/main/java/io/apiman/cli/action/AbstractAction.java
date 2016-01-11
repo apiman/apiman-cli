@@ -146,10 +146,14 @@ public abstract class AbstractAction implements Action {
                 printUsage(parser, false);
 
             } catch (ExitWithCodeException ec) {
-                // print the message to output and exit with the given code
+                // print the message and exit with the given code
                 OUTPUT.error(ec.getMessage());
-                System.exit(ec.getExitCode());
-                return;
+
+                if (ec.isPrintUsage()) {
+                    printUsage(parser, ec.getExitCode());
+                } else {
+                    System.exit(ec.getExitCode());
+                }
 
             } catch (Exception e) {
                 LOGGER.error("Error in " + getActionName(), e);
@@ -179,19 +183,29 @@ public abstract class AbstractAction implements Action {
     }
 
     /**
-     * Print usage information.
+     * Print usage information, then exit.
      *
      * @param parser  the command line parser containing usage information
      * @param success whether this is due to a successful operation
      */
     private void printUsage(CmdLineParser parser, boolean success) {
+        printUsage(parser, success ? 0 : 255);
+    }
+
+    /**
+     * Print usage information, then exit.
+     *
+     * @param parser   the command line parser containing usage information
+     * @param exitCode the exit code
+     */
+    private void printUsage(CmdLineParser parser, int exitCode) {
         System.out.println(getActionName() + " usage:");
 
         // additional usage message
         System.out.println(getAdditionalUsage());
 
         parser.printUsage(System.out);
-        System.exit(success ? 0 : 255);
+        System.exit(exitCode);
     }
 
     /**

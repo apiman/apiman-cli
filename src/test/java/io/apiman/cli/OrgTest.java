@@ -28,8 +28,7 @@ public class OrgTest extends BaseTest {
 
     @Test
     public void test1_create() {
-        Cli.main("org",
-                "create",
+        Cli.main("org", "create",
                 "--debug",
                 "--server", APIMAN_URL,
                 "--serverUsername", "admin",
@@ -40,8 +39,7 @@ public class OrgTest extends BaseTest {
 
     @Test
     public void test2_fetch() {
-        Cli.main("org",
-                "show",
+        Cli.main("org", "show",
                 "--debug",
                 "--server", APIMAN_URL,
                 "--serverUsername", "admin",

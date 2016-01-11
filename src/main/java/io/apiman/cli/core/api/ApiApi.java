@@ -18,6 +18,7 @@ package io.apiman.cli.core.api;
 
 import io.apiman.cli.core.api.model.Api;
 import io.apiman.cli.core.api.model.ApiConfig;
+import io.apiman.cli.core.api.model.ApiPolicy;
 import retrofit.client.Response;
 import retrofit.http.*;
 
@@ -39,5 +40,10 @@ public interface ApiApi {
     Api fetch(@Path("orgName") String orgName, @Path("apiName") String apiName, @Path("version") String version);
 
     @PUT("/organizations/{orgName}/apis/{apiName}/versions/{version}")
-    Response configure(@Path("orgName") String orgName, @Path("apiName") String apiName, @Path("version") String version, @Body ApiConfig config);
+    Response configure(@Path("orgName") String orgName, @Path("apiName") String apiName,
+                       @Path("version") String version, @Body ApiConfig config);
+
+    @POST("/organizations/{orgName}/apis/{apiName}/versions/{version}/policies")
+    Response addPolicy(@Path("orgName") String orgName, @Path("apiName") String apiName,
+                       @Path("version") String version, @Body ApiPolicy policyConfig);
 }
