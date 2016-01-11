@@ -5,6 +5,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.1.3] - 2016-01-01
+### Added
+- Improved JavaDocs
+- Adds Apache 2.0 license and file headers
+- Renamed 'service' references to 'API'
+- Support for both apiman 1.1.9 and 1.2.x servers, using `--serverVersion` flag (default is 1.1.9)
+
 ## [0.1.2] - 2016-01-01
 ### Added
 - Support for publishing services

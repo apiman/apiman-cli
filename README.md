@@ -2,18 +2,18 @@
 
 Manage your _apiman_ instances from the command line.
 
-Script actions, such as adding services and gateways, or display information about a running _apiman_ instance.
+Script actions, such as adding APIs and gateways, or display information about a running _apiman_ instance.
 
 ## Example
 
-Create a new service:
+Create a new API:
 
-    $ ./apiman service create \
+    $ ./apiman api create \
             --server http://localhost:8080/apiman \
             --name example \
             --endpoint http://example.com \
             --initialVersion 1.0 \
-            --publicService \
+            --public \
             --orgName test
     
 Add a gateway:
@@ -35,7 +35,7 @@ Add a gateway:
 
     apiman plugin [args...]
     apiman org [args...]
-    apiman service [args...]
+    apiman api [args...]
     apiman gateway [args...]
     
     --debug                    : Log at DEBUG level (default: false)
@@ -106,7 +106,7 @@ Add a gateway:
 ## Manage Plugins
    
     apiman plugin show [args...]
-    apiman plugin create [args...]
+    apiman plugin add [args...]
     apiman plugin list [args...]
 
 ### Show Plugin
@@ -117,9 +117,9 @@ Add a gateway:
     --help (-h)                : Display usage only (default: false)
     --id (-i) VAL              : Plugin ID
 
-### Create Plugin
+### Add Plugin
     
-    apiman plugin create [args...]
+    apiman plugin add [args...]
     
     --artifactId (-a) VAL      : Artifact ID
     --classifier (-c) VAL      : Classifier
@@ -130,21 +130,43 @@ Add a gateway:
     
     apiman plugin list [args...]
       
-## Manage Services
+## Manage APIs
    
-    apiman service create [args...]
+    apiman api create [args...]
+    apiman api list [args...]
+    apiman api publish [args...]
 
-### Create Service
+### Create API
     
-    apiman service create [args...]
+    apiman api create [args...]
     
-    --endpoint (-e) VAL        : Endpoint
-    --endpointType (-t) VAL    : Endpoint type (default: rest)
-    --gateway (-g) VAL         : Gateway (default: TheGateway)
-    --initialVersion (-v) VAL  : Initial version
-    --name (-n) VAL            : Service name
-    --orgName (-o) VAL         : Organisation name
-    --publicService (-p)       : Public service
+    --endpoint (-e) VAL                 : Endpoint
+    --endpointType (-t) VAL             : Endpoint type (default: rest)
+    --gateway (-g) VAL                  : Gateway (default: TheGateway)
+    --initialVersion (-v) VAL           : Initial version
+    --name (-n) VAL                     : API name
+    --orgName (-o) VAL                  : Organisation name
+    --publicApi (-p)                    : Public API
+    --serverVersion (-sv) [v119 | v12x] : Management API server version (default:
+                                          v119)
+
+### List APIs
+    
+    apiman api list [args...]
+    
+    --orgName (-o) VAL                  : Organisation name
+    --serverVersion (-sv) [v119 | v12x] : Management API server version (default:
+                                          v119)
+
+### Publish API
+    
+    apiman api publish [args...]
+    
+    --version (-v) VAL                  : API version
+    --name (-n) VAL                     : API name
+    --orgName (-o) VAL                  : Organisation name
+    --serverVersion (-sv) [v119 | v12x] : Management API server version (default:
+                                          v119)
      
 # TODO
 

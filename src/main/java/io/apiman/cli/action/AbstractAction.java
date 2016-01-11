@@ -1,9 +1,25 @@
-package io.apiman.cli.api.action;
+/*
+ * Copyright 2016 Pete Cornish
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.apiman.cli.action;
 
 import com.google.common.collect.Maps;
 import com.google.common.io.BaseEncoding;
-import io.apiman.cli.api.exception.ActionException;
-import io.apiman.cli.api.exception.ExitWithCodeException;
+import io.apiman.cli.exception.ActionException;
+import io.apiman.cli.exception.ExitWithCodeException;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,12 +38,12 @@ import static io.apiman.cli.util.LogUtil.LINE_SEPARATOR;
 import static io.apiman.cli.util.LogUtil.OUTPUT;
 
 /**
- * @author Pete
+ * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
 public abstract class AbstractAction implements Action {
     private static final Logger LOGGER = LogManager.getLogger(AbstractAction.class);
     private static final String DEFAULT_SERVER_ADDRESS = "http://localhost:8080/apiman";
-    private static final String DEFAULT_SERVER_USERNAME = "apiman";
+    private static final String DEFAULT_SERVER_USERNAME = "admin";
     private static final String DEFAULT_SERVER_PASSWORD = "admin123!";
 
     /**
