@@ -10,9 +10,17 @@ public interface Action {
 
     void setCommand(String command);
 
-    void run(List<String> args);
-
     String getCommand();
 
-    String getActionCommandChain();
+    /**
+     * Parse the given arguments and perform an action.
+     *
+     * @param args the arguments to parse
+     */
+    void run(List<String> args);
+
+    /**
+     * @return a concatenation of the parent's action command and this action command
+     */
+    String getCommandChain();
 }

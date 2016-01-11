@@ -3,10 +3,8 @@ package io.apiman.cli.api.action;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.common.io.BaseEncoding;
-import com.google.common.io.CharStreams;
 import io.apiman.cli.api.exception.ActionException;
 import io.apiman.cli.api.exception.ExitWithCodeException;
-import io.apiman.cli.util.JsonUtil;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,18 +13,12 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import retrofit.RestAdapter;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 import retrofit.converter.JacksonConverter;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
 
+import static io.apiman.cli.util.JsonUtil.MAPPER;
 import static io.apiman.cli.util.LogUtil.LINE_SEPARATOR;
 import static io.apiman.cli.util.LogUtil.OUTPUT;
 
@@ -63,8 +55,16 @@ public abstract class AbstractAction implements Action {
         populateActions(actionMap);
     }
 
+    /**
+     * Subclasses should populate the Map with their child Actions.
+     *
+     * @param actionMap the Map to populate
+     */
     protected abstract void populateActions(Map<String, Class<? extends Action>> actionMap);
 
+    /**
+     * @return human-readable name for this action (e.g. 'Manage Plugins')
+     */
     protected abstract String getActionName();
 
     @Override
@@ -82,6 +82,9 @@ public abstract class AbstractAction implements Action {
         return command;
     }
 
+    /**
+     * See {@link Action#run(List)}
+     */
     @Override
     public void run(List<String> args) {
         final CmdLineParser parser = new CmdLineParser(this);
@@ -180,7 +183,7 @@ public abstract class AbstractAction implements Action {
         final StringBuilder sb = new StringBuilder();
         sb.append(LINE_SEPARATOR);
 
-        final String parentCommand = getActionCommandChain();
+        final String parentCommand = getCommandChain();
 
         for (String actionCommand : actionMap.keySet()) {
             sb.append(" ");
@@ -194,9 +197,12 @@ public abstract class AbstractAction implements Action {
         return sb.toString();
     }
 
+    /**
+     * See {@link Action#getCommandChain()}
+     */
     @Override
-    public String getActionCommandChain() {
-        return (null != parent ? parent.getActionCommandChain() + " " : "") + getCommand();
+    public String getCommandChain() {
+        return (null != parent ? parent.getCommandChain() + " " : "") + getCommand();
     }
 
     /**
@@ -223,20 +229,19 @@ public abstract class AbstractAction implements Action {
         return null;
     }
 
-    protected String getManagementApiEndpoint() {
-        return serverAddress;
-    }
-
     /**
      * @param clazz the Class for which to build a client
-     * @param <T> the API interface
+     * @param <T>   the API interface
      * @return an API client for the given Class
      */
     protected <T> T buildApiClient(Class<T> clazz) {
         final RestAdapter.Builder builder = new RestAdapter.Builder() //
-                .setConverter(new JacksonConverter(JsonUtil.MAPPER))
+                .setConverter(new JacksonConverter(MAPPER))
                 .setEndpoint(getManagementApiEndpoint())
-                .setRequestInterceptor(request -> request.addHeader("Authorization", "Basic " + BaseEncoding.base64().encode("admin:admin123!".getBytes())));
+                .setRequestInterceptor(request -> {
+                    final String credentials = String.format("%s:%s", getManagementApiUsername(), getManagementApiPassword());
+                    request.addHeader("Authorization", "Basic "+ BaseEncoding.base64().encode(credentials.getBytes()));
+                });
 
         if (LOGGER.isDebugEnabled()) {
             builder.setLogLevel(RestAdapter.LogLevel.FULL);
@@ -245,35 +250,17 @@ public abstract class AbstractAction implements Action {
         return builder.build().create(clazz);
     }
 
-    protected void invokeAndCheckResponse(Supplier<Response> request) throws ActionException {
-        invokeAndCheckResponse(HttpURLConnection.HTTP_OK, request);
+    protected String getManagementApiEndpoint() {
+        return serverAddress;
     }
 
-    protected void invokeAndCheckResponse(int expectedStatus, Supplier<Response> request) throws ActionException {
-        final Response response;
-        try {
-            // invoke the request
-            response = request.get();
-
-            // check response code is successful
-            if (response.getStatus() != expectedStatus) {
-                httpError(expectedStatus, response);
-            }
-
-        } catch (RetrofitError e) {
-            httpError(expectedStatus, e.getResponse());
-        }
+    private String getManagementApiUsername() {
+        // TODO read from config/argument
+        return "admin";
     }
 
-    private void httpError(int expectedStatus, Response response) throws ActionException {
-        // obtain response body
-        String body = null;
-        try (InputStream errStream = response.getBody().in()) {
-            body = CharStreams.toString(new InputStreamReader(errStream));
-        } catch (IOException ignored) {
-        }
-
-        throw new ActionException("HTTP " + response.getStatus() + " "
-                + response.getReason() + " but expected " + expectedStatus + ":\n" + body);
+    private String getManagementApiPassword() {
+        // TODO read from config/argument
+        return "admin123!";
     }
 }
