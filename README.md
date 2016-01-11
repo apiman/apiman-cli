@@ -146,7 +146,7 @@ Add a gateway:
     --initialVersion (-v) VAL           : Initial version
     --name (-n) VAL                     : API name
     --orgName (-o) VAL                  : Organisation name
-    --publicApi (-p)                    : Public API
+    --public (-p)                       : Public API
     --serverVersion (-sv) [v119 | v12x] : Management API server version (default:
                                           v119)
 
