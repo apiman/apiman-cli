@@ -11,7 +11,7 @@ import org.junit.runners.MethodSorters;
 public class GatewayTest extends BaseTest {
 
     @Test
-    public void test1_gatewayTest() {
+    public void test1_test() {
         Cli.main("gateway",
                 "test",
                 "--debug",
@@ -23,7 +23,7 @@ public class GatewayTest extends BaseTest {
     }
 
     @Test
-    public void test2_gatewayCreate() {
+    public void test2_create() {
         Cli.main("gateway",
                 "create",
                 "--debug",
@@ -37,7 +37,7 @@ public class GatewayTest extends BaseTest {
     }
 
     @Test
-    public void test3_gatewayFetch() {
+    public void test3_fetch() {
         Cli.main("gateway",
                 "show",
                 "--debug",
@@ -46,7 +46,7 @@ public class GatewayTest extends BaseTest {
     }
 
     @Test
-    public void test4_gatewayList() {
+    public void test4_list() {
         Cli.main("gateway",
                 "list",
                 "--debug",

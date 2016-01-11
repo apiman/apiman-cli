@@ -1,6 +1,5 @@
 package io.apiman.cli.api.action.common;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.apiman.cli.api.exception.ActionException;
 import io.apiman.cli.util.JsonUtil;
 import org.apache.logging.log4j.LogManager;
@@ -46,10 +45,6 @@ public abstract class ModelListAction<M, A> extends AbstractModelAction<M, A> {
     }
 
     protected void processList(List<M> model) {
-        try {
-            OUTPUT.info(JsonUtil.MAPPER.writeValueAsString(model));
-        } catch (JsonProcessingException e) {
-            throw new ActionException(e);
-        }
+        OUTPUT.info(JsonUtil.safeWriteValueAsString(model));
     }
 }

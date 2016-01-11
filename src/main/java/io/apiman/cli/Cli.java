@@ -5,6 +5,7 @@ import io.apiman.cli.api.action.AbstractAction;
 import io.apiman.cli.api.action.Action;
 import io.apiman.cli.core.gateway.action.GatewayAction;
 import io.apiman.cli.core.org.action.OrgAction;
+import io.apiman.cli.core.plugin.action.PluginAction;
 import org.kohsuke.args4j.CmdLineParser;
 
 import java.util.List;
@@ -27,6 +28,10 @@ public class Cli extends AbstractAction {
 
             case "gateway":
                 action = new GatewayAction();
+                break;
+
+            case "plugin":
+                action = new PluginAction();
                 break;
 
             default:

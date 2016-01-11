@@ -8,24 +8,33 @@ import org.junit.runners.MethodSorters;
  * @author Pete
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class OrgTest extends BaseTest {
+public class PluginTest extends BaseTest {
 
     @Test
     public void test1_create() {
-        Cli.main("org",
+        Cli.main("plugin",
                 "create",
                 "--debug",
                 "--server", APIMAN_URL,
-                "--name", "test",
-                "--description", "example");
+                "--groupId", "io.apiman.plugins",
+                "--artifactId", "apiman-plugins-test-policy",
+                "--version", "1.1.9.Final");
     }
 
     @Test
     public void test2_fetch() {
-        Cli.main("org",
+        Cli.main("plugin",
                 "show",
                 "--debug",
                 "--server", APIMAN_URL,
-                "--name", "test");
+                "--id", "1");
+    }
+
+    @Test
+    public void test3_list() {
+        Cli.main("plugin",
+                "list",
+                "--debug",
+                "--server", APIMAN_URL);
     }
 }

@@ -1,7 +1,7 @@
 package io.apiman.cli.api.action.common;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.apiman.cli.api.exception.ActionException;
+import io.apiman.cli.util.JsonUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kohsuke.args4j.CmdLineParser;
@@ -9,7 +9,6 @@ import org.kohsuke.args4j.CmdLineParser;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
 
-import static io.apiman.cli.util.JsonUtil.MAPPER;
 import static io.apiman.cli.util.LogUtil.OUTPUT;
 
 /**
@@ -33,7 +32,7 @@ public abstract class ModelShowAction<M, A> extends AbstractModelAction<M, A> {
 
             @SuppressWarnings("unchecked")
             final M model = (M) fetchMethod.invoke(apiClient, getModelId());
-            LOGGER.debug("{} received: {}", this::getModelName, () -> model);
+            LOGGER.debug("{} received: {}", this::getModelName, () -> JsonUtil.safeWriteValueAsString(model));
 
             processModel(model);
 
@@ -43,11 +42,7 @@ public abstract class ModelShowAction<M, A> extends AbstractModelAction<M, A> {
     }
 
     protected void processModel(M model) {
-        try {
-            OUTPUT.info(MAPPER.writeValueAsString(model));
-        } catch (JsonProcessingException e) {
-            throw new ActionException(e);
-        }
+        OUTPUT.info(JsonUtil.safeWriteValueAsString(model));
     }
 
     protected abstract String getModelId() throws ActionException;

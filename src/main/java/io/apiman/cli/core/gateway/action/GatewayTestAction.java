@@ -1,9 +1,8 @@
 package io.apiman.cli.core.gateway.action;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import io.apiman.cli.core.gateway.GatewayApi;
 import io.apiman.cli.api.exception.ActionException;
 import io.apiman.cli.api.exception.ExitWithCodeException;
+import io.apiman.cli.core.gateway.GatewayApi;
 import io.apiman.cli.core.gateway.model.GatewayTestResponse;
 import io.apiman.cli.util.JsonUtil;
 import org.apache.logging.log4j.LogManager;
@@ -39,14 +38,7 @@ public class GatewayTestAction extends AbstractGatewayCreateAction {
             response = apiClient.test(buildModelInstance());
 
             OUTPUT.info("Test {}", () -> response.isSuccess() ? "successful" : "failed");
-
-            LOGGER.debug("Test result: {}", () -> {
-                try {
-                    return JsonUtil.MAPPER.writeValueAsString(response);
-                } catch (JsonProcessingException ignored) {
-                    return null;
-                }
-            });
+            LOGGER.debug("Test result: {}", () -> JsonUtil.safeWriteValueAsString(response));
 
         } catch (Exception e) {
             throw new ActionException(e);
