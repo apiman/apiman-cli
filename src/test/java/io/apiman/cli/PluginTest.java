@@ -16,6 +16,8 @@ public class PluginTest extends BaseTest {
                 "create",
                 "--debug",
                 "--server", APIMAN_URL,
+                "--serverUsername", "admin",
+                "--serverPassword", "admin123!",
                 "--groupId", "io.apiman.plugins",
                 "--artifactId", "apiman-plugins-test-policy",
                 "--version", "1.1.9.Final");
@@ -27,6 +29,8 @@ public class PluginTest extends BaseTest {
                 "show",
                 "--debug",
                 "--server", APIMAN_URL,
+                "--serverUsername", "admin",
+                "--serverPassword", "admin123!",
                 "--id", "1");
     }
 
@@ -35,6 +39,8 @@ public class PluginTest extends BaseTest {
         Cli.main("plugin",
                 "list",
                 "--debug",
-                "--server", APIMAN_URL);
+                "--server", APIMAN_URL,
+                "--serverUsername", "admin",
+                "--serverPassword", "admin123!");
     }
 }

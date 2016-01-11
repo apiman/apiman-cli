@@ -16,6 +16,8 @@ public class OrgTest extends BaseTest {
                 "create",
                 "--debug",
                 "--server", APIMAN_URL,
+                "--serverUsername", "admin",
+                "--serverPassword", "admin123!",
                 "--name", "test",
                 "--description", "example");
     }
@@ -26,6 +28,8 @@ public class OrgTest extends BaseTest {
                 "show",
                 "--debug",
                 "--server", APIMAN_URL,
+                "--serverUsername", "admin",
+                "--serverPassword", "admin123!",
                 "--name", "test");
     }
 }

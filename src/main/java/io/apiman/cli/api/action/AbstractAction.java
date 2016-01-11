@@ -264,12 +264,12 @@ public abstract class AbstractAction implements Action {
     }
 
     protected String getManagementApiEndpoint() {
-        // TODO read from config/argument
+        // TODO read from config/environment
         return serverAddress;
     }
 
     private String getManagementApiUsername() {
-        // TODO read from config/argument
+        // TODO read from config/environment
         return serverUsername;
     }
 

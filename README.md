@@ -137,7 +137,7 @@ Add a gateway:
 # TODO
 
 * Support reading management API configuration from environment variables
-* Support publishing services
+* Support adding policies to services
 * Better support for non-public services
 * Support deletion
 

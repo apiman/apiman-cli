@@ -1,5 +1,5 @@
 group 'io.apiman.cli'
-version '1.0.0-SNAPSHOT'
+version '0.1.2'
 
 buildscript {
     repositories { jcenter() }
@@ -33,4 +33,10 @@ jar {
     manifest {
         attributes("Main-Class": "io.apiman.cli.Cli")
     }
+}
+
+shadowJar {
+    baseName = 'apiman-cli'
+    classifier = ''
+    version = ''
 }

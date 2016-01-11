@@ -19,7 +19,7 @@ public class ApiUtil {
         invokeAndCheckResponse(HttpURLConnection.HTTP_OK, request);
     }
 
-    protected static void invokeAndCheckResponse(int expectedStatus, Supplier<Response> request) throws ActionException {
+    public static void invokeAndCheckResponse(int expectedStatus, Supplier<Response> request) throws ActionException {
         final Response response;
         try {
             // invoke the request

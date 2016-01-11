@@ -12,6 +12,7 @@ public class ServiceAction extends AbstractAction {
     @Override
     protected void populateActions(Map<String, Class<? extends Action>> actionMap) {
         actionMap.put("create", ServiceCreateAction.class);
+        actionMap.put("publish", ServicePublishAction.class);
     }
 
     @Override
