@@ -27,6 +27,8 @@ import static io.apiman.cli.util.LogUtil.OUTPUT;
 public abstract class AbstractAction implements Action {
     private static final Logger LOGGER = LogManager.getLogger(AbstractAction.class);
     private static final String DEFAULT_SERVER_ADDRESS = "http://localhost:8080/apiman";
+    private static final String DEFAULT_SERVER_USERNAME = "apiman";
+    private static final String DEFAULT_SERVER_PASSWORD = "admin123!";
 
     /**
      * Maps action commands (e.g. 'org' or 'create') to their implementations.
@@ -41,6 +43,12 @@ public abstract class AbstractAction implements Action {
 
     @Option(name = "--server", aliases = {"-s"}, usage = "Management API server address")
     private String serverAddress = DEFAULT_SERVER_ADDRESS;
+
+    @Option(name = "--serverUsername", aliases = {"-su"}, usage = "Management API server username")
+    private String serverUsername = DEFAULT_SERVER_USERNAME;
+
+    @Option(name = "--serverPassword", aliases = {"-sp"}, usage = "Management API server password")
+    private String serverPassword = DEFAULT_SERVER_PASSWORD;
 
     /**
      * The parent Action (<code>null</code> if root).
@@ -256,16 +264,17 @@ public abstract class AbstractAction implements Action {
     }
 
     protected String getManagementApiEndpoint() {
+        // TODO read from config/argument
         return serverAddress;
     }
 
     private String getManagementApiUsername() {
         // TODO read from config/argument
-        return "admin";
+        return serverUsername;
     }
 
     private String getManagementApiPassword() {
-        // TODO read from config/argument
-        return "admin123!";
+        // TODO read from config/environment
+        return serverPassword;
     }
 }
