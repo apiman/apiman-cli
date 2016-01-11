@@ -8,11 +8,23 @@ Script actions, such as adding services and gateways, or display information abo
 
 Create a new service:
 
-    ./apiman service create --server http://localhost:8080/apiman --name example --endpoint http://example.com --initialVersion 1.0 --publicService --orgName test
+    $ ./apiman service create \
+            --server http://localhost:8080/apiman \
+            --name example \
+            --endpoint http://example.com \
+            --initialVersion 1.0 \
+            --publicService \
+            --orgName test
     
 Add a gateway:
 
-    ./apiman gateway create --server http://localhost:8080/apiman --name test-gw --endpoint http://localhost:1234 --username apimanager --password "apiman123!" --type REST
+    $ ./apiman gateway create \
+            --server http://localhost:8080/apiman \
+            --name test-gw \
+            --endpoint http://localhost:1234 \
+            --username apimanager \
+            --password "apiman123!" \
+            --type REST
 
 ## Requirements
 
