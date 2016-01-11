@@ -1,5 +1,7 @@
 package io.apiman.cli.api.action;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
 import com.google.common.io.BaseEncoding;
 import com.google.common.io.CharStreams;
 import io.apiman.cli.api.exception.ActionException;
@@ -22,8 +24,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
+import static io.apiman.cli.util.LogUtil.LINE_SEPARATOR;
 import static io.apiman.cli.util.LogUtil.OUTPUT;
 
 /**
@@ -33,6 +37,11 @@ public abstract class AbstractAction implements Action {
     private static final Logger LOGGER = LogManager.getLogger(AbstractAction.class);
     private static final String DEFAULT_SERVER_ADDRESS = "http://localhost:8080/apiman";
 
+    /**
+     * Maps action commands (e.g. 'org' or 'create') to their implementations.
+     */
+    private final Map<String, Class<? extends Action>> actionMap;
+
     @Option(name = "--debug", usage = "Log at DEBUG level")
     private boolean logDebug;
 
@@ -41,6 +50,37 @@ public abstract class AbstractAction implements Action {
 
     @Option(name = "--server", aliases = {"-s"}, usage = "Management API server address")
     private String serverAddress = DEFAULT_SERVER_ADDRESS;
+
+    /**
+     * The parent Action (<code>null</code> if root).
+     */
+    private Action parent;
+    private String command;
+
+    public AbstractAction() {
+        // get child actions
+        actionMap = Maps.newHashMap();
+        populateActions(actionMap);
+    }
+
+    protected abstract void populateActions(Map<String, Class<? extends Action>> actionMap);
+
+    protected abstract String getActionName();
+
+    @Override
+    public void setParent(Action parent) {
+        this.parent = parent;
+    }
+
+    @Override
+    public void setCommand(String command) {
+        this.command = command;
+    }
+
+    @Override
+    public String getCommand() {
+        return command;
+    }
 
     @Override
     public void run(List<String> args) {
@@ -95,6 +135,9 @@ public abstract class AbstractAction implements Action {
         }
     }
 
+    /**
+     * @return <code>true</code> if the Action is permitted to accept no arguments, otherwise <code>false</code>
+     */
     protected boolean permitNoArgs() {
         return false;
     }
@@ -109,19 +152,87 @@ public abstract class AbstractAction implements Action {
         printUsage(parser, false);
     }
 
+    /**
+     * Print usage information.
+     *
+     * @param parser  the command line parser containing usage information
+     * @param success whether this is due to a successful operation
+     */
     private void printUsage(CmdLineParser parser, boolean success) {
         System.out.println(getActionName() + " usage:");
+
+        // additional usage message
+        final String additionalUsage = getAdditionalUsage();
+        if (!Strings.isNullOrEmpty(additionalUsage)) {
+            System.out.println(additionalUsage);
+        }
+
         parser.printUsage(System.out);
         System.exit(success ? 0 : 255);
     }
 
-    protected abstract Action getChildAction(List<String> args, CmdLineParser parser);
+    /**
+     * Returns additional usage information; by default this is a list of the supported child actions.
+     *
+     * @return additional usage information
+     */
+    protected String getAdditionalUsage() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append(LINE_SEPARATOR);
+
+        final String parentCommand = getActionCommandChain();
+
+        for (String actionCommand : actionMap.keySet()) {
+            sb.append(" ");
+            sb.append(parentCommand);
+            sb.append(" ");
+            sb.append(actionCommand);
+            sb.append(" [args...]");
+            sb.append(LINE_SEPARATOR);
+        }
+
+        return sb.toString();
+    }
+
+    @Override
+    public String getActionCommandChain() {
+        return (null != parent ? parent.getActionCommandChain() + " " : "") + getCommand();
+    }
+
+    /**
+     * @param args   the arguments
+     * @param parser the command line parser containing usage information
+     * @return a child Action for the given args, or <code>null</code> if not found
+     */
+    protected Action getChildAction(List<String> args, CmdLineParser parser) {
+        final String command = args.get(0);
+
+        // find implementation
+        final Class<? extends Action> actionClass = actionMap.get(command);
+        if (null != actionClass) {
+            try {
+                final Action action = actionClass.newInstance();
+                action.setParent(this);
+                action.setCommand(command);
+
+                return action;
+            } catch (InstantiationException | IllegalAccessException e) {
+                throw new ActionException(String.format("Error getting child action for args: %s", args), e);
+            }
+        }
+        return null;
+    }
 
     protected String getManagementApiEndpoint() {
         return serverAddress;
     }
 
-    protected <T> T getApiClient(Class<T> clazz) {
+    /**
+     * @param clazz the Class for which to build a client
+     * @param <T> the API interface
+     * @return an API client for the given Class
+     */
+    protected <T> T buildApiClient(Class<T> clazz) {
         final RestAdapter.Builder builder = new RestAdapter.Builder() //
                 .setConverter(new JacksonConverter(JsonUtil.MAPPER))
                 .setEndpoint(getManagementApiEndpoint())
@@ -162,8 +273,7 @@ public abstract class AbstractAction implements Action {
         } catch (IOException ignored) {
         }
 
-        throw new ActionException("HTTP " + response.getStatus() + " " + response.getReason() + " but expected " + expectedStatus + ":\n" + body);
+        throw new ActionException("HTTP " + response.getStatus() + " "
+                + response.getReason() + " but expected " + expectedStatus + ":\n" + body);
     }
-
-    protected abstract String getActionName();
 }

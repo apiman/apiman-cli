@@ -35,7 +35,7 @@ public abstract class ModelListAction<M, A> extends AbstractModelAction<M, A> {
         LOGGER.debug("Listing {}", this::getModelName);
 
         try {
-            final A apiClient = getApiClient(getApiClass());
+            final A apiClient = buildApiClient(getApiClass());
             final Method listMethod = apiClient.getClass().getMethod("list");
             processList((List<M>) listMethod.invoke(apiClient));
 

@@ -6,9 +6,8 @@ import io.apiman.cli.api.action.Action;
 import io.apiman.cli.core.gateway.action.GatewayAction;
 import io.apiman.cli.core.org.action.OrgAction;
 import io.apiman.cli.core.plugin.action.PluginAction;
-import org.kohsuke.args4j.CmdLineParser;
 
-import java.util.List;
+import java.util.Map;
 
 /**
  * @author Pete
@@ -19,30 +18,19 @@ public class Cli extends AbstractAction {
     }
 
     @Override
-    protected Action getChildAction(List<String> args, CmdLineParser parser) {
-        Action action;
-        switch (args.get(0)) {
-            case "org":
-                action = new OrgAction();
-                break;
-
-            case "gateway":
-                action = new GatewayAction();
-                break;
-
-            case "plugin":
-                action = new PluginAction();
-                break;
-
-            default:
-                action = null;
-                break;
-        }
-        return action;
+    protected void populateActions(Map<String, Class<? extends Action>> actionMap) {
+        actionMap.put("org", OrgAction.class);
+        actionMap.put("gateway", GatewayAction.class);
+        actionMap.put("plugin", PluginAction.class);
     }
 
     @Override
     protected String getActionName() {
         return "apiman-cli";
+    }
+
+    @Override
+    public String getCommand() {
+        return "apiman";
     }
 }

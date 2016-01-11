@@ -27,7 +27,7 @@ public abstract class ModelShowAction<M, A> extends AbstractModelAction<M, A> {
         LOGGER.debug("Showing {}", this::getModelName);
 
         try {
-            final A apiClient = this.getApiClient(getApiClass());
+            final A apiClient = this.buildApiClient(getApiClass());
             final Method fetchMethod = apiClient.getClass().getMethod("fetch", String.class);
 
             @SuppressWarnings("unchecked")

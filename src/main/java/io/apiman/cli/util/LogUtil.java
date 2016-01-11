@@ -11,4 +11,5 @@ public class LogUtil {
      * Used for printing output to the user; typically this is mapped to stdout.
      */
     public static final Logger OUTPUT = LogManager.getLogger("output");
+    public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 }

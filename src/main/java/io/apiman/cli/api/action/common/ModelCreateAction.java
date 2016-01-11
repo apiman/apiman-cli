@@ -27,7 +27,7 @@ public abstract class ModelCreateAction<M, A> extends AbstractModelAction<M, A> 
 
         invokeAndCheckResponse(() -> {
             try {
-                final A apiClient = getApiClient(getApiClass());
+                final A apiClient = buildApiClient(getApiClass());
                 final Method createMethod = apiClient.getClass().getMethod("create", getModelClass());
                 return (Response) createMethod.invoke(apiClient, buildModelInstance());
 

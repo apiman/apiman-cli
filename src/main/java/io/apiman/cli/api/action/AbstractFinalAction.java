@@ -3,8 +3,11 @@ package io.apiman.cli.api.action;
 import org.kohsuke.args4j.CmdLineParser;
 
 import java.util.List;
+import java.util.Map;
 
 /**
+ * An Action that has no child Actions.
+ *
  * @author Pete
  */
 public abstract class AbstractFinalAction extends AbstractAction {
@@ -18,5 +21,10 @@ public abstract class AbstractFinalAction extends AbstractAction {
     @Override
     protected Action getChildAction(List<String> args, CmdLineParser parser) {
         return null;
+    }
+
+    @Override
+    protected void populateActions(Map<String, Class<? extends Action>> actionMap) {
+        // no child actions
     }
 }

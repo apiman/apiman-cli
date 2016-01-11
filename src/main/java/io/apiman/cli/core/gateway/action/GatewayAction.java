@@ -2,39 +2,19 @@ package io.apiman.cli.core.gateway.action;
 
 import io.apiman.cli.api.action.AbstractAction;
 import io.apiman.cli.api.action.Action;
-import org.kohsuke.args4j.CmdLineParser;
 
-import java.util.List;
+import java.util.Map;
 
 /**
  * @author Pete
  */
 public class GatewayAction extends AbstractAction {
     @Override
-    protected Action getChildAction(List<String> args, CmdLineParser parser) {
-        Action action;
-        switch (args.get(0)) {
-            case "create":
-                action = new GatewayCreateAction();
-                break;
-
-            case "show":
-                action = new GatewayShowAction();
-                break;
-
-            case "list":
-                action = new GatewayListAction();
-                break;
-
-            case "test":
-                action = new GatewayTestAction();
-                break;
-
-            default:
-                action = null;
-                break;
-        }
-        return action;
+    protected void populateActions(Map<String, Class<? extends Action>> actionMap) {
+        actionMap.put("create", GatewayCreateAction.class);
+        actionMap.put("show", GatewayShowAction.class);
+        actionMap.put("list", GatewayListAction.class);
+        actionMap.put("test", GatewayTestAction.class);
     }
 
     @Override

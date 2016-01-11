@@ -34,7 +34,7 @@ public class GatewayTestAction extends AbstractGatewayCreateAction {
 
         GatewayTestResponse response;
         try {
-            final GatewayApi apiClient = getApiClient(GatewayApi.class);
+            final GatewayApi apiClient = buildApiClient(GatewayApi.class);
             response = apiClient.test(buildModelInstance());
 
             OUTPUT.info("Test {}", () -> response.isSuccess() ? "successful" : "failed");
