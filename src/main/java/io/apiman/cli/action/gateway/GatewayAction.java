@@ -26,6 +26,10 @@ public class GatewayAction extends AbstractAction {
                 action = new GatewayListAction();
                 break;
 
+            case "test":
+                action = new GatewayTestAction();
+                break;
+
             default:
                 action = null;
                 break;
@@ -35,6 +39,6 @@ public class GatewayAction extends AbstractAction {
 
     @Override
     protected String getActionName() {
-        return "Manage gateway";
+        return "Manage Gateways";
     }
 }

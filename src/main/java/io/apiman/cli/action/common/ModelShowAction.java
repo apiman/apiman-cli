@@ -1,12 +1,10 @@
 package io.apiman.cli.action.common;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JavaType;
 import io.apiman.cli.exception.ActionException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kohsuke.args4j.CmdLineParser;
-import retrofit.client.Response;
 
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
@@ -34,13 +32,9 @@ public abstract class ModelShowAction<M, A> extends AbstractModelAction<M, A> {
             final Method fetchMethod = apiClient.getClass().getMethod("fetch", String.class);
 
             @SuppressWarnings("unchecked")
-            final Response response = (Response) fetchMethod.invoke(apiClient, getModelId());
-
-            // convert to model type (required, as Retrofit's type inference does't work here)
-            final JavaType modelType = MAPPER.getTypeFactory().constructType(getModelClass());
-            final M model = MAPPER.readValue(response.getBody().in(), modelType);
-
+            final M model = (M) fetchMethod.invoke(apiClient, getModelId());
             LOGGER.debug("{} received: {}", this::getModelName, () -> model);
+
             processModel(model);
 
         } catch (Exception e) {

@@ -11,7 +11,19 @@ import org.junit.runners.MethodSorters;
 public class GatewayTest extends BaseTest {
 
     @Test
-    public void test1_gatewayCreate() {
+    public void test1_gatewayTest() {
+        Cli.main("gateway",
+                "test",
+                "--debug",
+                "--server", APIMAN_URL,
+                "--endpoint", "http://localhost:8080/apiman-gateway-api",
+                "--username", "apimanager",
+                "--password", "apiman123!",
+                "--type", "REST");
+    }
+
+    @Test
+    public void test2_gatewayCreate() {
         Cli.main("gateway",
                 "create",
                 "--debug",
@@ -19,13 +31,13 @@ public class GatewayTest extends BaseTest {
                 "--name", "test",
                 "--description", "example",
                 "--endpoint", "http://localhost:1234",
-                "--username", "admin",
-                "--password", "\"admin123!\"",
+                "--username", "apimanager",
+                "--password", "apiman123!",
                 "--type", "REST");
     }
 
     @Test
-    public void test2_gatewayFetch() {
+    public void test3_gatewayFetch() {
         Cli.main("gateway",
                 "show",
                 "--debug",
@@ -34,7 +46,7 @@ public class GatewayTest extends BaseTest {
     }
 
     @Test
-    public void test3_gatewayList() {
+    public void test4_gatewayList() {
         Cli.main("gateway",
                 "list",
                 "--debug",

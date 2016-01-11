@@ -31,6 +31,6 @@ public class OrgAction extends AbstractAction {
 
     @Override
     protected String getActionName() {
-        return "Manage organisation";
+        return "Manage Organisations";
     }
 }

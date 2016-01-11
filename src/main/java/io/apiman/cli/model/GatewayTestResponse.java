@@ -9,22 +9,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class GatewayConfig {
+public class GatewayTestResponse {
     @JsonProperty
-    private String endpoint;
+    private boolean success;
 
     @JsonProperty
-    private String username;
+    private String detail;
 
-    @JsonProperty
-    private String password;
-
-    public GatewayConfig() {
+    public boolean isSuccess() {
+        return success;
     }
 
-    public GatewayConfig(String endpoint, String username, String password) {
-        this.endpoint = endpoint;
-        this.username = username;
-        this.password = password;
+    public String getDetail() {
+        return detail;
     }
 }

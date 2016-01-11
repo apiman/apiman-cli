@@ -10,10 +10,10 @@ import retrofit.http.Path;
 /**
  * @author Pete
  */
-public interface OrgApi<T extends Org> {
+public interface OrgApi {
     @POST("/organizations")
-    Response create(@Body T organisation);
+    Response create(@Body Org organisation);
 
     @GET("/organizations/{organizationId}")
-    Response fetch(@Path("organizationId") String organizationId);
+    Org fetch(@Path("organizationId") String organizationId);
 }

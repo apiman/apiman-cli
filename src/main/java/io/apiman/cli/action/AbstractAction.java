@@ -3,6 +3,7 @@ package io.apiman.cli.action;
 import com.google.common.io.BaseEncoding;
 import com.google.common.io.CharStreams;
 import io.apiman.cli.exception.ActionException;
+import io.apiman.cli.exception.ExitWithCodeException;
 import io.apiman.cli.util.JsonUtil;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -22,6 +23,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.util.List;
 import java.util.function.Supplier;
+
+import static io.apiman.cli.util.LogUtil.OUTPUT;
 
 /**
  * @author Pete
@@ -75,6 +78,12 @@ public abstract class AbstractAction implements Action {
                 }
 
                 printUsage(parser, false);
+
+            } catch (ExitWithCodeException ec) {
+                // print the message to output and exit with the given code
+                OUTPUT.error(ec.getMessage());
+                System.exit(ec.getExitCode());
+                return;
 
             } catch (Exception e) {
                 LOGGER.error("Error in " + getActionName(), e);
