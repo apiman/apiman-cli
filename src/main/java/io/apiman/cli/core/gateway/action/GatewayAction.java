@@ -1,10 +1,7 @@
-package io.apiman.cli;
+package io.apiman.cli.core.gateway.action;
 
-import com.google.common.collect.Lists;
 import io.apiman.cli.api.action.AbstractAction;
 import io.apiman.cli.api.action.Action;
-import io.apiman.cli.core.gateway.action.GatewayAction;
-import io.apiman.cli.core.org.action.OrgAction;
 import org.kohsuke.args4j.CmdLineParser;
 
 import java.util.List;
@@ -12,21 +9,25 @@ import java.util.List;
 /**
  * @author Pete
  */
-public class Cli extends AbstractAction {
-    public static void main(String... args) {
-        new Cli().run(Lists.newArrayList(args));
-    }
-
+public class GatewayAction extends AbstractAction {
     @Override
     protected Action getChildAction(List<String> args, CmdLineParser parser) {
         Action action;
         switch (args.get(0)) {
-            case "org":
-                action = new OrgAction();
+            case "create":
+                action = new GatewayCreateAction();
                 break;
 
-            case "gateway":
-                action = new GatewayAction();
+            case "show":
+                action = new GatewayShowAction();
+                break;
+
+            case "list":
+                action = new GatewayListAction();
+                break;
+
+            case "test":
+                action = new GatewayTestAction();
                 break;
 
             default:
@@ -38,6 +39,6 @@ public class Cli extends AbstractAction {
 
     @Override
     protected String getActionName() {
-        return "apiman-cli";
+        return "Manage Gateways";
     }
 }
