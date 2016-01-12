@@ -46,8 +46,9 @@ public class Api {
     public Api() {
     }
 
-    public Api(String name, String initialVersion) {
+    public Api(String name, String description, String initialVersion) {
         this.name = name;
+        this.description = description;
         this.initialVersion = initialVersion;
     }
 }

@@ -44,6 +44,9 @@ public class ApiCreateAction extends AbstractApiAction implements ApiMixin {
     @Option(name = "--name", aliases = {"-n"}, usage = "API name", required = true)
     private String name;
 
+    @Option(name = "--description", aliases = {"-d"}, usage = "Description")
+    private String description;
+
     @Option(name = "--initialVersion", aliases = {"-v"}, usage = "Initial version", required = true)
     private String initialVersion;
 
@@ -70,6 +73,7 @@ public class ApiCreateAction extends AbstractApiAction implements ApiMixin {
 
         final Api api = new Api(
                 name,
+                description,
                 initialVersion);
 
         switch (serverVersion) {
