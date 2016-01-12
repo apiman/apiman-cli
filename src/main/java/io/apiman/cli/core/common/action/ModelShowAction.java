@@ -39,7 +39,7 @@ public abstract class ModelShowAction<M, A> extends AbstractModelAction<M, A> {
     }
 
     @Override
-    protected void performAction(CmdLineParser parser) throws ActionException {
+    public void performAction(CmdLineParser parser) throws ActionException {
         LOGGER.debug("Showing {}", this::getModelName);
 
         try {

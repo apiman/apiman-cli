@@ -47,7 +47,7 @@ public abstract class ModelListAction<M, A> extends AbstractModelAction<M, A> {
 
     @SuppressWarnings("unchecked")
     @Override
-    protected void performAction(CmdLineParser parser) throws ActionException {
+    public void performAction(CmdLineParser parser) throws ActionException {
         LOGGER.debug("Listing {}", this::getModelName);
 
         try {

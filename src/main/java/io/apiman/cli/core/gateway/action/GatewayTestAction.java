@@ -47,7 +47,7 @@ public class GatewayTestAction extends AbstractGatewayCreateAction {
     }
 
     @Override
-    protected void performAction(CmdLineParser parser) throws ActionException {
+    public void performAction(CmdLineParser parser) throws ActionException {
         LOGGER.debug("Testing {}", this::getModelName);
 
         GatewayTestResponse response;

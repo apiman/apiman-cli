@@ -68,7 +68,7 @@ public class ApiCreateAction extends AbstractApiAction implements ApiMixin {
     }
 
     @Override
-    protected void performAction(CmdLineParser parser) throws ActionException {
+    public void performAction(CmdLineParser parser) throws ActionException {
         LOGGER.debug("Creating {}", this::getModelName);
 
         final Api api = new Api(

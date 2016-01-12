@@ -51,4 +51,12 @@ public class Api {
         this.description = description;
         this.initialVersion = initialVersion;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getInitialVersion() {
+        return initialVersion;
+    }
 }

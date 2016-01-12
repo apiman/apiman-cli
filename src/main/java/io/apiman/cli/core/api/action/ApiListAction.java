@@ -44,7 +44,7 @@ public class ApiListAction extends AbstractApiAction implements ApiMixin {
     }
 
     @Override
-    protected void performAction(CmdLineParser parser) throws ActionException {
+    public void performAction(CmdLineParser parser) throws ActionException {
         LOGGER.debug("Listing {}", this::getModelName);
 
         List<Api> apis;

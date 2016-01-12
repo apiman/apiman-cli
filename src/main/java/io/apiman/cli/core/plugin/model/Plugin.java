@@ -58,4 +58,8 @@ public class Plugin {
         this.classifier = classifier;
         this.version = version;
     }
+
+    public String getName() {
+        return name;
+    }
 }

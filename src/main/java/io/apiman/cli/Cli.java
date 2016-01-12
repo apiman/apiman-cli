@@ -19,6 +19,7 @@ package io.apiman.cli;
 import com.google.common.collect.Lists;
 import io.apiman.cli.action.AbstractAction;
 import io.apiman.cli.action.Action;
+import io.apiman.cli.core.declarative.action.ApplyAction;
 import io.apiman.cli.core.gateway.action.GatewayAction;
 import io.apiman.cli.core.org.action.OrgAction;
 import io.apiman.cli.core.plugin.action.PluginAction;
@@ -42,6 +43,7 @@ public class Cli extends AbstractAction {
         actionMap.put("gateway", GatewayAction.class);
         actionMap.put("plugin", PluginAction.class);
         actionMap.put("api", ApiAction.class);
+        actionMap.put("apply", ApplyAction.class);
     }
 
     @Override
