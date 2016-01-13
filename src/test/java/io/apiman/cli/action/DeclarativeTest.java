@@ -1,7 +1,10 @@
-package io.apiman.cli;
+package io.apiman.cli.action;
 
+import io.apiman.cli.common.BaseTest;
 import io.apiman.cli.core.declarative.action.ApplyAction;
 import io.apiman.cli.core.declarative.model.Declaration;
+import io.apiman.cli.util.JsonUtil;
+import io.apiman.cli.util.YamlUtil;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -12,36 +15,36 @@ import static org.junit.Assert.assertNotNull;
 /**
  * @author pete
  */
-public class DeclarativeTest {
+public class DeclarativeTest extends BaseTest {
     private ApplyAction action;
 
     @Before
     public void setUp() {
         action = new ApplyAction();
-        action.setServerAddress("http://192.168.99.100:8080/apiman");
+        action.setServerAddress(APIMAN_URL);
         action.setLogDebug(true);
     }
 
     @Test
     public void testLoadDeclarationJson() throws Exception {
-        final Declaration declaration = action.loadDeclarationJson(
-                Paths.get(DeclarativeTest.class.getResource("/simple.json").toURI()));
+        final Declaration declaration = action.loadDeclaration(
+                Paths.get(DeclarativeTest.class.getResource("/simple.json").toURI()), JsonUtil.MAPPER);
 
         assertLoadedModel(declaration);
     }
 
     @Test
     public void testLoadDeclarationYaml() throws Exception {
-        final Declaration declaration = action.loadDeclarationYaml(
-                Paths.get(DeclarativeTest.class.getResource("/simple.yml").toURI()));
+        final Declaration declaration = action.loadDeclaration(
+                Paths.get(DeclarativeTest.class.getResource("/simple.yml").toURI()), YamlUtil.MAPPER);
 
         assertLoadedModel(declaration);
     }
 
     @Test
     public void testApplyDeclarationYaml() throws Exception {
-        final Declaration declaration = action.loadDeclarationYaml(
-                Paths.get(DeclarativeTest.class.getResource("/simple.yml").toURI()));
+        final Declaration declaration = action.loadDeclaration(
+                Paths.get(DeclarativeTest.class.getResource("/simple.yml").toURI()), YamlUtil.MAPPER);
 
         action.applyDeclaration(declaration);
     }

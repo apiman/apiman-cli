@@ -16,6 +16,7 @@
 
 package io.apiman.cli;
 
+import io.apiman.cli.common.BaseTest;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;

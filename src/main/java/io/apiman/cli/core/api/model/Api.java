@@ -43,6 +43,9 @@ public class Api {
     @JsonProperty
     private String version;
 
+    @JsonProperty
+    private String status;
+
     public Api() {
     }
 
@@ -58,5 +61,9 @@ public class Api {
 
     public String getInitialVersion() {
         return initialVersion;
+    }
+
+    public String getStatus() {
+        return status;
     }
 }

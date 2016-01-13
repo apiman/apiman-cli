@@ -1,5 +1,6 @@
 package io.apiman.cli.core.declarative.action;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import io.apiman.cli.action.AbstractFinalAction;
 import io.apiman.cli.core.api.ServiceApi;
@@ -10,6 +11,7 @@ import io.apiman.cli.core.api.model.ServiceConfig;
 import io.apiman.cli.core.common.ActionApi;
 import io.apiman.cli.core.common.model.ServerAction;
 import io.apiman.cli.core.declarative.model.Declaration;
+import io.apiman.cli.core.declarative.model.DeclarativeApi;
 import io.apiman.cli.core.gateway.GatewayApi;
 import io.apiman.cli.core.gateway.model.Gateway;
 import io.apiman.cli.core.org.OrgApi;
@@ -25,12 +27,18 @@ import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
+import retrofit.RetrofitError;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Optional;
+import java.util.function.Supplier;
 
+import static io.apiman.cli.util.OptionalConsumer.of;
+import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -38,6 +46,9 @@ import static java.util.Optional.ofNullable;
  */
 public class ApplyAction extends AbstractFinalAction {
     private static final Logger LOGGER = LogManager.getLogger(ApplyAction.class);
+    private static final String JSON_EXTENSION = ".json";
+    private static final String STATE_READY = "READY";
+    private static final String STATE_PUBLISHED = "PUBLISHED";
 
     @Option(name = "--declarationFile", aliases = {"-f"}, usage = "Declaration file")
     private Path declarationFile;
@@ -52,11 +63,11 @@ public class ApplyAction extends AbstractFinalAction {
         final Declaration declaration;
 
         // parse declaration
-        if (declarationFile.endsWith(".json")) {
-            declaration = loadDeclarationJson(declarationFile);
+        if (declarationFile.endsWith(JSON_EXTENSION)) {
+            declaration = loadDeclaration(declarationFile, JsonUtil.MAPPER);
         } else {
             // default is YAML
-            declaration = loadDeclarationYaml(declarationFile);
+            declaration = loadDeclaration(declarationFile, YamlUtil.MAPPER);
         }
 
         LOGGER.info("Loaded declaration: {}", declarationFile);
@@ -65,87 +76,275 @@ public class ApplyAction extends AbstractFinalAction {
         applyDeclaration(declaration);
     }
 
+    /**
+     * Apply the given Declaration.
+     *
+     * @param declaration the Declaration to apply.
+     */
     public void applyDeclaration(Declaration declaration) {
         LOGGER.debug("Applying declaration");
 
         // add gateways
-        ofNullable(declaration.getSystem().getGateways()).ifPresent(gateways -> {
-            LOGGER.debug("Adding gateways");
-
-            gateways.forEach(declarativeGateway -> {
-                LOGGER.info("Adding gateway: {}", declarativeGateway.getName());
-
-                final Gateway gateway = copy(declarativeGateway, Gateway.class);
-                gateway.setConfiguration(JsonUtil.safeWriteValueAsString(declarativeGateway.getConfig()));
-                buildApiClient(GatewayApi.class).create(gateway);
-            });
-        });
+        applyGateways(declaration);
 
         // add plugins
-        ofNullable(declaration.getSystem().getPlugins()).ifPresent(plugins -> {
-            LOGGER.debug("Adding plugins");
-
-            plugins.forEach(plugin -> {
-                LOGGER.info("Adding plugin: {}", plugin.getName());
-                buildApiClient(PluginApi.class).create(plugin);
-            });
-        });
+        applyPlugins(declaration);
 
         // add org
         ofNullable(declaration.getOrg()).ifPresent(declarativeOrg -> {
             final String orgName = declaration.getOrg().getName();
-            LOGGER.info("Adding org: {}", orgName);
-            buildApiClient(OrgApi.class).create(copy(declaration.getOrg(), Org.class));
+            final OrgApi orgApiClient = buildApiClient(OrgApi.class);
+
+            of(checkExists(() -> orgApiClient.fetch(orgName)))
+                    .ifPresent(existing -> {
+                        LOGGER.info("Org already exists: {}", orgName);
+                    })
+                    .ifNotPresent(() -> {
+                        LOGGER.info("Adding org: {}", orgName);
+                        orgApiClient.create(copy(declaration.getOrg(), Org.class));
+                    });
 
             // add apis
-            ofNullable(declaration.getOrg().getApis()).ifPresent(declarativeApis -> {
-                LOGGER.debug("Adding APIs");
+            applyApis(declaration, orgName);
+        });
 
-                declarativeApis.forEach(declarativeApi -> {
-                    LOGGER.info("Adding API: {}", declarativeApi.getName());
+        LOGGER.info("Applied declaration");
+    }
+
+    /**
+     * Add gateways if they are not present.
+     *
+     * @param declaration
+     */
+    private void applyGateways(Declaration declaration) {
+        ofNullable(declaration.getSystem().getGateways()).ifPresent(gateways -> {
+            LOGGER.debug("Applying gateways");
+
+            gateways.forEach(declarativeGateway -> {
+                final GatewayApi apiClient = buildApiClient(GatewayApi.class);
+                final String gatewayName = declarativeGateway.getName();
+
+                of(checkExists(() -> apiClient.fetch(gatewayName)))
+                        .ifPresent(existing -> {
+                            LOGGER.info("Gateway already exists: {}", gatewayName);
+                        })
+                        .ifNotPresent(() -> {
+                            LOGGER.info("Adding gateway: {}", gatewayName);
+
+                            final Gateway gateway = copy(declarativeGateway, Gateway.class);
+                            gateway.setConfiguration(JsonUtil.safeWriteValueAsString(declarativeGateway.getConfig()));
+                            apiClient.create(gateway);
+                        });
+            });
+        });
+    }
+
+    /**
+     * Add plugins if they are not present.
+     *
+     * @param declaration
+     */
+    private void applyPlugins(Declaration declaration) {
+        ofNullable(declaration.getSystem().getPlugins()).ifPresent(plugins -> {
+            LOGGER.debug("Applying plugins");
+
+            plugins.forEach(plugin -> {
+                final PluginApi apiClient = buildApiClient(PluginApi.class);
+
+                of(checkExists(() -> apiClient.fetch(plugin.getName())))
+                        .ifPresent(existing -> {
+                            LOGGER.info("Plugin already exists: {}", plugin.getName());
+                        })
+                        .ifNotPresent(() -> {
+                            LOGGER.info("Adding plugin: {}", plugin.getName());
+                            apiClient.create(plugin);
+                        });
+            });
+        });
+    }
+
+    /**
+     * Add and configure APIs if they are not present.
+     *
+     * @param declaration
+     * @param orgName
+     */
+    private void applyApis(Declaration declaration, String orgName) {
+        ofNullable(declaration.getOrg().getApis()).ifPresent(declarativeApis -> {
+            LOGGER.debug("Applying APIs");
+
+            declarativeApis.forEach(declarativeApi -> {
+                final ServiceApi apiClient = buildApiClient(ServiceApi.class);
+                final String apiName = declarativeApi.getName();
+                final String apiVersion = declarativeApi.getInitialVersion();
+
+                // create and configure API
+                applyApi(orgName, declarativeApi, apiClient, apiName, apiVersion);
+
+                // add policies
+                applyPolicies(orgName, declarativeApi, apiClient, apiName, apiVersion);
+
+                // publish API
+                if (declarativeApi.isPublished()) {
+                    publish(orgName, apiClient, apiName, apiVersion);
+                }
+            });
+        });
+    }
+
+    /**
+     * Add and configure the API if it is not present.
+     *
+     * @param orgName
+     * @param declarativeApi
+     * @param apiClient
+     * @param apiName
+     * @param apiVersion
+     */
+    private void applyApi(String orgName, DeclarativeApi declarativeApi, ServiceApi apiClient, String apiName, String apiVersion) {
+        LOGGER.debug("Applying API: {}", apiName);
+
+        of(checkExists(() -> apiClient.fetch(orgName, apiName, apiVersion)))
+                .ifPresent(existing -> {
+                    LOGGER.info("API already exists: {}", apiName);
+                })
+                .ifNotPresent(() -> {
+                    LOGGER.info("Adding API: {}", apiName);
 
                     // create API
                     final Api api = copy(declarativeApi, Api.class);
-                    final ServiceApi apiClient = buildApiClient(ServiceApi.class);
                     apiClient.create(orgName, api);
 
                     // configure API
-                    LOGGER.info("Configuring API: {}", declarativeApi.getName());
+                    // TODO move this outside of the block - currently API throws a 409 if this has been called
+                    LOGGER.info("Configuring API: {}", apiName);
                     final ServiceConfig apiConfig = copy(declarativeApi.getConfig(), ServiceConfig.class);
                     apiConfig.setGateways(Lists.newArrayList(new ApiGateway(declarativeApi.getConfig().getGateway())));
-                    apiClient.configure(orgName, api.getName(), api.getInitialVersion(), apiConfig);
-
-                    // add policies
-                    ofNullable(declarativeApi.getPolicies()).ifPresent(declarativePolicies -> {
-                        LOGGER.debug("Adding policies to API: {}", api.getName());
-
-                        declarativePolicies.forEach(declarativePolicy -> {
-                            LOGGER.info("Adding policy '{}' to API: {}", declarativePolicy.getName(), api.getName());
-
-                            // add policy
-                            final ApiPolicy apiPolicy = new ApiPolicy(
-                                    declarativePolicy.getName(),
-                                    JsonUtil.safeWriteValueAsString(declarativePolicy.getConfig()));
-
-                            apiClient.addPolicy(orgName, api.getName(), api.getInitialVersion(), apiPolicy);
-                        });
-                    });
-
-                    // publish API
-                    if (declarativeApi.isPublished()) {
-                        LOGGER.info("Publishing API: {}", api.getName());
-
-                        final ServerAction serverAction = new ServerAction(
-                                "publishService",
-                                orgName,
-                                api.getName(),
-                                api.getInitialVersion());
-
-                        buildApiClient(ActionApi.class).doAction(serverAction);
-                    }
+                    apiClient.configure(orgName, apiName, apiVersion, apiConfig);
                 });
+    }
+
+    /**
+     * Add policies to the API if they are not present.
+     *
+     * @param orgName
+     * @param declarativeApi
+     * @param apiClient
+     * @param apiName
+     * @param apiVersion
+     */
+    private void applyPolicies(String orgName, DeclarativeApi declarativeApi, ServiceApi apiClient, String apiName, String apiVersion) {
+        ofNullable(declarativeApi.getPolicies()).ifPresent(declarativePolicies -> {
+            LOGGER.debug("Applying policies to API: {}", apiName);
+
+            declarativePolicies.forEach(declarativePolicy -> {
+                final String policyName = declarativePolicy.getName();
+
+                // determine if the policy already exists for this API
+                if (checkPolicyExists(orgName, apiClient, apiName, apiVersion, policyName)) {
+                    LOGGER.info("Policy '{}' already exists for API: {}", policyName, apiName);
+
+                } else {
+                    LOGGER.info("Adding policy '{}' to API: {}", policyName, apiName);
+
+                    // add policy
+                    final ApiPolicy apiPolicy = new ApiPolicy(
+                            policyName,
+                            JsonUtil.safeWriteValueAsString(declarativePolicy.getConfig()));
+
+                    apiClient.addPolicy(orgName, apiName, apiVersion, apiPolicy);
+                }
             });
         });
+    }
+
+    /**
+     * Determine if the policy exists on the given API.
+     *
+     * @param orgName
+     * @param apiClient
+     * @param apiName
+     * @param apiVersion
+     * @param policyName
+     * @return <code>true</code> if the policy exists on the API, otherwise <code>false</code>
+     */
+    private boolean checkPolicyExists(String orgName, ServiceApi apiClient, String apiName, String apiVersion, String policyName) {
+        return checkExists(() ->
+                apiClient.fetchPolicies(orgName, apiName, apiVersion))
+                .map(apiPolicies -> apiPolicies.stream().anyMatch(apiPolicy ->
+                        policyName.equals(apiPolicy.getPolicyDefinitionId())))
+                .orElse(false);
+    }
+
+    /**
+     * Publish the API, if it is in the 'Ready' state.
+     *
+     * @param orgName
+     * @param apiClient
+     * @param apiName
+     * @param apiVersion
+     */
+    private void publish(String orgName, ServiceApi apiClient, String apiName, String apiVersion) {
+        LOGGER.debug("Attempting to publish API: {}", apiName);
+
+        final String apiState = ofNullable(apiClient.fetch(orgName, apiName, apiVersion).getStatus()).orElse("");
+        switch (apiState.toUpperCase()) {
+            case STATE_READY:
+                performPublish(orgName, apiName, apiVersion);
+                break;
+
+            case STATE_PUBLISHED:
+                LOGGER.info("API already published: {}", apiName);
+                break;
+
+            default:
+                throw new DeclarativeException(String.format(
+                        "Unable to publish API '%s' in state: %s", apiName, apiState));
+        }
+    }
+
+    /**
+     * Trigger the publish action for the given API.
+     *
+     * @param orgName
+     * @param apiName
+     * @param apiVersion
+     */
+    private void performPublish(String orgName, String apiName, String apiVersion) {
+        LOGGER.info("Publishing API: {}", apiName);
+
+        final ServerAction serverAction = new ServerAction(
+                "publishService",
+                orgName,
+                apiName,
+                apiVersion);
+
+        buildApiClient(ActionApi.class).doAction(serverAction);
+    }
+
+    /**
+     * Check for the presence of an item using the given Supplier.
+     *
+     * @param supplier the Supplier of the item
+     * @param <T>
+     * @return the item or {@link Optional#empty()}
+     */
+    private <T> Optional<T> checkExists(Supplier<T> supplier) {
+        try {
+            // attempt to return the item
+            return ofNullable(supplier.get());
+
+        } catch (RetrofitError re) {
+            // 404 indicates the item does not exist - anything else is an error
+            if (ofNullable(re.getResponse())
+                    .filter(response -> HttpURLConnection.HTTP_NOT_FOUND == response.getStatus())
+                    .isPresent()) {
+
+                return empty();
+            }
+
+            throw new DeclarativeException("Error checking for existence of existing item", re);
+        }
     }
 
     private <D, O> D copy(O original, Class<D> destinationClass) {
@@ -166,17 +365,9 @@ public class ApplyAction extends AbstractFinalAction {
         }
     }
 
-    public Declaration loadDeclarationJson(Path path) {
+    public Declaration loadDeclaration(Path path, ObjectMapper mapper) {
         try (InputStream is = Files.newInputStream(path)) {
-            return JsonUtil.MAPPER.readValue(is, Declaration.class);
-        } catch (IOException e) {
-            throw new DeclarativeException(e);
-        }
-    }
-
-    public Declaration loadDeclarationYaml(Path path) {
-        try (InputStream is = Files.newInputStream(path)) {
-            return YamlUtil.MAPPER.readValue(is, Declaration.class);
+            return mapper.readValue(is, Declaration.class);
         } catch (IOException e) {
             throw new DeclarativeException(e);
         }

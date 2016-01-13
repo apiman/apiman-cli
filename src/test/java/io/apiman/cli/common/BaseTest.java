@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.apiman.cli;
+package io.apiman.cli.common;
 
 /**
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}

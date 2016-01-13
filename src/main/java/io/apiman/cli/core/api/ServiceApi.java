@@ -43,7 +43,11 @@ public interface ServiceApi {
     Response configure(@Path("orgName") String orgName, @Path("serviceName") String serviceName,
                        @Path("version") String version, @Body ServiceConfig config);
 
-    @POST("/organizations/{orgName}/services/{apiName}/versions/{version}/policies")
-    Response addPolicy(@Path("orgName") String orgName, @Path("apiName") String apiName,
+    @POST("/organizations/{orgName}/services/{serviceName}/versions/{version}/policies")
+    Response addPolicy(@Path("orgName") String orgName, @Path("serviceName") String serviceName,
                        @Path("version") String version, @Body ApiPolicy policyConfig);
+
+    @GET("/organizations/{orgName}/services/{serviceName}/versions/{version}/policies")
+    List<ApiPolicy> fetchPolicies(@Path("orgName") String orgName, @Path("serviceName") String serviceName,
+                                  @Path("version") String version);
 }

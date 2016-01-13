@@ -174,6 +174,11 @@ Add a gateway:
 * Support adding policies to services
 * Better support for non-public services
 * Support deletion
+* Declarative API environment definitions
+  * Option to skip or fail for existing items
+* Docs - split examples into separate file
+* Docs - split detailed API usage into separate file
+* Docs - simplify README examples
 
 # Contributing
 
