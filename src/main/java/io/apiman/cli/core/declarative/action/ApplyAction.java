@@ -17,6 +17,7 @@ import io.apiman.cli.core.gateway.model.Gateway;
 import io.apiman.cli.core.org.OrgApi;
 import io.apiman.cli.core.org.model.Org;
 import io.apiman.cli.core.plugin.PluginApi;
+import io.apiman.cli.core.plugin.model.Plugin;
 import io.apiman.cli.exception.ActionException;
 import io.apiman.cli.exception.DeclarativeException;
 import io.apiman.cli.util.JsonUtil;
@@ -73,7 +74,11 @@ public class ApplyAction extends AbstractFinalAction {
         LOGGER.info("Loaded declaration: {}", declarationFile);
         LOGGER.debug("Declaration loaded: {}", () -> JsonUtil.safeWriteValueAsString(declaration));
 
-        applyDeclaration(declaration);
+        try {
+            applyDeclaration(declaration);
+        } catch (Exception e) {
+            throw new ActionException("Error applying declaration", e);
+        }
     }
 
     /**
@@ -151,16 +156,45 @@ public class ApplyAction extends AbstractFinalAction {
             plugins.forEach(plugin -> {
                 final PluginApi apiClient = buildApiClient(PluginApi.class);
 
-                of(checkExists(() -> apiClient.fetch(plugin.getName())))
-                        .ifPresent(existing -> {
-                            LOGGER.info("Plugin already exists: {}", plugin.getName());
-                        })
-                        .ifNotPresent(() -> {
-                            LOGGER.info("Adding plugin: {}", plugin.getName());
-                            apiClient.create(plugin);
-                        });
+                if (checkPluginExists(plugin, apiClient)) {
+                    LOGGER.info("Plugin already installed: {}", plugin.getName());
+                } else {
+                    LOGGER.info("Installing plugin: {}", plugin.getName());
+                    apiClient.create(plugin);
+                }
             });
         });
+    }
+
+    /**
+     * Determine if the plugin is installed.
+     *
+     * @param plugin
+     * @param apiClient
+     * @return <code>true</code> if the plugin is installed, otherwise <code>false</code>
+     */
+    private boolean checkPluginExists(Plugin plugin, PluginApi apiClient) {
+        return checkExists(apiClient::list)
+                .map(apiPolicies -> apiPolicies.stream()
+                        .anyMatch(installedPlugin ->
+                                plugin.getArtifactId().equals(installedPlugin.getArtifactId()) &&
+                                        plugin.getGroupId().equals(installedPlugin.getGroupId()) &&
+                                        plugin.getVersion().equals(installedPlugin.getVersion()) &&
+                                        safeEquals(plugin.getClassifier(), installedPlugin.getClassifier())
+                        ))
+                .orElse(false);
+    }
+
+    /**
+     * Whether two nullable objects are equal.
+     *
+     * @param o1
+     * @param o2
+     * @return <code>true</code> if objects are equal, otherwise <code>false</code>
+     */
+    private <T> boolean safeEquals(T o1, T o2) {
+        return (null == o1 && null == o2) ||
+                ofNullable(o1).filter(o -> o.equals(o2)).isPresent();
     }
 
     /**
