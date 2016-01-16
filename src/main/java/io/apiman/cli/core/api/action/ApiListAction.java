@@ -21,7 +21,7 @@ import io.apiman.cli.core.api.ApiMixin;
 import io.apiman.cli.core.api.ServiceApi;
 import io.apiman.cli.core.api.model.Api;
 import io.apiman.cli.exception.ActionException;
-import io.apiman.cli.util.JsonUtil;
+import io.apiman.cli.util.MappingUtil;
 import io.apiman.cli.util.LogUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -59,6 +59,6 @@ public class ApiListAction extends AbstractApiAction implements ApiMixin {
                 break;
         }
 
-        LogUtil.OUTPUT.info(JsonUtil.safeWriteValueAsString(apis));
+        LogUtil.OUTPUT.info(MappingUtil.safeWriteValueAsJson(apis));
     }
 }

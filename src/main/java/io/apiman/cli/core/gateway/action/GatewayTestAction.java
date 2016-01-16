@@ -20,7 +20,7 @@ import io.apiman.cli.exception.ActionException;
 import io.apiman.cli.exception.ExitWithCodeException;
 import io.apiman.cli.core.gateway.GatewayApi;
 import io.apiman.cli.core.gateway.model.GatewayTestResponse;
-import io.apiman.cli.util.JsonUtil;
+import io.apiman.cli.util.MappingUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kohsuke.args4j.CmdLineParser;
@@ -56,7 +56,7 @@ public class GatewayTestAction extends AbstractGatewayCreateAction {
             response = apiClient.test(buildModelInstance());
 
             OUTPUT.info("Test {}", () -> response.isSuccess() ? "successful" : "failed");
-            LOGGER.debug("Test result: {}", () -> JsonUtil.safeWriteValueAsString(response));
+            LOGGER.debug("Test result: {}", () -> MappingUtil.safeWriteValueAsJson(response));
 
         } catch (Exception e) {
             throw new ActionException(e);

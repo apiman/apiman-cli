@@ -19,33 +19,39 @@ package io.apiman.cli.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Shared JSON utility methods.
+ * Shared JSON/YAML mapping utility methods.
  *
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
-public class JsonUtil {
-    public static final ObjectMapper MAPPER;
-    private static final Logger LOGGER = LogManager.getLogger(JsonUtil.class);
+public class MappingUtil {
+    private static final Logger LOGGER = LogManager.getLogger(MappingUtil.class);
+
+    public static final ObjectMapper JSON_MAPPER;
+    public static final ObjectMapper YAML_MAPPER;
 
     static {
-        MAPPER = new ObjectMapper();
-        MAPPER.enable(SerializationFeature.INDENT_OUTPUT);
+        JSON_MAPPER = new ObjectMapper();
+        JSON_MAPPER.enable(SerializationFeature.INDENT_OUTPUT);
+
+        YAML_MAPPER = new ObjectMapper(new YAMLFactory());
+        YAML_MAPPER.enable(SerializationFeature.INDENT_OUTPUT);
     }
 
     /**
-     * @param obj the Object to write as JSON
+     * @param obj the Object to write as a JSON String
      * @return the {@code obj} as JSON, or {@code null} if an error occurs
      */
-    public static String safeWriteValueAsString(Object obj) {
+    public static String safeWriteValueAsJson(Object obj) {
         try {
-            return JsonUtil.MAPPER.writeValueAsString(obj);
+            return MappingUtil.JSON_MAPPER.writeValueAsString(obj);
 
         } catch (NullPointerException | JsonProcessingException e) {
-            LOGGER.trace(String.format("Error writing value as string: %s", obj), e);
+            LOGGER.trace(String.format("Error writing value as JSON string: %s", obj), e);
             return null;
         }
     }

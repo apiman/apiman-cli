@@ -17,7 +17,7 @@
 package io.apiman.cli.core.common.action;
 
 import io.apiman.cli.exception.ActionException;
-import io.apiman.cli.util.JsonUtil;
+import io.apiman.cli.util.MappingUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kohsuke.args4j.CmdLineParser;
@@ -61,6 +61,6 @@ public abstract class ModelListAction<M, A> extends AbstractModelAction<M, A> {
     }
 
     protected void processList(List<M> model) {
-        OUTPUT.info(JsonUtil.safeWriteValueAsString(model));
+        OUTPUT.info(MappingUtil.safeWriteValueAsJson(model));
     }
 }

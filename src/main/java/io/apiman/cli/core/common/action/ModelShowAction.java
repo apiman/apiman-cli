@@ -17,7 +17,7 @@
 package io.apiman.cli.core.common.action;
 
 import io.apiman.cli.exception.ActionException;
-import io.apiman.cli.util.JsonUtil;
+import io.apiman.cli.util.MappingUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kohsuke.args4j.CmdLineParser;
@@ -48,7 +48,7 @@ public abstract class ModelShowAction<M, A> extends AbstractModelAction<M, A> {
 
             @SuppressWarnings("unchecked")
             final M model = (M) fetchMethod.invoke(apiClient, getModelId());
-            LOGGER.debug("{} received: {}", this::getModelName, () -> JsonUtil.safeWriteValueAsString(model));
+            LOGGER.debug("{} received: {}", this::getModelName, () -> MappingUtil.safeWriteValueAsJson(model));
 
             processModel(model);
 
@@ -58,7 +58,7 @@ public abstract class ModelShowAction<M, A> extends AbstractModelAction<M, A> {
     }
 
     protected void processModel(M model) {
-        OUTPUT.info(JsonUtil.safeWriteValueAsString(model));
+        OUTPUT.info(MappingUtil.safeWriteValueAsJson(model));
     }
 
     protected abstract String getModelId() throws ActionException;

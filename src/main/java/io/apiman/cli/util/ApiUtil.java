@@ -32,7 +32,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.util.function.Supplier;
 
-import static io.apiman.cli.util.JsonUtil.MAPPER;
+import static io.apiman.cli.util.MappingUtil.JSON_MAPPER;
 
 /**
  * Shared API utility methods.
@@ -91,7 +91,7 @@ public class ApiUtil {
      */
     public static <T> T buildApiClient(Class<T> clazz, String endpoint, String username, String password, boolean debugLogging) {
         final RestAdapter.Builder builder = new RestAdapter.Builder() //
-                .setConverter(new JacksonConverter(MAPPER))
+                .setConverter(new JacksonConverter(JSON_MAPPER))
                 .setEndpoint(endpoint)
                 .setRequestInterceptor(request -> {
                     final String credentials = String.format("%s:%s", username, password);
