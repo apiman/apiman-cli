@@ -45,4 +45,16 @@ public class GatewayConfig {
         this.username = username;
         this.password = password;
     }
+
+    public String getEndpoint() {
+        return endpoint;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
 }

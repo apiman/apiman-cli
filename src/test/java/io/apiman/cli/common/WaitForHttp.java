@@ -16,6 +16,8 @@
 
 package io.apiman.cli.common;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.MultipleFailureException;
@@ -39,6 +41,8 @@ import static org.rnorth.ducttape.unreliables.Unreliables.retryUntilSuccess;
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
 public class WaitForHttp implements TestRule {
+    private static final Logger LOGGER = LogManager.getLogger(WaitForHttp.class);
+
     private static final RateLimiter RATE_LIMITER = RateLimiterBuilder
             .newBuilder()
             .withRate(1, TimeUnit.SECONDS)
@@ -62,7 +66,6 @@ public class WaitForHttp implements TestRule {
 
     @Override
     public Statement apply(Statement base, Description description) {
-
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
@@ -83,6 +86,7 @@ public class WaitForHttp implements TestRule {
 
     protected void starting() {
         final String url = getAddress() + path;
+        LOGGER.info("Waiting for URL: {}", url);
 
         // try to connect to the URL
         try {

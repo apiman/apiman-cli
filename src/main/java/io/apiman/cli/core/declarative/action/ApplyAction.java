@@ -18,6 +18,7 @@ package io.apiman.cli.core.declarative.action;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
+import com.google.common.io.CharStreams;
 import io.apiman.cli.action.AbstractFinalAction;
 import io.apiman.cli.core.api.ServiceApi;
 import io.apiman.cli.core.api.model.Api;
@@ -47,9 +48,11 @@ import retrofit.RetrofitError;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -70,6 +73,9 @@ public class ApplyAction extends AbstractFinalAction {
 
     @Option(name = "--declarationFile", aliases = {"-f"}, usage = "Declaration file")
     private Path declarationFile;
+
+    @Option(name = "-P", usage = "Set property (key=value)")
+    private List<String> properties;
 
     @Override
     protected String getActionName() {
@@ -418,7 +424,14 @@ public class ApplyAction extends AbstractFinalAction {
 
     public Declaration loadDeclaration(Path path, ObjectMapper mapper) {
         try (InputStream is = Files.newInputStream(path)) {
-            return mapper.readValue(is, Declaration.class);
+            String fileContents = CharStreams.toString(new InputStreamReader(is));
+            LOGGER.trace("Declaration file raw: {}", fileContents);
+
+            fileContents = MappingUtil.resolvePlaceholders(fileContents, properties);
+            LOGGER.trace("Declaration file after resolving placeholders: {}", fileContents);
+
+            return mapper.readValue(fileContents, Declaration.class);
+
         } catch (IOException e) {
             throw new DeclarativeException(e);
         }
@@ -426,5 +439,9 @@ public class ApplyAction extends AbstractFinalAction {
 
     public void setServerAddress(String serverAddress) {
         this.serverAddress = serverAddress;
+    }
+
+    public void setProperties(List<String> properties) {
+        this.properties = properties;
     }
 }

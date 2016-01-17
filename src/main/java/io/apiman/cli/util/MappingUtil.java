@@ -55,4 +55,26 @@ public class MappingUtil {
             return null;
         }
     }
+
+    /**
+     * Replace the placeholders in the given input String.
+     *
+     * @param original     the input String, containing placeholders in the form <code>Example ${placeholder} text.</code>
+     * @param replacements the placeholders and their values in the form <code>key=value</code>
+     * @return the {@code original} string with {@code replacements}
+     */
+    public static String resolvePlaceholders(String original, Iterable<String> replacements) {
+        if (null != replacements) {
+            for (String keyValue : replacements) {
+                final String[] split = keyValue.split("=");
+                if (split.length > 0) {
+                    final String key = split[0];
+                    final String value = (split.length >= 2 ? split[1] : "");
+
+                    original = original.replaceAll("\\$\\{" + key + "\\}", value);
+                }
+            }
+        }
+        return original;
+    }
 }

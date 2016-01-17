@@ -16,9 +16,11 @@
 
 package io.apiman.cli.action;
 
+import com.google.common.collect.Lists;
 import io.apiman.cli.common.BaseTest;
 import io.apiman.cli.core.declarative.action.ApplyAction;
 import io.apiman.cli.core.declarative.model.Declaration;
+import io.apiman.cli.core.declarative.model.DeclarativeGateway;
 import io.apiman.cli.util.MappingUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -68,6 +70,36 @@ public class DeclarativeTest extends BaseTest {
                 Paths.get(DeclarativeTest.class.getResource("/simple-full.yml").toURI()), MappingUtil.YAML_MAPPER);
 
         assertLoadedModel(declaration);
+    }
+
+    /**
+     * Expect that the declarative model can be loaded from a YAML file containing placeholders.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testLoadDeclarationPlaceholders() throws Exception {
+        // set properties
+        action.setProperties(Lists.newArrayList(
+            "gw.endpoint=http://example.com",
+            "gw.username=myuser",
+            "gw.password=secret"
+        ));
+
+        final Declaration declaration = action.loadDeclaration(
+                Paths.get(DeclarativeTest.class.getResource("/simple-placeholders.yml").toURI()), MappingUtil.YAML_MAPPER);
+
+        // assert loaded with resolved placeholders
+        assertNotNull(declaration);
+        assertNotNull(declaration.getSystem());
+
+        assertNotNull(declaration.getSystem().getGateways());
+        assertEquals(1, declaration.getSystem().getGateways().size());
+
+        final DeclarativeGateway gateway = declaration.getSystem().getGateways().get(0);
+        assertEquals("http://example.com", gateway.getConfig().getEndpoint());
+        assertEquals("myuser", gateway.getConfig().getUsername());
+        assertEquals("secret", gateway.getConfig().getPassword());
     }
 
     /**

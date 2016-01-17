@@ -1,0 +1,11 @@
+# Declaration with placeholders.
+---
+  system:
+    gateways:
+      - name: "test-gw"
+        description: "Test Gateway"
+        type: "REST"
+        config:
+          endpoint: "${gw.endpoint}"
+          username: "${gw.username}"
+          password: "${gw.password}"
