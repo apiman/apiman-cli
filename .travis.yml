@@ -1,0 +1,11 @@
+sudo: required
+language: java
+jdk:
+  - oraclejdk8
+services:
+  - docker
+before_install:
+ - docker pull jboss/apiman-wildfly:1.1.9.Final
+script:
+ - docker run -d -p 8080:8080 jboss/apiman-wildfly:1.1.9.Final
+ - ./gradlew test --info

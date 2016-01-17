@@ -14,31 +14,39 @@
  * limitations under the License.
  */
 
-package io.apiman.cli;
+package io.apiman.cli.common;
 
-import io.apiman.cli.common.BaseTest;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runners.MethodSorters;
+import io.apiman.cli.Cli;
+import org.junit.ClassRule;
 
 /**
+ * This base class waits for an instance of apiman.
+ *
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class OrgTest extends BaseTest {
+public class BaseTest {
+    /**
+     * Wait for apiman to be available.
+     */
+    @ClassRule
+    public static WaitForHttp apiman = new WaitForHttp("localhost", 8080, "/apiman/system/status");
 
-    @Test
-    public void test1_create() {
-        createOrg("test-org");
+    public static String getApimanUrl() {
+        return apiman.getAddress() + "/apiman";
     }
 
-    @Test
-    public void test2_fetch() {
-        Cli.main("org", "show",
+    /**
+     * Create an org with the given name.
+     *
+     * @param orgName the org name
+     */
+    protected void createOrg(String orgName) {
+        Cli.main("org", "create",
                 "--debug",
                 "--server", getApimanUrl(),
                 "--serverUsername", "admin",
                 "--serverPassword", "admin123!",
-                "--name", "test-org");
+                "--name", orgName,
+                "--description", "example");
     }
 }

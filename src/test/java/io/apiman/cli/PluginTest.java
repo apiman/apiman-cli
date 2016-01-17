@@ -16,6 +16,7 @@
 
 package io.apiman.cli;
 
+import io.apiman.cli.common.BaseTest;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -26,23 +27,26 @@ import org.junit.runners.MethodSorters;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PluginTest extends BaseTest {
 
+    /**
+     * Requires a plugin whose Maven coordinates are accessible in Maven central.
+     */
     @Test
     public void test1_create() {
         Cli.main("plugin", "add",
                 "--debug",
-                "--server", APIMAN_URL,
+                "--server", getApimanUrl(),
                 "--serverUsername", "admin",
                 "--serverPassword", "admin123!",
                 "--groupId", "io.apiman.plugins",
                 "--artifactId", "apiman-plugins-test-policy",
-                "--version", "1.1.9.Final");
+                "--version", "1.1.8.Final");
     }
 
     @Test
     public void test2_fetch() {
         Cli.main("plugin", "show",
                 "--debug",
-                "--server", APIMAN_URL,
+                "--server", getApimanUrl(),
                 "--serverUsername", "admin",
                 "--serverPassword", "admin123!",
                 "--id", "1");
@@ -52,7 +56,7 @@ public class PluginTest extends BaseTest {
     public void test3_list() {
         Cli.main("plugin", "list",
                 "--debug",
-                "--server", APIMAN_URL,
+                "--server", getApimanUrl(),
                 "--serverUsername", "admin",
                 "--serverPassword", "admin123!");
     }
