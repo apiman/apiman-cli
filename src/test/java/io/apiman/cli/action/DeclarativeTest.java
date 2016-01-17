@@ -33,13 +33,14 @@ import static org.junit.Assert.assertNotNull;
  *
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
+
 public class DeclarativeTest extends BaseTest {
     private ApplyAction action;
 
     @Before
     public void setUp() {
         action = new ApplyAction();
-        action.setServerAddress(APIMAN_URL);
+        action.setServerAddress(getApimanUrl());
         action.setLogDebug(true);
     }
 
@@ -51,7 +52,7 @@ public class DeclarativeTest extends BaseTest {
     @Test
     public void testLoadDeclarationJson() throws Exception {
         final Declaration declaration = action.loadDeclaration(
-                Paths.get(DeclarativeTest.class.getResource("/simple.json").toURI()), MappingUtil.JSON_MAPPER);
+                Paths.get(DeclarativeTest.class.getResource("/simple-full.json").toURI()), MappingUtil.JSON_MAPPER);
 
         assertLoadedModel(declaration);
     }
@@ -64,7 +65,7 @@ public class DeclarativeTest extends BaseTest {
     @Test
     public void testLoadDeclarationYaml() throws Exception {
         final Declaration declaration = action.loadDeclaration(
-                Paths.get(DeclarativeTest.class.getResource("/simple.yml").toURI()), MappingUtil.YAML_MAPPER);
+                Paths.get(DeclarativeTest.class.getResource("/simple-full.yml").toURI()), MappingUtil.YAML_MAPPER);
 
         assertLoadedModel(declaration);
     }
@@ -77,7 +78,7 @@ public class DeclarativeTest extends BaseTest {
     @Test
     public void testApplyDeclaration_JustPlugins() throws Exception {
         final Declaration declaration = action.loadDeclaration(
-                Paths.get(DeclarativeTest.class.getResource("/simple-plugins.yml").toURI()), MappingUtil.YAML_MAPPER);
+                Paths.get(DeclarativeTest.class.getResource("/simple-plugin.yml").toURI()), MappingUtil.YAML_MAPPER);
 
         action.applyDeclaration(declaration);
     }
@@ -90,7 +91,7 @@ public class DeclarativeTest extends BaseTest {
     @Test
     public void testApplyDeclaration_Full() throws Exception {
         final Declaration declaration = action.loadDeclaration(
-                Paths.get(DeclarativeTest.class.getResource("/simple-no-plugins.yml").toURI()), MappingUtil.YAML_MAPPER);
+                Paths.get(DeclarativeTest.class.getResource("/simple-no-plugin.yml").toURI()), MappingUtil.YAML_MAPPER);
 
         action.applyDeclaration(declaration);
     }

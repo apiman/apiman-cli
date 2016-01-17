@@ -16,9 +16,37 @@
 
 package io.apiman.cli.common;
 
+import io.apiman.cli.Cli;
+import org.junit.ClassRule;
+
 /**
+ * This base class waits for an instance of apiman.
+ *
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
 public class BaseTest {
-    public static final String APIMAN_URL = "http://localhost:8080/apiman";
+    /**
+     * Wait for apiman to be available.
+     */
+    @ClassRule
+    public static WaitForHttp apiman = new WaitForHttp("localhost", 8080, "/apiman/system/status");
+
+    public static String getApimanUrl() {
+        return apiman.getAddress() + "/apiman";
+    }
+
+    /**
+     * Create an org with the given name.
+     *
+     * @param orgName the org name
+     */
+    protected void createOrg(String orgName) {
+        Cli.main("org", "create",
+                "--debug",
+                "--server", getApimanUrl(),
+                "--serverUsername", "admin",
+                "--serverPassword", "admin123!",
+                "--name", orgName,
+                "--description", "example");
+    }
 }

@@ -26,54 +26,59 @@ import org.junit.runners.MethodSorters;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ApiTest extends BaseTest {
+    private static final String ORG_NAME = "apitest";
 
     @Test
     public void test1_create() {
+        //set up
+        createOrg(ORG_NAME);
+
+        // test
         Cli.main("api", "create",
                 "--debug",
-                "--server", APIMAN_URL,
+                "--server", getApimanUrl(),
                 "--serverUsername", "admin",
                 "--serverPassword", "admin123!",
                 "--name", "example",
                 "--endpoint", "http://example.com",
                 "--initialVersion", "1.0",
                 "--public",
-                "--orgName", "test");
+                "--orgName", ORG_NAME);
     }
 
     @Test
     public void test2_addPolicy() {
         Cli.main("api", "policy", "add",
                 "--debug",
-                "--server", APIMAN_URL,
+                "--server", getApimanUrl(),
                 "--serverUsername", "admin",
                 "--serverPassword", "admin123!",
                 "--name", "example",
                 "--version", "1.0",
                 "--policyName", "test-policy",
                 "--configFile", "examples/policies/empty-policy-config.json",
-                "--orgName", "test");
+                "--orgName", ORG_NAME);
     }
 
     @Test
     public void test3_publish() {
         Cli.main("api", "publish",
                 "--debug",
-                "--server", APIMAN_URL,
+                "--server", getApimanUrl(),
                 "--serverUsername", "admin",
                 "--serverPassword", "admin123!",
                 "--name", "example",
                 "--version", "1.0",
-                "--orgName", "test");
+                "--orgName", ORG_NAME);
     }
 
     @Test
     public void test4_list() {
         Cli.main("api", "list",
                 "--debug",
-                "--server", APIMAN_URL,
+                "--server", getApimanUrl(),
                 "--serverUsername", "admin",
                 "--serverPassword", "admin123!",
-                "--orgName", "test");
+                "--orgName", ORG_NAME);
     }
 }
