@@ -1,4 +1,4 @@
-# apiman-cli: A CLI for apiman
+# apiman-cli: A CLI for apiman [![Build Status](https://travis-ci.org/outofcoffee/apiman-cli.svg?branch=master)](https://travis-ci.org/outofcoffee/apiman-cli)
 
 Manage your _apiman_ instances from the command line.
 
