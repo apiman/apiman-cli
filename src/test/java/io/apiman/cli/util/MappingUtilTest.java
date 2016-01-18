@@ -16,7 +16,10 @@
 
 package io.apiman.cli.util;
 
+import com.google.common.collect.Lists;
 import org.junit.Test;
+
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -33,10 +36,10 @@ public class MappingUtilTest {
         // test data
         final String original = INPUT_STRING;
 
-        final String[] replacements = new String[] {
+        final List<String> replacements = Lists.newArrayList(
                 "key1=value1",
                 "key2=value2"
-        };
+        );
 
         // test
         final String actual = MappingUtil.resolvePlaceholders(original, replacements);
@@ -50,7 +53,7 @@ public class MappingUtilTest {
         // test data
         final String original = INPUT_STRING;
 
-        final String[] replacements = new String[0];
+        final List<String> replacements = Lists.newArrayList();
 
         // test
         final String actual = MappingUtil.resolvePlaceholders(original, replacements);
@@ -64,7 +67,7 @@ public class MappingUtilTest {
         // test data
         final String original = INPUT_STRING;
 
-        final String[] replacements = null;
+        final List<String> replacements = null;
 
         // test
         final String actual = MappingUtil.resolvePlaceholders(original, replacements);
