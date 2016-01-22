@@ -20,8 +20,16 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import org.apache.commons.lang3.text.StrSubstitutor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.Collection;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static java.util.Collections.emptyList;
+import static java.util.Optional.ofNullable;
 
 /**
  * Shared JSON/YAML mapping utility methods.
@@ -63,18 +71,12 @@ public class MappingUtil {
      * @param replacements the placeholders and their values in the form <code>key=value</code>
      * @return the {@code original} string with {@code replacements}
      */
-    public static String resolvePlaceholders(String original, Iterable<String> replacements) {
-        if (null != replacements) {
-            for (String keyValue : replacements) {
-                final String[] split = keyValue.split("=");
-                if (split.length > 0) {
-                    final String key = split[0];
-                    final String value = (split.length >= 2 ? split[1] : "");
+    public static String resolvePlaceholders(String original, Collection<String> replacements) {
+        final Map<String, String> valuesMap =
+                ofNullable(replacements).orElse(emptyList()).stream()
+                        .map(keyValue -> keyValue.split("="))
+                        .collect(Collectors.toMap(kv -> kv[0], kv -> (kv.length >= 2 ? kv[1] : "")));
 
-                    original = original.replaceAll("\\$\\{" + key + "\\}", value);
-                }
-            }
-        }
-        return original;
+        return StrSubstitutor.replace(original, valuesMap);
     }
 }

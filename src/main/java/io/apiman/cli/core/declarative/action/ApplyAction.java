@@ -404,6 +404,16 @@ public class ApplyAction extends AbstractFinalAction {
         }
     }
 
+    /**
+     * Return an instance of {@code destinationClass} with a copy of identical fields to those found
+     * in {@code original}.
+     *
+     * @param original         the source object
+     * @param destinationClass the return type Class definition
+     * @param <D>              the return type
+     * @param <O>              the source type
+     * @return an instance of {@code destinationClass} containing the copied fields
+     */
     private <D, O> D copy(O original, Class<D> destinationClass) {
         try {
             final D destination = destinationClass.newInstance();
@@ -422,6 +432,13 @@ public class ApplyAction extends AbstractFinalAction {
         }
     }
 
+    /**
+     * Load the Declaration from the given Path, using the mapper provided.
+     *
+     * @param path   the Path to the declaration
+     * @param mapper the Mapper to use
+     * @return the Declaration
+     */
     public Declaration loadDeclaration(Path path, ObjectMapper mapper) {
         try (InputStream is = Files.newInputStream(path)) {
             String fileContents = CharStreams.toString(new InputStreamReader(is));

@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
 public class MappingUtilTest {
-    private static final String INPUT_STRING = "This is a ${key1} sample ${key2} string.";
+    private static final String INPUT_STRING = "This is a ${key.1} sample ${key.2} string.";
 
     @Test
     public void testResolvePlaceholders_Success() throws Exception {
@@ -37,15 +37,15 @@ public class MappingUtilTest {
         final String original = INPUT_STRING;
 
         final List<String> replacements = Lists.newArrayList(
-                "key1=value1",
-                "key2=value2"
+                "key.1=value.1",
+                "key.2=value.2"
         );
 
         // test
         final String actual = MappingUtil.resolvePlaceholders(original, replacements);
 
         // assertions
-        assertEquals("This is a value1 sample value2 string.", actual);
+        assertEquals("This is a value.1 sample value.2 string.", actual);
     }
 
     @Test
