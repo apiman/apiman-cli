@@ -5,7 +5,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
-- Support for declarative API environment definitions (using YAML or JSON)
+- N/A
+
+## [0.1.5] - 2016-01-23
+### Added
+- Declarative API environment definitions (using YAML or JSON) with the new `apiman apply` command
+- Declarations can use placeholders, passed from the command line with the `-P key=value` or `-P "key=value"` syntax
 
 ## [0.1.4] - 2016-01-11
 ### Added
