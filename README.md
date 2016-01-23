@@ -46,7 +46,7 @@ Add a plugin:
             --artifactId apiman-plugins-test-policy \
             --version 1.1.8.Final
 
-You can do much more - see the [Usage](#Usage) section.
+You can do much more - see the [Usage](#usage) section.
 
 ## Declarative API management
 
