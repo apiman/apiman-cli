@@ -263,14 +263,14 @@ You can also use placeholders in your declaration files. This helps you reuse de
 
 # Recent changes and Roadmap
 
-## For recent changes see the [Changelog](CHANGELOG.md)
+For recent changes see the [Changelog](CHANGELOG.md).
 
 ## Roadmap
 
 * Support reading management API configuration from environment variables
-* Support adding policies to services
-* Better support for non-public services
+* Better support for non-public APIs
 * Support deletion
+* Support for retiring published APIs
 * Option to skip or fail for existing items in declarative mode
 * Docs - split examples into separate file
 * Docs - split detailed API usage into separate file
