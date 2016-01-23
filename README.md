@@ -74,7 +74,7 @@ Here's a simple YAML file (you can use JSON if you want):
             endpoint: "http://example.com"
             endpointType: "rest"
             publicService: true
-            gateway: "test-gw"
+            gateway: "TheGateway"
           policies:
             - name: "CachingPolicy"
               config:
@@ -84,7 +84,6 @@ Here's a simple YAML file (you can use JSON if you want):
 
     $ ./apiman apply -f simple.yml
     INFO Loaded declaration: examples/declarative/simple.yml
-    INFO Adding gateway: test-gw
     INFO Adding org: test
     INFO Adding API: example
     INFO Configuring API: example
@@ -93,14 +92,17 @@ Here's a simple YAML file (you can use JSON if you want):
     INFO Applied declaration
 
 The following things just happened:
-    1. Your organisation was created,
-    2. an API was added,
-    3. a policy was then configured on the API, and
-    4. the API was published.
+
+1. an organisation named `test` was created,
+2. an API named `example` was added with the endpoint `http://example.com`,
+3. a caching policy was added to the API and configured with a TTL of 60 seconds and, finally,
+4. the API was published to the gateway.
+    
+Declarations also allow you to add gateways, install plugins and more. See the `examples` directory.
 
 ## Using placeholders
 
-You can also use placeholders in your declaration file. This helps you reuse declaration files across different environments. For example:
+You can also use placeholders in your declaration files. This helps you reuse declaration files across different environments. For example:
 
     endpoint: "${myApiEndpoint}"
 
@@ -261,14 +263,14 @@ You can also use placeholders in your declaration file. This helps you reuse dec
 
 # Recent changes and Roadmap
 
-## For recent changes see the [Changelog](CHANGELOG.md)
+For recent changes see the [Changelog](CHANGELOG.md).
 
 ## Roadmap
 
 * Support reading management API configuration from environment variables
-* Support adding policies to services
-* Better support for non-public services
+* Better support for non-public APIs
 * Support deletion
+* Support for retiring published APIs
 * Option to skip or fail for existing items in declarative mode
 * Docs - split examples into separate file
 * Docs - split detailed API usage into separate file
