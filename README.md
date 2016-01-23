@@ -93,12 +93,12 @@ Here's a simple YAML file (you can use JSON if you want):
 
 The following things just happened:
 
-    1. an organisation named `test` was created,
-    2. an API named `example` was added with the endpoint `http://example.com`,
-    3. a caching policy was added to the API and configured with a TTL of 60 seconds and, finally,
-    4. the API was published to the gateway.
+1. an organisation named `test` was created,
+2. an API named `example` was added with the endpoint `http://example.com`,
+3. a caching policy was added to the API and configured with a TTL of 60 seconds and, finally,
+4. the API was published to the gateway.
     
-Declarations also allow you to add gateways, install plugins and more.
+Declarations also allow you to add gateways, install plugins and more. See the `examples` directory.
 
 ## Using placeholders
 
