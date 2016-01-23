@@ -16,6 +16,9 @@
 
 package io.apiman.cli.action;
 
+import io.apiman.cli.exception.ActionException;
+import org.kohsuke.args4j.CmdLineParser;
+
 import java.util.List;
 
 /**
@@ -39,4 +42,12 @@ public interface Action {
      * @return a concatenation of the parent's action command and this action command
      */
     String getCommandChain();
+
+    /**
+     * Default implementation will print usage and exit with an error code.
+     * Subclasses should implement their custom behaviour here.
+     *
+     * @param parser the command line parser
+     */
+    void performAction(CmdLineParser parser) throws ActionException;
 }

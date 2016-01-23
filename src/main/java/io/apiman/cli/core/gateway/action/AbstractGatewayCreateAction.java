@@ -24,7 +24,7 @@ import io.apiman.cli.exception.ActionException;
 import io.apiman.cli.core.gateway.model.Gateway;
 import io.apiman.cli.core.gateway.model.GatewayConfig;
 import io.apiman.cli.core.gateway.model.GatewayType;
-import io.apiman.cli.util.JsonUtil;
+import io.apiman.cli.util.MappingUtil;
 import org.kohsuke.args4j.Option;
 
 /**
@@ -54,7 +54,7 @@ public abstract class AbstractGatewayCreateAction extends ModelCreateAction<Gate
     protected Gateway buildModelInstance() throws ActionException {
         final String config;
         try {
-            config = JsonUtil.MAPPER.writeValueAsString(
+            config = MappingUtil.JSON_MAPPER.writeValueAsString(
                     new GatewayConfig(endpoint,
                             username,
                             password));

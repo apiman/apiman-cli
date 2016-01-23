@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,35 +14,39 @@
  * limitations under the License.
  */
 
-package io.apiman.cli.core.org.model;
+package io.apiman.cli.core.declarative.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
- * Models an organisation.
+ * Represents an API environment declaration.
  *
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Org {
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+public class Declaration {
     @JsonProperty
-    private String name;
+    private DeclarativeSystem system;
 
     @JsonProperty
-    private String description;
+    private DeclarativeOrg org;
 
-    public Org() {
+    public DeclarativeSystem getSystem() {
+        return system;
     }
 
-    public Org(String name, String description) {
-        this.name = name;
-        this.description = description;
+    public DeclarativeOrg getOrg() {
+        return org;
     }
 
-    public String getName() {
-        return name;
+    public void setSystem(DeclarativeSystem system) {
+        this.system = system;
+    }
+
+    public void setOrg(DeclarativeOrg org) {
+        this.org = org;
     }
 }

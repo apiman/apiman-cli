@@ -49,4 +49,12 @@ public class Gateway {
         this.type = type;
         this.configuration = configuration;
     }
+
+    public void setConfiguration(String configuration) {
+        this.configuration = configuration;
+    }
+
+    public String getName() {
+        return name;
+    }
 }

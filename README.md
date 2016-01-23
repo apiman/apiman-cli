@@ -1,42 +1,126 @@
-# apiman-cli: A CLI for apiman [![Build Status](https://travis-ci.org/outofcoffee/apiman-cli.svg?branch=master)](https://travis-ci.org/outofcoffee/apiman-cli)
+# apiman-cli: A CLI for apiman [![Build Status](https://travis-ci.org/apiman/apiman-cli.svg?branch=master)](https://travis-ci.org/apiman/apiman-cli)
 
-Manage your _apiman_ instances from the command line.
+Manage your [apiman](http://apiman.io) instances from the command line.
 
-Script actions, such as adding APIs and gateways, or display information about a running _apiman_ instance.
+Script actions, such as adding APIs and gateways, or display information about a running _apiman_ environment.
 
 ## Example
 
-Create a new API:
+Let's assume you have an _apiman_ server running on http://localhost:8080
+
+Step 1: Create a new API:
 
     $ ./apiman api create \
-            --server http://localhost:8080/apiman \
             --name example \
             --endpoint http://example.com \
             --initialVersion 1.0 \
             --public \
             --orgName test
+
+Step 2: Publish it:
+
+    $ ./apiman api publish \
+            --name example \
+            --version 1.0 \
+            --orgName test
+
+You're done! Hit your new API at: [http://localhost:8080/apiman-gateway/test/example/1.0](http://localhost:8080/apiman-gateway/test/example/1.0)
+
+## Management example
+
+You can also manage your _apiman_ server.
     
 Add a gateway:
 
     $ ./apiman gateway create \
-            --server http://localhost:8080/apiman \
             --name test-gw \
             --endpoint http://localhost:1234 \
             --username apimanager \
             --password "apiman123!" \
             --type REST
 
-## Requirements
+Add a plugin:
 
-* JDK 8
-* OS X, Windows, Linux
+    $ ./apiman plugin add \
+            --groupId io.apiman.plugins \
+            --artifactId apiman-plugins-test-policy \
+            --version 1.1.8.Final
 
-## Usage
+You can do much more - see the [Usage](#usage) section.
+
+## Declarative API management
+
+Whilst running commands to control your _apiman_ environment from the CLI can be helpful, sometimes you need to keep your configuration in a file that you can check into your source control system.
+
+For this, _apiman-cli_ has **Declarative Mode**.
+
+Here's how it works:
+
+### Step 1: Declare your API environment
+
+Here's a simple YAML file (you can use JSON if you want):
+
+    # simple.yml
+    ---
+    org:
+      name: "test"
+      description: "Test organisation"
+      apis:
+        - name: "example"
+          description: "Example API"
+          initialVersion: "1.0"
+          published: true
+          config:
+            endpoint: "http://example.com"
+            endpointType: "rest"
+            publicService: true
+            gateway: "test-gw"
+          policies:
+            - name: "CachingPolicy"
+              config:
+                ttl: 60
+
+### Step 2: Apply the environment declaration
+
+    $ ./apiman apply -f simple.yml
+    INFO Loaded declaration: examples/declarative/simple.yml
+    INFO Adding gateway: test-gw
+    INFO Adding org: test
+    INFO Adding API: example
+    INFO Configuring API: example
+    INFO Adding policy 'CachingPolicy' to API: example
+    INFO Publishing API: example
+    INFO Applied declaration
+
+The following things just happened:
+    1. Your organisation was created,
+    2. an API was added,
+    3. a policy was then configured on the API, and
+    4. the API was published.
+
+## Using placeholders
+
+You can also use placeholders in your declaration file. This helps you reuse declaration files across different environments. For example:
+
+    endpoint: "${myApiEndpoint}"
+
+...then pass them in when you run the _apply_ command:
+
+    ./apiman apply -f simple.yml -P myApiEndpoint=http://example.com
+
+# Requirements
+
+  * An instance of [apiman](http://apiman.io)
+  * JDK 8
+  * OS X, Windows, Linux
+
+# Usage
 
     apiman plugin [args...]
     apiman org [args...]
     apiman api [args...]
     apiman gateway [args...]
+    apiman apply [args...]
     
     --debug                    : Log at DEBUG level (default: false)
     --help (-h)                : Display usage only (default: false)
@@ -167,13 +251,28 @@ Add a gateway:
     --orgName (-o) VAL                  : Organisation name
     --serverVersion (-sv) [v119 | v12x] : Management API server version (default:
                                           v119)
-     
-# TODO
+
+## Apply declaration
+
+    apiman apply [args...]
+    
+     --declarationFile (-f) PATH : Declaration file
+     -P VAL                      : Set property (key=value)
+
+# Recent changes and Roadmap
+
+## For recent changes see the [Changelog](CHANGELOG.md)
+
+## Roadmap
 
 * Support reading management API configuration from environment variables
 * Support adding policies to services
 * Better support for non-public services
 * Support deletion
+* Option to skip or fail for existing items in declarative mode
+* Docs - split examples into separate file
+* Docs - split detailed API usage into separate file
+* Docs - simplify README examples
 
 # Contributing
 

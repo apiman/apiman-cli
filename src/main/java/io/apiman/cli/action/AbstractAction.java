@@ -17,9 +17,9 @@
 package io.apiman.cli.action;
 
 import com.google.common.collect.Maps;
-import com.google.common.io.BaseEncoding;
 import io.apiman.cli.exception.ActionException;
 import io.apiman.cli.exception.ExitWithCodeException;
+import io.apiman.cli.util.ApiUtil;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,13 +27,10 @@ import org.apache.logging.log4j.core.LoggerContext;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
-import retrofit.RestAdapter;
-import retrofit.converter.JacksonConverter;
 
 import java.util.List;
 import java.util.Map;
 
-import static io.apiman.cli.util.JsonUtil.MAPPER;
 import static io.apiman.cli.util.LogUtil.LINE_SEPARATOR;
 import static io.apiman.cli.util.LogUtil.OUTPUT;
 
@@ -58,7 +55,7 @@ public abstract class AbstractAction implements Action {
     private boolean displayHelp;
 
     @Option(name = "--server", aliases = {"-s"}, usage = "Management API server address")
-    private String serverAddress = DEFAULT_SERVER_ADDRESS;
+    protected String serverAddress = DEFAULT_SERVER_ADDRESS;
 
     @Option(name = "--serverUsername", aliases = {"-su"}, usage = "Management API server username")
     private String serverUsername = DEFAULT_SERVER_USERNAME;
@@ -173,12 +170,10 @@ public abstract class AbstractAction implements Action {
     }
 
     /**
-     * Default implementation will print usage and exit with an error code.
-     * Subclasses should implement their custom behaviour here.
-     *
-     * @param parser
+     * See {@link Action#performAction(CmdLineParser)}
      */
-    protected void performAction(CmdLineParser parser) throws ActionException {
+    @Override
+    public void performAction(CmdLineParser parser) throws ActionException {
         printUsage(parser, false);
     }
 
@@ -278,19 +273,12 @@ public abstract class AbstractAction implements Action {
      * @return an API client for the given Class
      */
     protected <T> T buildApiClient(Class<T> clazz) {
-        final RestAdapter.Builder builder = new RestAdapter.Builder() //
-                .setConverter(new JacksonConverter(MAPPER))
-                .setEndpoint(getManagementApiEndpoint())
-                .setRequestInterceptor(request -> {
-                    final String credentials = String.format("%s:%s", getManagementApiUsername(), getManagementApiPassword());
-                    request.addHeader("Authorization", "Basic " + BaseEncoding.base64().encode(credentials.getBytes()));
-                });
-
-        if (LOGGER.isDebugEnabled()) {
-            builder.setLogLevel(RestAdapter.LogLevel.FULL);
-        }
-
-        return builder.build().create(clazz);
+        return ApiUtil.buildApiClient(
+                clazz,
+                getManagementApiEndpoint(),
+                getManagementApiUsername(),
+                getManagementApiPassword(),
+                logDebug);
     }
 
     protected String getManagementApiEndpoint() {
@@ -306,5 +294,9 @@ public abstract class AbstractAction implements Action {
     private String getManagementApiPassword() {
         // TODO read from config/environment
         return serverPassword;
+    }
+
+    public void setLogDebug(boolean logDebug) {
+        this.logDebug = logDebug;
     }
 }

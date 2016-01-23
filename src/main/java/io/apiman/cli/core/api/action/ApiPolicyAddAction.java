@@ -67,7 +67,7 @@ public class ApiPolicyAddAction extends AbstractApiAction implements ApiMixin {
     }
 
     @Override
-    protected void performAction(CmdLineParser parser) throws ActionException {
+    public void performAction(CmdLineParser parser) throws ActionException {
         if (!configStdIn && null == configFile) {
             throw new ExitWithCodeException(1, "Policy configuration must be provided", true);
         }
