@@ -24,7 +24,7 @@ Step 2: Publish it:
             --version 1.0 \
             --orgName test
 
-You're done! Hit your new API at: http://localhost:8080/apiman-gateway/test/1.0/example
+You're done! Hit your new API at: [http://localhost:8080/apiman-gateway/test/example/1.0](http://localhost:8080/apiman-gateway/test/example/1.0)
 
 ## Management example
 
