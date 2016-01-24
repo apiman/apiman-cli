@@ -330,45 +330,40 @@ public class ApplyAction extends AbstractFinalAction {
         ofNullable(declarativeApi.getPolicies()).ifPresent(declarativePolicies -> {
             LOGGER.debug("Applying policies to API: {}", apiName);
 
+            // existing policies for the API
+            final List<ApiPolicy> apiPolicies = apiClient.fetchPolicies(orgName, apiName, apiVersion);
+
             declarativePolicies.forEach(declarativePolicy -> {
                 final String policyName = declarativePolicy.getName();
 
+                final ApiPolicy apiPolicy = new ApiPolicy(
+                        policyName,
+                        MappingUtil.safeWriteValueAsJson(declarativePolicy.getConfig()));
+
                 // determine if the policy already exists for this API
-                if (checkPolicyExists(orgName, apiClient, apiName, apiVersion, policyName)) {
-                    LOGGER.info("Policy '{}' already exists for API: {}", policyName, apiName);
+                final Optional<ApiPolicy> existingPolicy = apiPolicies.stream()
+                        .filter(p -> policyName.equals(p.getPolicyDefinitionId()))
+                        .findFirst();
+
+                if (existingPolicy.isPresent()) {
+                    if (ServerVersion.v12x.equals(serverVersion)) {
+                        // update the existing policy config
+                        LOGGER.info("Updating existing policy '{}' configuration for API: {}", policyName, apiName);
+
+                        final Long policyId = existingPolicy.get().getId();
+                        apiClient.configurePolicy(orgName, apiName, apiVersion, policyId, apiPolicy);
+
+                    } else {
+                        LOGGER.info("Policy '{}' already exists for API '{}' - skipping configuration update", policyName, apiName);
+                    }
 
                 } else {
+                    // add new policy
                     LOGGER.info("Adding policy '{}' to API: {}", policyName, apiName);
-
-                    // add policy
-                    final ApiPolicy apiPolicy = new ApiPolicy(
-                            policyName,
-                            MappingUtil.safeWriteValueAsJson(declarativePolicy.getConfig()));
-
                     apiClient.addPolicy(orgName, apiName, apiVersion, apiPolicy);
                 }
             });
         });
-    }
-
-    /**
-     * Determine if the policy exists on the given API.
-     *
-     * @param orgName
-     * @param apiClient
-     * @param apiName
-     * @param apiVersion
-     * @param policyName
-     * @return <code>true</code> if the policy exists on the API, otherwise <code>false</code>
-     */
-    private boolean checkPolicyExists(String orgName, VersionAgnosticApi apiClient, String apiName,
-                                      String apiVersion, String policyName) {
-
-        return checkExists(() ->
-                apiClient.fetchPolicies(orgName, apiName, apiVersion))
-                .map(apiPolicies -> apiPolicies.stream().anyMatch(apiPolicy ->
-                        policyName.equals(apiPolicy.getPolicyDefinitionId())))
-                .orElse(false);
     }
 
     /**

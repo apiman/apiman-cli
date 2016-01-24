@@ -67,6 +67,11 @@ public class Version12XServerApiFactoryImpl extends AbstractServerApiFactory<Ver
             public List<ApiPolicy> fetchPolicies(String orgName, String serviceName, String version) {
                 return delegate.fetchPolicies(orgName, serviceName, version);
             }
+
+            @Override
+            public Response configurePolicy(String orgName, String apiName, String apiVersion, Long policyId, ApiPolicy policyConfig) {
+                return delegate.configurePolicy(orgName, apiName, apiVersion, policyId, policyConfig);
+            }
         };
     }
 }
