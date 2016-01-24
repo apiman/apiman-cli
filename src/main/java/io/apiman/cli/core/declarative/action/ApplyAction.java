@@ -17,13 +17,11 @@
 package io.apiman.cli.core.declarative.action;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
 import com.google.common.io.CharStreams;
 import io.apiman.cli.action.AbstractFinalAction;
 import io.apiman.cli.core.api.VersionAgnosticApi;
 import io.apiman.cli.core.api.model.Api;
 import io.apiman.cli.core.api.model.ApiConfig;
-import io.apiman.cli.core.api.model.ApiGateway;
 import io.apiman.cli.core.api.model.ApiPolicy;
 import io.apiman.cli.core.common.ActionApi;
 import io.apiman.cli.core.common.model.ServerVersion;
@@ -38,6 +36,7 @@ import io.apiman.cli.core.plugin.PluginApi;
 import io.apiman.cli.core.plugin.model.Plugin;
 import io.apiman.cli.exception.ActionException;
 import io.apiman.cli.exception.DeclarativeException;
+import io.apiman.cli.util.BeanUtil;
 import io.apiman.cli.util.MappingUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -132,7 +131,7 @@ public class ApplyAction extends AbstractFinalAction {
                     })
                     .ifNotPresent(() -> {
                         LOGGER.info("Adding org: {}", orgName);
-                        orgApiClient.create(MappingUtil.copy(declaration.getOrg(), Org.class));
+                        orgApiClient.create(MappingUtil.map(declaration.getOrg(), Org.class));
                     });
 
             // add apis
@@ -162,8 +161,7 @@ public class ApplyAction extends AbstractFinalAction {
                         .ifNotPresent(() -> {
                             LOGGER.info("Adding gateway: {}", gatewayName);
 
-                            final Gateway gateway = MappingUtil.copy(declarativeGateway, Gateway.class);
-                            gateway.setConfiguration(MappingUtil.safeWriteValueAsJson(declarativeGateway.getConfig()));
+                            final Gateway gateway = MappingUtil.map(declarativeGateway, Gateway.class);
                             apiClient.create(gateway);
                         });
             });
@@ -206,21 +204,9 @@ public class ApplyAction extends AbstractFinalAction {
                                 plugin.getArtifactId().equals(installedPlugin.getArtifactId()) &&
                                         plugin.getGroupId().equals(installedPlugin.getGroupId()) &&
                                         plugin.getVersion().equals(installedPlugin.getVersion()) &&
-                                        safeEquals(plugin.getClassifier(), installedPlugin.getClassifier())
+                                        BeanUtil.safeEquals(plugin.getClassifier(), installedPlugin.getClassifier())
                         ))
                 .orElse(false);
-    }
-
-    /**
-     * Whether two nullable objects are equal.
-     *
-     * @param o1
-     * @param o2
-     * @return <code>true</code> if objects are equal, otherwise <code>false</code>
-     */
-    private <T> boolean safeEquals(T o1, T o2) {
-        return (null == o1 && null == o2) ||
-                ofNullable(o1).filter(o -> o.equals(o2)).isPresent();
     }
 
     /**
@@ -275,7 +261,7 @@ public class ApplyAction extends AbstractFinalAction {
                     LOGGER.info("Adding API: {}", apiName);
 
                     // create API
-                    final Api api = MappingUtil.copy(declarativeApi, Api.class);
+                    final Api api = MappingUtil.map(declarativeApi, Api.class);
                     apiClient.create(orgName, api);
 
                     if (ServerVersion.v11x.equals(serverVersion)) {
@@ -284,10 +270,9 @@ public class ApplyAction extends AbstractFinalAction {
                     }
                 });
 
-
         if (ServerVersion.v12x.equals(serverVersion)) {
             // The v1.2.x API supports configuration of the API even if published (but not retired)
-            final String apiState = getCurrentState(apiClient, orgName, apiName, apiVersion);
+            final String apiState = fetchCurrentState(apiClient, orgName, apiName, apiVersion);
             if (STATE_RETIRED.equals(apiState.toUpperCase())) {
                 LOGGER.warn("API '{}' is retired - skipping configuration", apiName);
 
@@ -297,7 +282,16 @@ public class ApplyAction extends AbstractFinalAction {
         }
     }
 
-    private String getCurrentState(VersionAgnosticApi apiClient, String orgName, String apiName, String apiVersion) {
+    /**
+     * Return the current state of the API.
+     *
+     * @param apiClient
+     * @param orgName
+     * @param apiName
+     * @param apiVersion
+     * @return the API state
+     */
+    private String fetchCurrentState(VersionAgnosticApi apiClient, String orgName, String apiName, String apiVersion) {
         final String apiState = ofNullable(apiClient.fetch(orgName, apiName, apiVersion).getStatus()).orElse("");
         LOGGER.debug("API '{}' state: {}", apiName, apiState);
         return apiState;
@@ -317,17 +311,14 @@ public class ApplyAction extends AbstractFinalAction {
 
         LOGGER.info("Configuring API: {}", apiName);
 
-        // convert configuration
-        final ApiConfig apiConfig = MappingUtil.copy(declarativeApi.getConfig(), ApiConfig.class);
-        apiConfig.setPublicApi(declarativeApi.getConfig().isMakePublic());
-        apiConfig.setGateways(Lists.newArrayList(new ApiGateway(declarativeApi.getConfig().getGateway())));
-
+        final ApiConfig apiConfig = MappingUtil.map(declarativeApi.getConfig(), ApiConfig.class);
         apiClient.configure(orgName, apiName, apiVersion, apiConfig);
     }
 
     /**
      * Add policies to the API if they are not present.
-     *  @param apiClient
+     *
+     * @param apiClient
      * @param declarativeApi
      * @param orgName
      * @param apiName
@@ -390,7 +381,7 @@ public class ApplyAction extends AbstractFinalAction {
      */
     private void publish(VersionAgnosticApi apiClient, String orgName, String apiName, String apiVersion) {
         LOGGER.debug("Attempting to publish API: {}", apiName);
-        final String apiState = getCurrentState(apiClient, orgName, apiName, apiVersion);
+        final String apiState = fetchCurrentState(apiClient, orgName, apiName, apiVersion);
 
         switch (apiState.toUpperCase()) {
             case STATE_READY:
@@ -465,7 +456,7 @@ public class ApplyAction extends AbstractFinalAction {
             String fileContents = CharStreams.toString(new InputStreamReader(is));
             LOGGER.trace("Declaration file raw: {}", fileContents);
 
-            fileContents = MappingUtil.resolvePlaceholders(fileContents, properties);
+            fileContents = BeanUtil.resolvePlaceholders(fileContents, properties);
             LOGGER.trace("Declaration file after resolving placeholders: {}", fileContents);
 
             return mapper.readValue(fileContents, Declaration.class);

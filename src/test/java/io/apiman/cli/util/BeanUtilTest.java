@@ -24,11 +24,11 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 /**
- * Tests for {@link MappingUtil}.
+ * Tests for {@link BeanUtil}.
  *
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
-public class MappingUtilTest {
+public class BeanUtilTest {
     private static final String INPUT_STRING = "This is a ${key.1} sample ${key.2} string.";
 
     @Test
@@ -42,7 +42,7 @@ public class MappingUtilTest {
         );
 
         // test
-        final String actual = MappingUtil.resolvePlaceholders(original, replacements);
+        final String actual = BeanUtil.resolvePlaceholders(original, replacements);
 
         // assertions
         assertEquals("This is a value.1 sample value.2 string.", actual);
@@ -56,7 +56,7 @@ public class MappingUtilTest {
         final List<String> replacements = Lists.newArrayList();
 
         // test
-        final String actual = MappingUtil.resolvePlaceholders(original, replacements);
+        final String actual = BeanUtil.resolvePlaceholders(original, replacements);
 
         // assertions
         assertEquals(INPUT_STRING, actual);
@@ -70,7 +70,7 @@ public class MappingUtilTest {
         final List<String> replacements = null;
 
         // test
-        final String actual = MappingUtil.resolvePlaceholders(original, replacements);
+        final String actual = BeanUtil.resolvePlaceholders(original, replacements);
 
         // assertions
         assertEquals(INPUT_STRING, actual);

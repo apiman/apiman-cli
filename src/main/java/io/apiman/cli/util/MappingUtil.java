@@ -20,29 +20,41 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import org.apache.commons.lang3.text.StrSubstitutor;
+import com.google.common.collect.Lists;
+import io.apiman.cli.core.api.model.ApiConfig;
+import io.apiman.cli.core.api.model.ApiGateway;
+import io.apiman.cli.core.api.model.ServiceConfig;
+import io.apiman.cli.core.declarative.model.DeclarativeApiConfig;
+import io.apiman.cli.core.declarative.model.DeclarativeGateway;
+import io.apiman.cli.core.gateway.model.Gateway;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
-
-import java.util.Collection;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static java.util.Collections.emptyList;
-import static java.util.Optional.ofNullable;
+import org.modelmapper.spi.MappingContext;
 
 /**
- * Shared JSON/YAML mapping utility methods.
+ * Shared POJO/JSON/YAML mapping utility methods.
  *
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
 public class MappingUtil {
     private static final Logger LOGGER = LogManager.getLogger(MappingUtil.class);
 
+    /**
+     * JSON -> POJO
+     */
     public static final ObjectMapper JSON_MAPPER;
+
+    /**
+     * YAML -> POJO
+     */
     public static final ObjectMapper YAML_MAPPER;
+
+    /**
+     * POJO -> POJO
+     */
+    public static final ModelMapper MODEL_MAPPER;
 
     static {
         JSON_MAPPER = new ObjectMapper();
@@ -50,6 +62,8 @@ public class MappingUtil {
 
         YAML_MAPPER = new ObjectMapper(new YAMLFactory());
         YAML_MAPPER.enable(SerializationFeature.INDENT_OUTPUT);
+
+        MODEL_MAPPER = buildModelMapper();
     }
 
     /**
@@ -58,7 +72,7 @@ public class MappingUtil {
      */
     public static String safeWriteValueAsJson(Object obj) {
         try {
-            return MappingUtil.JSON_MAPPER.writeValueAsString(obj);
+            return JSON_MAPPER.writeValueAsString(obj);
 
         } catch (NullPointerException | JsonProcessingException e) {
             LOGGER.trace(String.format("Error writing value as JSON string: %s", obj), e);
@@ -67,46 +81,69 @@ public class MappingUtil {
     }
 
     /**
-     * Replace the placeholders in the given input String.
-     *
-     * @param original     the input String, containing placeholders in the form <code>Example ${placeholder} text.</code>
-     * @param replacements the placeholders and their values in the form <code>key=value</code>
-     * @return the {@code original} string with {@code replacements}
-     */
-    public static String resolvePlaceholders(String original, Collection<String> replacements) {
-        final Map<String, String> valuesMap =
-                ofNullable(replacements).orElse(emptyList()).stream()
-                        .map(keyValue -> keyValue.split("="))
-                        .collect(Collectors.toMap(kv -> kv[0], kv -> (kv.length >= 2 ? kv[1] : "")));
-
-        return StrSubstitutor.replace(original, valuesMap);
-    }
-
-    /**
      * Return an instance of {@code destinationClass} with a copy of identical fields to those found
-     * in {@code original}.
+     * in {@code source}.
      *
-     * @param original         the source object
+     * @param source         the source object
      * @param destinationClass the return type Class definition
      * @param <D>              the return type
-     * @param <O>              the source type
+     * @param <S>              the source type
      * @return an instance of {@code destinationClass} containing the copied fields
      */
-    public static <D, O> D copy(O original, Class<D> destinationClass) {
+    public static <S, D> D map(S source, Class<D> destinationClass) {
         try {
+            /*
+             * Explicitly instantiate the destination to avoid ModelMapper returning the source object
+             * in cases where the destination type is assignable from the source type.
+             */
             final D destination = destinationClass.newInstance();
 
-            final ModelMapper modelMapper = new ModelMapper();
-            modelMapper.getConfiguration()
-                    .setFieldMatchingEnabled(true)
-                    .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE);
-
-            modelMapper.map(original, destination);
+            MODEL_MAPPER.map(source, destination);
 
             return destination;
 
         } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Configures a ModelMapper with some specific converters.
+     *
+     * @return a configured ModelMapper
+     */
+    private static ModelMapper buildModelMapper() {
+        final ModelMapper mapper = new ModelMapper();
+
+        mapper.getConfiguration()
+                .setFieldMatchingEnabled(true)
+                .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE);
+
+        // ApiConfig -> ServiceConfig
+        mapper.addConverter((MappingContext<ApiConfig, ServiceConfig> context) -> {
+            final ServiceConfig serviceConfig = context.getMappingEngine().map(context);
+            serviceConfig.setPublicService(context.getSource().isPublicApi());
+            return serviceConfig;
+        });
+
+        // DeclarativeGateway -> Gateway
+        mapper.addConverter((MappingContext<DeclarativeGateway, Gateway> context) -> {
+            final Gateway gateway = context.getMappingEngine().map(context);
+            gateway.setConfiguration(safeWriteValueAsJson(context.getSource().getConfig()));
+            return gateway;
+        });
+
+        // DeclarativeApiConfig -> ApiConfig
+        mapper.addConverter((MappingContext<DeclarativeApiConfig, ApiConfig> context) -> {
+            final DeclarativeApiConfig declarativeApiConfig = context.getSource();
+
+            final ApiConfig apiConfig = context.getMappingEngine().map(context);
+            apiConfig.setPublicApi(declarativeApiConfig.isMakePublic());
+            apiConfig.setGateways(Lists.newArrayList(new ApiGateway(declarativeApiConfig.getGateway())));
+
+            return apiConfig;
+        });
+
+        return mapper;
     }
 }

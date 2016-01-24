@@ -24,10 +24,11 @@ import io.apiman.cli.core.api.model.ApiPolicy;
 import io.apiman.cli.core.api.model.ServiceConfig;
 import io.apiman.cli.server.factory.AbstractServerApiFactory;
 import io.apiman.cli.server.factory.ServerApiFactory;
-import org.modelmapper.ModelMapper;
 import retrofit.client.Response;
 
 import java.util.List;
+
+import static io.apiman.cli.util.MappingUtil.MODEL_MAPPER;
 
 /**
  * Provides legacy apiman 1.1.x support.
@@ -58,10 +59,7 @@ public class Version11XServerApiFactoryImpl extends AbstractServerApiFactory<Ver
             @Override
             public Response configure(String orgName, String apiName, String version, ApiConfig apiConfig) {
                 // convert to 1.1.x format
-                final ModelMapper mapper = new ModelMapper();
-                final ServiceConfig serviceConfig = mapper.map(apiConfig, ServiceConfig.class);
-                serviceConfig.setPublicService(apiConfig.isPublicApi());
-
+                final ServiceConfig serviceConfig = MODEL_MAPPER.map(apiConfig, ServiceConfig.class);
                 return delegate.configure(orgName, apiName, version, serviceConfig);
             }
 
@@ -76,4 +74,5 @@ public class Version11XServerApiFactoryImpl extends AbstractServerApiFactory<Ver
             }
         };
     }
+
 }
