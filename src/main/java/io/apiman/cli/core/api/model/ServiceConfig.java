@@ -51,4 +51,8 @@ public class ServiceConfig {
         this.publicService = publicService;
         this.gateways = gateways;
     }
+
+    public void setPublicService(boolean publicService) {
+        this.publicService = publicService;
+    }
 }

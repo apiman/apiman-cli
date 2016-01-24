@@ -60,6 +60,7 @@ public class Version11XServerApiFactoryImpl extends AbstractServerApiFactory<Ver
                 // convert to 1.1.x format
                 final ModelMapper mapper = new ModelMapper();
                 final ServiceConfig serviceConfig = mapper.map(apiConfig, ServiceConfig.class);
+                serviceConfig.setPublicService(apiConfig.isPublicApi());
 
                 return delegate.configure(orgName, apiName, version, serviceConfig);
             }

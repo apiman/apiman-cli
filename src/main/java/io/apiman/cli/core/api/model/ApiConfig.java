@@ -60,4 +60,8 @@ public class ApiConfig {
     public void setPublicApi(boolean publicApi) {
         this.publicApi = publicApi;
     }
+
+    public boolean isPublicApi() {
+        return publicApi;
+    }
 }
