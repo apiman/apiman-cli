@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,17 +14,25 @@
  * limitations under the License.
  */
 
-package io.apiman.cli.core.common.model;
+package io.apiman.cli.server.binding;
+
+import com.google.inject.BindingAnnotation;
+import io.apiman.cli.core.common.model.ServerVersion;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * The supported management API versions.
- *
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
-public enum ServerVersion {
-    UNSPECIFIED,
-    v11x,
-    v12x;
+@Retention(RUNTIME)
+@Target({ElementType.TYPE})
+@BindingAnnotation
+public @interface ServerApiBinding {
+    Class<?> value();
 
-    public static final ServerVersion DEFAULT_VERSION = v11x;
+    ServerVersion serverVersion() default ServerVersion.UNSPECIFIED;
 }

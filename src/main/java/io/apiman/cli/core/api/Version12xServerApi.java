@@ -17,37 +17,37 @@
 package io.apiman.cli.core.api;
 
 import io.apiman.cli.core.api.model.Api;
+import io.apiman.cli.core.api.model.ApiConfig;
 import io.apiman.cli.core.api.model.ApiPolicy;
-import io.apiman.cli.core.api.model.ServiceConfig;
 import retrofit.client.Response;
 import retrofit.http.*;
 
 import java.util.List;
 
 /**
- * Legacy support for apiman 1.1.9.
- *
+ * Support for apiman 1.2.x.
+ * 
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
-public interface ServiceApi {
-    @POST("/organizations/{orgName}/services")
+public interface Version12xServerApi {
+    @POST("/organizations/{orgName}/apis")
     Response create(@Path("orgName") String orgName, @Body Api api);
 
-    @GET("/organizations/{orgName}/services")
+    @GET("/organizations/{orgName}/apis")
     List<Api> list(@Path("orgName") String orgName);
 
-    @GET("/organizations/{orgName}/services/{serviceName}/versions/{version}")
-    Api fetch(@Path("orgName") String orgName, @Path("serviceName") String serviceName, @Path("version") String version);
+    @GET("/organizations/{orgName}/apis/{apiName}/versions/{version}")
+    Api fetch(@Path("orgName") String orgName, @Path("apiName") String apiName, @Path("version") String version);
 
-    @PUT("/organizations/{orgName}/services/{serviceName}/versions/{version}")
-    Response configure(@Path("orgName") String orgName, @Path("serviceName") String serviceName,
-                       @Path("version") String version, @Body ServiceConfig config);
+    @PUT("/organizations/{orgName}/apis/{apiName}/versions/{version}")
+    Response configure(@Path("orgName") String orgName, @Path("apiName") String apiName,
+                       @Path("version") String version, @Body ApiConfig config);
 
-    @POST("/organizations/{orgName}/services/{serviceName}/versions/{version}/policies")
-    Response addPolicy(@Path("orgName") String orgName, @Path("serviceName") String serviceName,
+    @POST("/organizations/{orgName}/apis/{apiName}/versions/{version}/policies")
+    Response addPolicy(@Path("orgName") String orgName, @Path("apiName") String apiName,
                        @Path("version") String version, @Body ApiPolicy policyConfig);
 
-    @GET("/organizations/{orgName}/services/{serviceName}/versions/{version}/policies")
+    @GET("/organizations/{orgName}/apis/{serviceName}/versions/{version}/policies")
     List<ApiPolicy> fetchPolicies(@Path("orgName") String orgName, @Path("serviceName") String serviceName,
                                   @Path("version") String version);
 }

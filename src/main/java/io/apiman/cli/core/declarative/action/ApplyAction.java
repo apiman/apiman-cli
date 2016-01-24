@@ -20,13 +20,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.io.CharStreams;
 import io.apiman.cli.action.AbstractFinalAction;
-import io.apiman.cli.core.api.ServiceApi;
+import io.apiman.cli.core.api.VersionAgnosticApi;
 import io.apiman.cli.core.api.model.Api;
+import io.apiman.cli.core.api.model.ApiConfig;
 import io.apiman.cli.core.api.model.ApiGateway;
 import io.apiman.cli.core.api.model.ApiPolicy;
-import io.apiman.cli.core.api.model.ServiceConfig;
 import io.apiman.cli.core.common.ActionApi;
-import io.apiman.cli.core.common.model.ServerAction;
+import io.apiman.cli.core.common.model.ServerVersion;
+import io.apiman.cli.core.common.util.ServerActionUtil;
 import io.apiman.cli.core.declarative.model.Declaration;
 import io.apiman.cli.core.declarative.model.DeclarativeApi;
 import io.apiman.cli.core.gateway.GatewayApi;
@@ -42,8 +43,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.config.Configuration;
 import retrofit.RetrofitError;
 
 import java.io.IOException;
@@ -61,7 +60,7 @@ import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 
 /**
- * Applies a declaration.
+ * Applies an API environment declaration.
  *
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
@@ -70,12 +69,16 @@ public class ApplyAction extends AbstractFinalAction {
     private static final String JSON_EXTENSION = ".json";
     private static final String STATE_READY = "READY";
     private static final String STATE_PUBLISHED = "PUBLISHED";
+    private static final String STATE_RETIRED = "RETIRED";
 
     @Option(name = "--declarationFile", aliases = {"-f"}, usage = "Declaration file")
     private Path declarationFile;
 
     @Option(name = "-P", usage = "Set property (key=value)")
     private List<String> properties;
+
+    @Option(name = "--serverVersion", aliases = {"-sv"}, usage = "Management API server version")
+    protected ServerVersion serverVersion = ServerVersion.DEFAULT_VERSION;
 
     @Override
     protected String getActionName() {
@@ -121,7 +124,7 @@ public class ApplyAction extends AbstractFinalAction {
         // add org
         ofNullable(declaration.getOrg()).ifPresent(declarativeOrg -> {
             final String orgName = declaration.getOrg().getName();
-            final OrgApi orgApiClient = buildApiClient(OrgApi.class);
+            final OrgApi orgApiClient = buildServerApiClient(OrgApi.class);
 
             of(checkExists(() -> orgApiClient.fetch(orgName)))
                     .ifPresent(existing -> {
@@ -129,7 +132,7 @@ public class ApplyAction extends AbstractFinalAction {
                     })
                     .ifNotPresent(() -> {
                         LOGGER.info("Adding org: {}", orgName);
-                        orgApiClient.create(copy(declaration.getOrg(), Org.class));
+                        orgApiClient.create(MappingUtil.copy(declaration.getOrg(), Org.class));
                     });
 
             // add apis
@@ -149,7 +152,7 @@ public class ApplyAction extends AbstractFinalAction {
             LOGGER.debug("Applying gateways");
 
             gateways.forEach(declarativeGateway -> {
-                final GatewayApi apiClient = buildApiClient(GatewayApi.class);
+                final GatewayApi apiClient = buildServerApiClient(GatewayApi.class);
                 final String gatewayName = declarativeGateway.getName();
 
                 of(checkExists(() -> apiClient.fetch(gatewayName)))
@@ -159,7 +162,7 @@ public class ApplyAction extends AbstractFinalAction {
                         .ifNotPresent(() -> {
                             LOGGER.info("Adding gateway: {}", gatewayName);
 
-                            final Gateway gateway = copy(declarativeGateway, Gateway.class);
+                            final Gateway gateway = MappingUtil.copy(declarativeGateway, Gateway.class);
                             gateway.setConfiguration(MappingUtil.safeWriteValueAsJson(declarativeGateway.getConfig()));
                             apiClient.create(gateway);
                         });
@@ -177,7 +180,7 @@ public class ApplyAction extends AbstractFinalAction {
             LOGGER.debug("Applying plugins");
 
             plugins.forEach(plugin -> {
-                final PluginApi apiClient = buildApiClient(PluginApi.class);
+                final PluginApi apiClient = buildServerApiClient(PluginApi.class);
 
                 if (checkPluginExists(plugin, apiClient)) {
                     LOGGER.info("Plugin already installed: {}", plugin.getName());
@@ -231,19 +234,19 @@ public class ApplyAction extends AbstractFinalAction {
             LOGGER.debug("Applying APIs");
 
             declarativeApis.forEach(declarativeApi -> {
-                final ServiceApi apiClient = buildApiClient(ServiceApi.class);
+                final VersionAgnosticApi apiClient = buildServerApiClient(VersionAgnosticApi.class, serverVersion);
                 final String apiName = declarativeApi.getName();
                 final String apiVersion = declarativeApi.getInitialVersion();
 
                 // create and configure API
-                applyApi(orgName, declarativeApi, apiClient, apiName, apiVersion);
+                applyApi(apiClient, declarativeApi, orgName, apiName, apiVersion);
 
                 // add policies
-                applyPolicies(orgName, declarativeApi, apiClient, apiName, apiVersion);
+                applyPolicies(apiClient, declarativeApi, orgName, apiName, apiVersion);
 
                 // publish API
                 if (declarativeApi.isPublished()) {
-                    publish(orgName, apiClient, apiName, apiVersion);
+                    publish(apiClient, orgName, apiName, apiVersion);
                 }
             });
         });
@@ -252,13 +255,16 @@ public class ApplyAction extends AbstractFinalAction {
     /**
      * Add and configure the API if it is not present.
      *
-     * @param orgName
-     * @param declarativeApi
      * @param apiClient
+     * @param declarativeApi
+     * @param orgName
      * @param apiName
      * @param apiVersion
+     * @return the state of the API
      */
-    private void applyApi(String orgName, DeclarativeApi declarativeApi, ServiceApi apiClient, String apiName, String apiVersion) {
+    private void applyApi(VersionAgnosticApi apiClient, DeclarativeApi declarativeApi, String orgName,
+                          String apiName, String apiVersion) {
+
         LOGGER.debug("Applying API: {}", apiName);
 
         of(checkExists(() -> apiClient.fetch(orgName, apiName, apiVersion)))
@@ -269,28 +275,67 @@ public class ApplyAction extends AbstractFinalAction {
                     LOGGER.info("Adding API: {}", apiName);
 
                     // create API
-                    final Api api = copy(declarativeApi, Api.class);
+                    final Api api = MappingUtil.copy(declarativeApi, Api.class);
                     apiClient.create(orgName, api);
 
-                    // configure API
-                    // TODO move this outside of the block - currently API throws a 409 if this has been called
-                    LOGGER.info("Configuring API: {}", apiName);
-                    final ServiceConfig apiConfig = copy(declarativeApi.getConfig(), ServiceConfig.class);
-                    apiConfig.setGateways(Lists.newArrayList(new ApiGateway(declarativeApi.getConfig().getGateway())));
-                    apiClient.configure(orgName, apiName, apiVersion, apiConfig);
+                    if (ServerVersion.v11x.equals(serverVersion)) {
+                        // do this only on initial creation as v1.1.x API throws a 409 if this is called more than once
+                        configureApi(declarativeApi, apiClient, orgName, apiName, apiVersion);
+                    }
                 });
+
+
+        if (ServerVersion.v12x.equals(serverVersion)) {
+            // The v1.2.x API supports configuration of the API even if published (but not retired)
+            final String apiState = getCurrentState(apiClient, orgName, apiName, apiVersion);
+            if (STATE_RETIRED.equals(apiState.toUpperCase())) {
+                LOGGER.warn("API '{}' is retired - skipping configuration", apiName);
+
+            } else {
+                configureApi(declarativeApi, apiClient, orgName, apiName, apiVersion);
+            }
+        }
+    }
+
+    private String getCurrentState(VersionAgnosticApi apiClient, String orgName, String apiName, String apiVersion) {
+        final String apiState = ofNullable(apiClient.fetch(orgName, apiName, apiVersion).getStatus()).orElse("");
+        LOGGER.debug("API '{}' state: {}", apiName, apiState);
+        return apiState;
+    }
+
+    /**
+     * Configures the API using the declarative API configuration.
+     *
+     * @param declarativeApi
+     * @param apiClient
+     * @param orgName
+     * @param apiName
+     * @param apiVersion
+     */
+    private void configureApi(DeclarativeApi declarativeApi, VersionAgnosticApi apiClient,
+                              String orgName, String apiName, String apiVersion) {
+
+        LOGGER.info("Configuring API: {}", apiName);
+
+        // convert configuration
+        final ApiConfig apiConfig = MappingUtil.copy(declarativeApi.getConfig(), ApiConfig.class);
+        apiConfig.setPublicApi(declarativeApi.getConfig().isMakePublic());
+        apiConfig.setGateways(Lists.newArrayList(new ApiGateway(declarativeApi.getConfig().getGateway())));
+
+        apiClient.configure(orgName, apiName, apiVersion, apiConfig);
     }
 
     /**
      * Add policies to the API if they are not present.
-     *
-     * @param orgName
+     *  @param apiClient
      * @param declarativeApi
-     * @param apiClient
+     * @param orgName
      * @param apiName
      * @param apiVersion
      */
-    private void applyPolicies(String orgName, DeclarativeApi declarativeApi, ServiceApi apiClient, String apiName, String apiVersion) {
+    private void applyPolicies(VersionAgnosticApi apiClient, DeclarativeApi declarativeApi, String orgName,
+                               String apiName, String apiVersion) {
+
         ofNullable(declarativeApi.getPolicies()).ifPresent(declarativePolicies -> {
             LOGGER.debug("Applying policies to API: {}", apiName);
 
@@ -325,7 +370,9 @@ public class ApplyAction extends AbstractFinalAction {
      * @param policyName
      * @return <code>true</code> if the policy exists on the API, otherwise <code>false</code>
      */
-    private boolean checkPolicyExists(String orgName, ServiceApi apiClient, String apiName, String apiVersion, String policyName) {
+    private boolean checkPolicyExists(String orgName, VersionAgnosticApi apiClient, String apiName,
+                                      String apiVersion, String policyName) {
+
         return checkExists(() ->
                 apiClient.fetchPolicies(orgName, apiName, apiVersion))
                 .map(apiPolicies -> apiPolicies.stream().anyMatch(apiPolicy ->
@@ -336,22 +383,31 @@ public class ApplyAction extends AbstractFinalAction {
     /**
      * Publish the API, if it is in the 'Ready' state.
      *
-     * @param orgName
      * @param apiClient
+     * @param orgName
      * @param apiName
      * @param apiVersion
      */
-    private void publish(String orgName, ServiceApi apiClient, String apiName, String apiVersion) {
+    private void publish(VersionAgnosticApi apiClient, String orgName, String apiName, String apiVersion) {
         LOGGER.debug("Attempting to publish API: {}", apiName);
+        final String apiState = getCurrentState(apiClient, orgName, apiName, apiVersion);
 
-        final String apiState = ofNullable(apiClient.fetch(orgName, apiName, apiVersion).getStatus()).orElse("");
         switch (apiState.toUpperCase()) {
             case STATE_READY:
                 performPublish(orgName, apiName, apiVersion);
                 break;
 
             case STATE_PUBLISHED:
-                LOGGER.info("API already published: {}", apiName);
+                switch (serverVersion) {
+                    case v11x:
+                        LOGGER.info("API '{}' already published - skipping republish", apiName);
+                        break;
+
+                    case v12x:
+                        LOGGER.info("Republishing API: {}", apiName);
+                        performPublish(orgName, apiName, apiVersion);
+                        break;
+                }
                 break;
 
             default:
@@ -369,14 +425,7 @@ public class ApplyAction extends AbstractFinalAction {
      */
     private void performPublish(String orgName, String apiName, String apiVersion) {
         LOGGER.info("Publishing API: {}", apiName);
-
-        final ServerAction serverAction = new ServerAction(
-                "publishService",
-                orgName,
-                apiName,
-                apiVersion);
-
-        buildApiClient(ActionApi.class).doAction(serverAction);
+        ServerActionUtil.publishApi(orgName, apiName, apiVersion, serverVersion, buildServerApiClient(ActionApi.class));
     }
 
     /**
@@ -401,34 +450,6 @@ public class ApplyAction extends AbstractFinalAction {
             }
 
             throw new DeclarativeException("Error checking for existence of existing item", re);
-        }
-    }
-
-    /**
-     * Return an instance of {@code destinationClass} with a copy of identical fields to those found
-     * in {@code original}.
-     *
-     * @param original         the source object
-     * @param destinationClass the return type Class definition
-     * @param <D>              the return type
-     * @param <O>              the source type
-     * @return an instance of {@code destinationClass} containing the copied fields
-     */
-    private <D, O> D copy(O original, Class<D> destinationClass) {
-        try {
-            final D destination = destinationClass.newInstance();
-
-            final ModelMapper modelMapper = new ModelMapper();
-            modelMapper.getConfiguration()
-                    .setFieldMatchingEnabled(true)
-                    .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE);
-
-            modelMapper.map(original, destination);
-
-            return destination;
-
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new DeclarativeException(e);
         }
     }
 
@@ -460,5 +481,9 @@ public class ApplyAction extends AbstractFinalAction {
 
     public void setProperties(List<String> properties) {
         this.properties = properties;
+    }
+
+    public void setServerVersion(ServerVersion serverVersion) {
+        this.serverVersion = serverVersion;
     }
 }

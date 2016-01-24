@@ -233,16 +233,16 @@ You can also use placeholders in your declaration files. This helps you reuse de
     --name (-n) VAL                     : API name
     --orgName (-o) VAL                  : Organisation name
     --public (-p)                       : Public API
-    --serverVersion (-sv) [v119 | v12x] : Management API server version (default:
-                                          v119)
+    --serverVersion (-sv) [v11x | v12x] : Management API server version (default:
+                                          v11x)
 
 ### List APIs
     
     apiman api list [args...]
     
     --orgName (-o) VAL                  : Organisation name
-    --serverVersion (-sv) [v119 | v12x] : Management API server version (default:
-                                          v119)
+    --serverVersion (-sv) [v11x | v12x] : Management API server version (default:
+                                          v11x)
 
 ### Publish API
     
@@ -251,8 +251,8 @@ You can also use placeholders in your declaration files. This helps you reuse de
     --version (-v) VAL                  : API version
     --name (-n) VAL                     : API name
     --orgName (-o) VAL                  : Organisation name
-    --serverVersion (-sv) [v119 | v12x] : Management API server version (default:
-                                          v119)
+    --serverVersion (-sv) [v11x | v12x] : Management API server version (default:
+                                          v11x)
 
 ## Apply declaration
 

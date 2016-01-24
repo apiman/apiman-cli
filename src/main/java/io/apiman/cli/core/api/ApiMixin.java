@@ -22,10 +22,10 @@ import io.apiman.cli.core.api.model.Api;
 /**
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
-public interface ApiMixin extends ModelAction<Api, ApiApi> {
+public interface ApiMixin extends ModelAction<Api, Version12xServerApi> {
     @Override
-    default Class<ApiApi> getApiClass() {
-        return ApiApi.class;
+    default Class<Version12xServerApi> getApiClass() {
+        return Version12xServerApi.class;
     }
 
     @Override

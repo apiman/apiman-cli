@@ -20,11 +20,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Legacy support for apiman 1.1.9.
+ * Legacy support for apiman 1.1.x.
  *
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
@@ -50,10 +49,6 @@ public class ServiceConfig {
         this.endpoint = endpoint;
         this.endpointType = endpointType;
         this.publicService = publicService;
-        this.gateways = gateways;
-    }
-
-    public void setGateways(ArrayList<ApiGateway> gateways) {
         this.gateways = gateways;
     }
 }

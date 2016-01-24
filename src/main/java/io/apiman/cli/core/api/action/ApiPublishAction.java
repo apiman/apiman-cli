@@ -16,17 +16,15 @@
 
 package io.apiman.cli.core.api.action;
 
+import io.apiman.cli.core.common.util.ServerActionUtil;
 import io.apiman.cli.exception.ActionException;
 import io.apiman.cli.core.api.ApiMixin;
 import io.apiman.cli.core.common.ActionApi;
-import io.apiman.cli.core.common.model.ServerAction;
-import io.apiman.cli.util.ApiUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 
-import java.net.HttpURLConnection;
 import java.text.MessageFormat;
 
 /**
@@ -51,30 +49,7 @@ public class ApiPublishAction extends AbstractApiAction implements ApiMixin {
     @Override
     public void performAction(CmdLineParser parser) throws ActionException {
         LOGGER.debug("Publishing {}", this::getModelName);
-
-        String actionType;
-        switch (serverVersion) {
-            case v119:
-                // legacy apiman 1.1.9 support
-                actionType = "publishService";
-                break;
-
-            default:
-                // apiman 1.2.x support
-                actionType = "publishAPI";
-                break;
-        }
-
-        final ActionApi apiClient = buildApiClient(ActionApi.class);
-        ApiUtil.invokeAndCheckResponse(HttpURLConnection.HTTP_NO_CONTENT, () -> {
-            final ServerAction action = new ServerAction(
-                    actionType,
-                    orgName,
-                    name,
-                    version
-            );
-
-            return apiClient.doAction(action);
-        });
+        ServerActionUtil.publishApi(orgName, name, version, serverVersion, buildServerApiClient(ActionApi.class));
     }
+
 }

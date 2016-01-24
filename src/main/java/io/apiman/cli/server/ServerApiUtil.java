@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-package io.apiman.cli.util;
+package io.apiman.cli.server;
 
-import com.google.common.io.BaseEncoding;
 import com.google.common.io.CharStreams;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import io.apiman.cli.core.common.model.ServerVersion;
 import io.apiman.cli.exception.ActionException;
+import io.apiman.cli.server.binding.ServerApiBindings;
+import io.apiman.cli.server.factory.ServerApiFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
-import retrofit.converter.JacksonConverter;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,15 +35,15 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.util.function.Supplier;
 
-import static io.apiman.cli.util.MappingUtil.JSON_MAPPER;
-
 /**
- * Shared API utility methods.
+ * Shared Server API utility methods.
  *
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
-public class ApiUtil {
-    private static final Logger LOGGER = LogManager.getLogger(ApiUtil.class);
+public class ServerApiUtil {
+    private static final Logger LOGGER = LogManager.getLogger(ServerApiUtil.class);
+    private static boolean factoriesInitialised;
+    private static Injector apiFactories;
 
     public static void invokeAndCheckResponse(Supplier<Response> request) throws ActionException {
         invokeAndCheckResponse(HttpURLConnection.HTTP_OK, request);
@@ -82,26 +85,30 @@ public class ApiUtil {
     }
 
     /**
-     * @param clazz        the Class for which to build a client
-     * @param username     the management API username
-     * @param password     the management API password
-     * @param debugLogging whether debug logging should be enabled
-     * @param <T>          the API interface
+     * @param clazz         the Class for which to build a client
+     * @param username      the management API username
+     * @param password      the management API password
+     * @param debugLogging  whether debug logging should be enabled
+     * @param serverVersion the server version
+     * @param <T>           the API interface
      * @return an API client for the given Class
      */
-    public static <T> T buildApiClient(Class<T> clazz, String endpoint, String username, String password, boolean debugLogging) {
-        final RestAdapter.Builder builder = new RestAdapter.Builder() //
-                .setConverter(new JacksonConverter(JSON_MAPPER))
-                .setEndpoint(endpoint)
-                .setRequestInterceptor(request -> {
-                    final String credentials = String.format("%s:%s", username, password);
-                    request.addHeader("Authorization", "Basic " + BaseEncoding.base64().encode(credentials.getBytes()));
-                });
+    @SuppressWarnings("unchecked")
+    public static <T> T buildServerApiClient(Class<T> clazz, String endpoint, String username,
+                                             String password, boolean debugLogging, ServerVersion serverVersion) {
 
-        if (debugLogging) {
-            builder.setLogLevel(RestAdapter.LogLevel.FULL);
+        if (!factoriesInitialised) {
+            factoriesInitialised = true;
+
+            LOGGER.trace("Initialising API factories for server version {}", serverVersion);
+            apiFactories = Guice.createInjector(new ServerApiFactoryModule());
         }
 
-        return builder.build().create(clazz);
+        // locate the server API factory
+        final ServerApiFactory serverApiFactory = apiFactories.getInstance(
+                Key.get(ServerApiFactory.class, ServerApiBindings.boundTo(clazz, serverVersion)));
+
+        // use the factory to construct the server API client
+        return (T) serverApiFactory.build(endpoint, username, password, debugLogging);
     }
 }

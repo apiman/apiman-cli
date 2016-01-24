@@ -17,7 +17,7 @@
 package io.apiman.cli.core.api.action;
 
 import io.apiman.cli.core.common.action.AbstractModelAction;
-import io.apiman.cli.core.api.ApiApi;
+import io.apiman.cli.core.api.Version12xServerApi;
 import io.apiman.cli.core.api.ApiMixin;
 import io.apiman.cli.core.api.model.Api;
 import io.apiman.cli.core.common.model.ServerVersion;
@@ -28,10 +28,10 @@ import org.kohsuke.args4j.Option;
  *
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
-public abstract class AbstractApiAction extends AbstractModelAction<Api, ApiApi> implements ApiMixin {
+public abstract class AbstractApiAction extends AbstractModelAction<Api, Version12xServerApi> implements ApiMixin {
     @Option(name = "--orgName", aliases = {"-o"}, usage = "Organisation name", required = true)
     protected String orgName;
 
     @Option(name = "--serverVersion", aliases = {"-sv"}, usage = "Management API server version")
-    protected ServerVersion serverVersion = ServerVersion.v119;
+    protected ServerVersion serverVersion = ServerVersion.DEFAULT_VERSION;
 }

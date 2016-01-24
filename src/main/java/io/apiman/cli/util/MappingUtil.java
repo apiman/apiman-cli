@@ -23,6 +23,8 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.config.Configuration;
 
 import java.util.Collection;
 import java.util.Map;
@@ -78,5 +80,33 @@ public class MappingUtil {
                         .collect(Collectors.toMap(kv -> kv[0], kv -> (kv.length >= 2 ? kv[1] : "")));
 
         return StrSubstitutor.replace(original, valuesMap);
+    }
+
+    /**
+     * Return an instance of {@code destinationClass} with a copy of identical fields to those found
+     * in {@code original}.
+     *
+     * @param original         the source object
+     * @param destinationClass the return type Class definition
+     * @param <D>              the return type
+     * @param <O>              the source type
+     * @return an instance of {@code destinationClass} containing the copied fields
+     */
+    public static <D, O> D copy(O original, Class<D> destinationClass) {
+        try {
+            final D destination = destinationClass.newInstance();
+
+            final ModelMapper modelMapper = new ModelMapper();
+            modelMapper.getConfiguration()
+                    .setFieldMatchingEnabled(true)
+                    .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE);
+
+            modelMapper.map(original, destination);
+
+            return destination;
+
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
