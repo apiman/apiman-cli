@@ -14,22 +14,33 @@
  * limitations under the License.
  */
 
-package io.apiman.cli.core.org;
+package io.apiman.cli.command;
 
-import io.apiman.cli.core.common.command.ModelAction;
-import io.apiman.cli.core.org.model.Org;
+import org.kohsuke.args4j.CmdLineParser;
+
+import java.util.List;
+import java.util.Map;
 
 /**
+ * A Command that has no child Commands.
+ *
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
-public interface OrgMixin extends ModelAction<Org, OrgApi> {
+public abstract class AbstractFinalCommand extends AbstractCommand {
+    /**
+     * Indicates that there is no child command and that this instance should handle the request.
+     *
+     * @param args
+     * @param parser
+     * @return <code>null</code>
+     */
     @Override
-    default Class<OrgApi> getApiClass() {
-        return OrgApi.class;
+    protected Command getChildAction(List<String> args, CmdLineParser parser) {
+        return null;
     }
 
     @Override
-    default Class<Org> getModelClass() {
-        return Org.class;
+    protected void populateCommands(Map<String, Class<? extends Command>> commandMap) {
+        // no child commands
     }
 }

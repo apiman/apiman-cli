@@ -14,22 +14,31 @@
  * limitations under the License.
  */
 
-package io.apiman.cli.core.org;
+package io.apiman.cli.core.org.command;
 
-import io.apiman.cli.core.common.command.ModelAction;
+import io.apiman.cli.core.common.command.ModelCreateCommand;
+import io.apiman.cli.core.org.OrgApi;
+import io.apiman.cli.core.org.OrgMixin;
+import io.apiman.cli.exception.CommandException;
 import io.apiman.cli.core.org.model.Org;
+import org.kohsuke.args4j.Option;
 
 /**
+ * Create an organisation.
+ *
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
-public interface OrgMixin extends ModelAction<Org, OrgApi> {
-    @Override
-    default Class<OrgApi> getApiClass() {
-        return OrgApi.class;
-    }
+public class OrgCreateCommand extends ModelCreateCommand<Org, OrgApi>
+        implements OrgMixin {
+
+    @Option(name = "--name", aliases = {"-n"}, usage = "Name", required = true)
+    private String name;
+
+    @Option(name = "--description", aliases = {"-d"}, usage = "Description")
+    private String description;
 
     @Override
-    default Class<Org> getModelClass() {
-        return Org.class;
+    protected Org buildModelInstance() throws CommandException {
+        return new Org(name, description);
     }
 }

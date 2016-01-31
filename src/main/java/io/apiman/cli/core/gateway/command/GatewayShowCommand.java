@@ -14,22 +14,28 @@
  * limitations under the License.
  */
 
-package io.apiman.cli.core.org;
+package io.apiman.cli.core.gateway.command;
 
-import io.apiman.cli.core.common.command.ModelAction;
-import io.apiman.cli.core.org.model.Org;
+import io.apiman.cli.core.common.command.ModelShowCommand;
+import io.apiman.cli.core.gateway.GatewayApi;
+import io.apiman.cli.core.gateway.GatewayMixin;
+import io.apiman.cli.exception.CommandException;
+import io.apiman.cli.core.gateway.model.Gateway;
+import org.kohsuke.args4j.Option;
 
 /**
+ * Show a gateway.
+ *
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
-public interface OrgMixin extends ModelAction<Org, OrgApi> {
-    @Override
-    default Class<OrgApi> getApiClass() {
-        return OrgApi.class;
-    }
+public class GatewayShowCommand extends ModelShowCommand<Gateway, GatewayApi>
+        implements GatewayMixin {
+
+    @Option(name = "--name", aliases = {"-n"}, usage = "Name")
+    private String name;
 
     @Override
-    default Class<Org> getModelClass() {
-        return Org.class;
+    protected String getModelId() throws CommandException {
+        return name;
     }
 }

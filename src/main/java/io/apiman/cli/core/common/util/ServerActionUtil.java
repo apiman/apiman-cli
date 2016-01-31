@@ -19,7 +19,7 @@ package io.apiman.cli.core.common.util;
 import io.apiman.cli.core.common.ActionApi;
 import io.apiman.cli.core.common.model.ServerAction;
 import io.apiman.cli.core.common.model.ServerVersion;
-import io.apiman.cli.server.ServerApiUtil;
+import io.apiman.cli.management.ManagementApiUtil;
 
 import java.net.HttpURLConnection;
 
@@ -53,7 +53,7 @@ public class ServerActionUtil {
                 break;
         }
 
-        ServerApiUtil.invokeAndCheckResponse(HttpURLConnection.HTTP_NO_CONTENT, () -> {
+        ManagementApiUtil.invokeAndCheckResponse(HttpURLConnection.HTTP_NO_CONTENT, () -> {
             final ServerAction action = new ServerAction(
                     actionType,
                     orgName,

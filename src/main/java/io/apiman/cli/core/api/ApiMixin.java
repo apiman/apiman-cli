@@ -16,7 +16,7 @@
 
 package io.apiman.cli.core.api;
 
-import io.apiman.cli.core.common.action.ModelAction;
+import io.apiman.cli.core.common.command.ModelAction;
 import io.apiman.cli.core.api.model.Api;
 
 /**

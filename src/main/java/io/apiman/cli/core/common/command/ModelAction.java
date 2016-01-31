@@ -14,22 +14,20 @@
  * limitations under the License.
  */
 
-package io.apiman.cli.core.org;
-
-import io.apiman.cli.core.common.command.ModelAction;
-import io.apiman.cli.core.org.model.Org;
+package io.apiman.cli.core.common.command;
 
 /**
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
-public interface OrgMixin extends ModelAction<Org, OrgApi> {
-    @Override
-    default Class<OrgApi> getApiClass() {
-        return OrgApi.class;
-    }
+public interface ModelAction<M, A> {
+    Class<M> getModelClass();
 
-    @Override
-    default Class<Org> getModelClass() {
-        return Org.class;
+    Class<A> getApiClass();
+
+    /**
+     * @return the name for the model class
+     */
+    default String getModelName() {
+        return getModelClass().getSimpleName();
     }
 }
