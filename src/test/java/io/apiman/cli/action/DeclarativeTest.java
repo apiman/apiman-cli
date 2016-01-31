@@ -18,10 +18,12 @@ package io.apiman.cli.action;
 
 import com.google.common.collect.Lists;
 import io.apiman.cli.common.BaseTest;
+import io.apiman.cli.core.common.model.ServerVersion;
 import io.apiman.cli.common.IntegrationTest;
 import io.apiman.cli.core.declarative.action.ApplyAction;
 import io.apiman.cli.core.declarative.model.Declaration;
 import io.apiman.cli.core.declarative.model.DeclarativeGateway;
+import io.apiman.cli.util.LogUtil;
 import io.apiman.cli.util.MappingUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,13 +41,21 @@ import static org.junit.Assert.assertNotNull;
  */
 @Category(IntegrationTest.class)
 public class DeclarativeTest extends BaseTest {
+    private static final boolean LOG_DEBUG = true;
+
     private ApplyAction action;
 
     @Before
     public void setUp() {
         action = new ApplyAction();
         action.setServerAddress(getApimanUrl());
-        action.setLogDebug(true);
+
+        // version specific test
+        action.setServerVersion(ServerVersion.v12x);
+
+        // configure logging level
+        action.setLogDebug(LOG_DEBUG);
+        LogUtil.configureLogging(LOG_DEBUG);
     }
 
     /**

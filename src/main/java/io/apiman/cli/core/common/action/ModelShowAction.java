@@ -17,6 +17,7 @@
 package io.apiman.cli.core.common.action;
 
 import io.apiman.cli.exception.ActionException;
+import io.apiman.cli.util.LogUtil;
 import io.apiman.cli.util.MappingUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,8 +25,6 @@ import org.kohsuke.args4j.CmdLineParser;
 
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
-
-import static io.apiman.cli.util.LogUtil.OUTPUT;
 
 /**
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
@@ -43,7 +42,7 @@ public abstract class ModelShowAction<M, A> extends AbstractModelAction<M, A> {
         LOGGER.debug("Showing {}", this::getModelName);
 
         try {
-            final A apiClient = this.buildApiClient(getApiClass());
+            final A apiClient = this.buildServerApiClient(getApiClass());
             final Method fetchMethod = apiClient.getClass().getMethod("fetch", String.class);
 
             @SuppressWarnings("unchecked")
@@ -58,7 +57,7 @@ public abstract class ModelShowAction<M, A> extends AbstractModelAction<M, A> {
     }
 
     protected void processModel(M model) {
-        OUTPUT.info(MappingUtil.safeWriteValueAsJson(model));
+        LogUtil.OUTPUT.info(MappingUtil.safeWriteValueAsJson(model));
     }
 
     protected abstract String getModelId() throws ActionException;

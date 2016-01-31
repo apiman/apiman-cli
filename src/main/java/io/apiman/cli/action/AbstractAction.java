@@ -17,13 +17,13 @@
 package io.apiman.cli.action;
 
 import com.google.common.collect.Maps;
+import io.apiman.cli.core.common.model.ServerVersion;
 import io.apiman.cli.exception.ActionException;
 import io.apiman.cli.exception.ExitWithCodeException;
-import io.apiman.cli.util.ApiUtil;
-import org.apache.logging.log4j.Level;
+import io.apiman.cli.util.LogUtil;
+import io.apiman.cli.server.ServerApiUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.LoggerContext;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 
 import static io.apiman.cli.util.LogUtil.LINE_SEPARATOR;
-import static io.apiman.cli.util.LogUtil.OUTPUT;
 
 /**
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
@@ -120,11 +119,8 @@ public abstract class AbstractAction implements Action {
             try {
                 parser.parseArgument(args);
 
-                if (logDebug) {
-                    final LoggerContext context = (LoggerContext) LogManager.getContext(false);
-                    context.getConfiguration().getRootLogger().setLevel(Level.DEBUG);
-                    context.updateLoggers();
-                }
+                // update log config based on parsed arguments
+                LogUtil.configureLogging(logDebug);
 
                 if (displayHelp) {
                     printUsage(parser, true);
@@ -144,7 +140,7 @@ public abstract class AbstractAction implements Action {
 
             } catch (ExitWithCodeException ec) {
                 // print the message and exit with the given code
-                OUTPUT.error(ec.getMessage());
+                LogUtil.OUTPUT.error(ec.getMessage());
 
                 if (ec.isPrintUsage()) {
                     printUsage(parser, ec.getExitCode());
@@ -272,13 +268,24 @@ public abstract class AbstractAction implements Action {
      * @param <T>   the API interface
      * @return an API client for the given Class
      */
-    protected <T> T buildApiClient(Class<T> clazz) {
-        return ApiUtil.buildApiClient(
+    protected <T> T buildServerApiClient(Class<T> clazz) {
+        return buildServerApiClient(clazz, ServerVersion.UNSPECIFIED);
+    }
+
+    /**
+     * @param clazz         the Class for which to build a client
+     * @param serverVersion the server version
+     * @param <T>           the API interface
+     * @return an API client for the given Class
+     */
+    protected <T> T buildServerApiClient(Class<T> clazz, ServerVersion serverVersion) {
+        return ServerApiUtil.buildServerApiClient(
                 clazz,
                 getManagementApiEndpoint(),
                 getManagementApiUsername(),
                 getManagementApiPassword(),
-                logDebug);
+                logDebug,
+                serverVersion);
     }
 
     protected String getManagementApiEndpoint() {

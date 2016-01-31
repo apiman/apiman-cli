@@ -16,15 +16,13 @@
 
 package io.apiman.cli.core.api.action;
 
-import com.google.common.base.Strings;
 import com.google.common.io.CharStreams;
-import io.apiman.cli.core.api.ApiApi;
 import io.apiman.cli.core.api.ApiMixin;
-import io.apiman.cli.core.api.ServiceApi;
 import io.apiman.cli.core.api.model.ApiPolicy;
+import io.apiman.cli.core.api.VersionAgnosticApi;
 import io.apiman.cli.exception.ActionException;
 import io.apiman.cli.exception.ExitWithCodeException;
-import io.apiman.cli.util.ApiUtil;
+import io.apiman.cli.server.ServerApiUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kohsuke.args4j.CmdLineParser;
@@ -35,7 +33,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.MessageFormat;
 
 /**
@@ -86,18 +83,7 @@ public class ApiPolicyAddAction extends AbstractApiAction implements ApiMixin {
 
         final ApiPolicy apiPolicy = new ApiPolicy(policyName, policyConfig);
 
-        switch (serverVersion) {
-            case v119:
-                // legacy apiman 1.1.9 support
-                ApiUtil.invokeAndCheckResponse(() ->
-                        buildApiClient(ServiceApi.class).addPolicy(orgName, name, version, apiPolicy));
-                break;
-
-            default:
-                // apiman 1.2.x support
-                ApiUtil.invokeAndCheckResponse(() ->
-                        buildApiClient(ApiApi.class).addPolicy(orgName, name, version, apiPolicy));
-                break;
-        }
+        ServerApiUtil.invokeAndCheckResponse(() ->
+                buildServerApiClient(VersionAgnosticApi.class, serverVersion).addPolicy(orgName, name, version, apiPolicy));
     }
 }

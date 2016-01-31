@@ -29,7 +29,7 @@ import java.util.List;
  * 
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
-public interface ApiApi {
+public interface Version12xServerApi {
     @POST("/organizations/{orgName}/apis")
     Response create(@Path("orgName") String orgName, @Body Api api);
 
@@ -46,4 +46,12 @@ public interface ApiApi {
     @POST("/organizations/{orgName}/apis/{apiName}/versions/{version}/policies")
     Response addPolicy(@Path("orgName") String orgName, @Path("apiName") String apiName,
                        @Path("version") String version, @Body ApiPolicy policyConfig);
+
+    @GET("/organizations/{orgName}/apis/{apiName}/versions/{version}/policies")
+    List<ApiPolicy> fetchPolicies(@Path("orgName") String orgName, @Path("apiName") String apiName,
+                                  @Path("version") String version);
+
+    @PUT("/organizations/{orgName}/apis/{apiName}/versions/{version}/policies/{policyId}")
+    Response configurePolicy(@Path("orgName") String orgName, @Path("apiName") String apiName,
+                             @Path("version") String version, @Path("policyId") Long policyId, @Body ApiPolicy policyConfig);
 }

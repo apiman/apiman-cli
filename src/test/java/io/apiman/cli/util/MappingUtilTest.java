@@ -16,15 +16,13 @@
 
 package io.apiman.cli.util;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import io.apiman.cli.support.TestModel;
 import org.junit.Test;
 
-import java.util.List;
 import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Tests for {@link MappingUtil}.
@@ -32,53 +30,6 @@ import static org.junit.Assert.*;
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
 public class MappingUtilTest {
-    private static final String INPUT_STRING = "This is a ${key.1} sample ${key.2} string.";
-
-    @Test
-    public void testResolvePlaceholders_Success() throws Exception {
-        // test data
-        final String original = INPUT_STRING;
-
-        final List<String> replacements = Lists.newArrayList(
-                "key.1=value.1",
-                "key.2=value.2"
-        );
-
-        // test
-        final String actual = MappingUtil.resolvePlaceholders(original, replacements);
-
-        // assertions
-        assertEquals("This is a value.1 sample value.2 string.", actual);
-    }
-
-    @Test
-    public void testResolvePlaceholders_EmptyReplacements() throws Exception {
-        // test data
-        final String original = INPUT_STRING;
-
-        final List<String> replacements = Lists.newArrayList();
-
-        // test
-        final String actual = MappingUtil.resolvePlaceholders(original, replacements);
-
-        // assertions
-        assertEquals(INPUT_STRING, actual);
-    }
-
-    @Test
-    public void testResolvePlaceholders_NullReplacements() throws Exception {
-        // test data
-        final String original = INPUT_STRING;
-
-        final List<String> replacements = null;
-
-        // test
-        final String actual = MappingUtil.resolvePlaceholders(original, replacements);
-
-        // assertions
-        assertEquals(INPUT_STRING, actual);
-    }
-
     @Test
     public void testSafeWriteValueAsJson_Populated() throws Exception {
         // test data
@@ -103,4 +54,17 @@ public class MappingUtilTest {
         // assertions
         assertEquals("null", actual);
     }
+
+    @Test
+    public void testMap() throws Exception {
+        // test data
+        final TestModel input = new TestModel();
+
+        // test
+        final TestModel actual = MappingUtil.map(input, TestModel.class);
+
+        // assertions
+        assertEquals(input, actual);
+    }
+
 }

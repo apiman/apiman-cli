@@ -19,7 +19,7 @@ package io.apiman.cli.core.declarative.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.apiman.cli.core.api.model.ServiceConfig;
+import io.apiman.cli.core.api.model.ApiConfig;
 
 /**
  * Declarative API configuration.
@@ -28,9 +28,12 @@ import io.apiman.cli.core.api.model.ServiceConfig;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DeclarativeApiConfig extends ServiceConfig {
+public class DeclarativeApiConfig extends ApiConfig {
     @JsonProperty
     private String gateway;
+
+    @JsonProperty("public")
+    private boolean makePublic;
 
     public String getGateway() {
         return gateway;
@@ -38,5 +41,9 @@ public class DeclarativeApiConfig extends ServiceConfig {
 
     public void setGateway(String gateway) {
         this.gateway = gateway;
+    }
+
+    public boolean isMakePublic() {
+        return makePublic;
     }
 }

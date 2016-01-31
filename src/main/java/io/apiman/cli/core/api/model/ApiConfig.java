@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -50,5 +51,17 @@ public class ApiConfig {
         this.endpointType = endpointType;
         this.publicApi = publicApi;
         this.gateways = gateways;
+    }
+
+    public void setGateways(ArrayList<ApiGateway> gateways) {
+        this.gateways = gateways;
+    }
+
+    public void setPublicApi(boolean publicApi) {
+        this.publicApi = publicApi;
+    }
+
+    public boolean isPublicApi() {
+        return publicApi;
     }
 }
