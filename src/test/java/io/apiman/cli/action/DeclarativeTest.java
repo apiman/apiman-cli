@@ -51,7 +51,7 @@ public class DeclarativeTest extends BaseTest {
         action.setServerAddress(getApimanUrl());
 
         // version specific test
-        action.setServerVersion(ServerVersion.v11x);
+        action.setServerVersion(ServerVersion.v12x);
 
         // configure logging level
         action.setLogDebug(LOG_DEBUG);

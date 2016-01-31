@@ -97,15 +97,24 @@ public class ServerApiUtil {
                                              String password, boolean debugLogging, ServerVersion serverVersion) {
 
         if (!factoriesInitialised) {
-            factoriesInitialised = true;
-
-            LOGGER.debug("Initialising API factories for server version {}", serverVersion);
+            LOGGER.trace("Initialising API factories");
             apiFactories = Guice.createInjector(new ServerApiFactoryModule());
+            factoriesInitialised = true;
         }
 
         // locate the server API factory
-        final ServerApiFactory serverApiFactory = apiFactories.getInstance(
-                Key.get(ServerApiFactory.class, ServerApiBindings.boundTo(clazz, serverVersion)));
+        final ServerApiFactory serverApiFactory;
+        try {
+            serverApiFactory = apiFactories.getInstance(
+                    Key.get(ServerApiFactory.class, ServerApiBindings.boundTo(clazz, serverVersion)));
+
+        } catch (Exception e) {
+            throw new ActionException(String.format(
+                    "Error locating API factory for %s, with server version %s", clazz, serverVersion), e);
+        }
+
+        LOGGER.debug("Located API factory {} for {}, with server version {}",
+                serverApiFactory.getClass(), clazz, serverVersion);
 
         // use the factory to construct the server API client
         return (T) serverApiFactory.build(endpoint, username, password, debugLogging);
