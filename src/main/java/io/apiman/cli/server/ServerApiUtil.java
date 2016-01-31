@@ -99,7 +99,7 @@ public class ServerApiUtil {
         if (!factoriesInitialised) {
             factoriesInitialised = true;
 
-            LOGGER.trace("Initialising API factories for server version {}", serverVersion);
+            LOGGER.debug("Initialising API factories for server version {}", serverVersion);
             apiFactories = Guice.createInjector(new ServerApiFactoryModule());
         }
 
