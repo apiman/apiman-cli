@@ -276,6 +276,31 @@ For recent changes see the [Changelog](CHANGELOG.md).
 * Docs - split detailed API usage into separate file
 * Docs - simplify README examples
 
+# Building
+
+If you just want to run _apiman-cli_, use the _apiman_ or _apiman.bat_ (Windows) scripts in the root directory.
+
+If you want to compile the JAR yourself, use:
+
+    ./gradlew clean build
+    
+Note: for distribution, _apiman-cli_ is build as a 'fat JAR' (aka 'shadow JAR'). To do this, run:
+
+    ./gradlew clean shadowJar
+
+...and look under the `build/libs` directory.
+
+Importing into your favourite IDE is easy, as long as it supports Gradle projects.
+
+## Tests
+If you want to run unit tests, run:
+
+    ./gradlew clean test
+
+If you want to run integration tests, run:
+
+    ./gradlew clean test -PintegrationTest
+    
 # Contributing
 
 Pull requests are welcome.
