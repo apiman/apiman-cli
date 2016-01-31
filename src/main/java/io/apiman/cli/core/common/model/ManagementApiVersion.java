@@ -14,22 +14,17 @@
  * limitations under the License.
  */
 
-package io.apiman.cli.core.org;
-
-import io.apiman.cli.core.common.command.ModelAction;
-import io.apiman.cli.core.org.model.Org;
+package io.apiman.cli.core.common.model;
 
 /**
+ * The supported management API versions.
+ *
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
-public interface OrgMixin extends ModelAction<Org, OrgApi> {
-    @Override
-    default Class<OrgApi> getApiClass() {
-        return OrgApi.class;
-    }
+public enum ManagementApiVersion {
+    UNSPECIFIED,
+    v11x,
+    v12x;
 
-    @Override
-    default Class<Org> getModelClass() {
-        return Org.class;
-    }
+    public static final ManagementApiVersion DEFAULT_VERSION = v12x;
 }

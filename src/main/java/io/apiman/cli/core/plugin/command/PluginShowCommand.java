@@ -14,22 +14,28 @@
  * limitations under the License.
  */
 
-package io.apiman.cli.core.org;
+package io.apiman.cli.core.plugin.command;
 
-import io.apiman.cli.core.common.command.ModelAction;
-import io.apiman.cli.core.org.model.Org;
+import io.apiman.cli.core.common.command.ModelShowCommand;
+import io.apiman.cli.exception.CommandException;
+import io.apiman.cli.core.plugin.PluginApi;
+import io.apiman.cli.core.plugin.PluginMixin;
+import io.apiman.cli.core.plugin.model.Plugin;
+import org.kohsuke.args4j.Option;
 
 /**
+ * Show a plugin.
+ *
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
-public interface OrgMixin extends ModelAction<Org, OrgApi> {
-    @Override
-    default Class<OrgApi> getApiClass() {
-        return OrgApi.class;
-    }
+public class PluginShowCommand extends ModelShowCommand<Plugin, PluginApi>
+        implements PluginMixin {
+
+    @Option(name = "--id", aliases = {"-i"}, usage = "Plugin ID")
+    private String id;
 
     @Override
-    default Class<Org> getModelClass() {
-        return Org.class;
+    protected String getModelId() throws CommandException {
+        return id;
     }
 }

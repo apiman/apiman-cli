@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package io.apiman.cli.core.org;
+package io.apiman.cli.core.gateway.command;
 
-import io.apiman.cli.core.common.command.ModelAction;
-import io.apiman.cli.core.org.model.Org;
+import org.kohsuke.args4j.Option;
 
 /**
+ * Create a gateway.
+ *
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
-public interface OrgMixin extends ModelAction<Org, OrgApi> {
-    @Override
-    default Class<OrgApi> getApiClass() {
-        return OrgApi.class;
-    }
+public class GatewayCreateCommand extends AbstractGatewayCreateCommand {
+
+    @Option(name = "--name", aliases = {"-n"}, usage = "Name", required = true)
+    private String name;
 
     @Override
-    default Class<Org> getModelClass() {
-        return Org.class;
+    protected String getGatewayName() {
+        return name;
     }
 }

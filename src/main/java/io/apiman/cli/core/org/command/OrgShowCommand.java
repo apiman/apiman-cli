@@ -14,22 +14,30 @@
  * limitations under the License.
  */
 
-package io.apiman.cli.core.org;
+package io.apiman.cli.core.org.command;
 
-import io.apiman.cli.core.common.command.ModelAction;
+import io.apiman.cli.core.common.command.ModelShowCommand;
+import io.apiman.cli.core.org.OrgApi;
+import io.apiman.cli.core.org.OrgMixin;
+import io.apiman.cli.exception.CommandException;
 import io.apiman.cli.core.org.model.Org;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.kohsuke.args4j.Option;
 
 /**
+ * Show an organisation.
+ *
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
-public interface OrgMixin extends ModelAction<Org, OrgApi> {
-    @Override
-    default Class<OrgApi> getApiClass() {
-        return OrgApi.class;
-    }
+public class OrgShowCommand extends ModelShowCommand<Org, OrgApi> implements OrgMixin {
+    private static final Logger LOGGER = LogManager.getLogger(OrgShowCommand.class);
+
+    @Option(name = "--name", aliases = {"-n"}, usage = "Name")
+    private String name;
 
     @Override
-    default Class<Org> getModelClass() {
-        return Org.class;
+    protected String getModelId() throws CommandException {
+        return name;
     }
 }

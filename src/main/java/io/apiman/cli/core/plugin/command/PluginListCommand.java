@@ -14,22 +14,18 @@
  * limitations under the License.
  */
 
-package io.apiman.cli.core.org;
+package io.apiman.cli.core.plugin.command;
 
-import io.apiman.cli.core.common.command.ModelAction;
-import io.apiman.cli.core.org.model.Org;
+import io.apiman.cli.core.common.command.ModelListCommand;
+import io.apiman.cli.core.plugin.PluginApi;
+import io.apiman.cli.core.plugin.PluginMixin;
+import io.apiman.cli.core.plugin.model.Plugin;
 
 /**
+ * List plugins.
+ *
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
-public interface OrgMixin extends ModelAction<Org, OrgApi> {
-    @Override
-    default Class<OrgApi> getApiClass() {
-        return OrgApi.class;
-    }
-
-    @Override
-    default Class<Org> getModelClass() {
-        return Org.class;
-    }
+public class PluginListCommand extends ModelListCommand<Plugin, PluginApi>
+        implements PluginMixin {
 }

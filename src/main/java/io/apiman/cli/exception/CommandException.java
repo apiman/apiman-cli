@@ -14,22 +14,23 @@
  * limitations under the License.
  */
 
-package io.apiman.cli.core.org;
-
-import io.apiman.cli.core.common.command.ModelAction;
-import io.apiman.cli.core.org.model.Org;
+package io.apiman.cli.exception;
 
 /**
+ * Represents an error during command execution.
+ *
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
-public interface OrgMixin extends ModelAction<Org, OrgApi> {
-    @Override
-    default Class<OrgApi> getApiClass() {
-        return OrgApi.class;
+public class CommandException extends RuntimeException {
+    public CommandException(Throwable cause) {
+        super(cause);
     }
 
-    @Override
-    default Class<Org> getModelClass() {
-        return Org.class;
+    public CommandException(String message) {
+        super(message);
+    }
+
+    public CommandException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

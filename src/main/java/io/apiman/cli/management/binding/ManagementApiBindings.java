@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,22 +14,21 @@
  * limitations under the License.
  */
 
-package io.apiman.cli.core.org;
+package io.apiman.cli.management.binding;
 
-import io.apiman.cli.core.common.command.ModelAction;
-import io.apiman.cli.core.org.model.Org;
+import io.apiman.cli.core.common.model.ManagementApiVersion;
 
 /**
+ * Convenience methods for instantiating {@link ManagementApiBinding}s.
+ *
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
-public interface OrgMixin extends ModelAction<Org, OrgApi> {
-    @Override
-    default Class<OrgApi> getApiClass() {
-        return OrgApi.class;
+public class ManagementApiBindings {
+    public static ManagementApiBinding boundTo(Class<?> apiClass) {
+        return new ManagementApiBindingImpl(apiClass);
     }
 
-    @Override
-    default Class<Org> getModelClass() {
-        return Org.class;
+    public static ManagementApiBinding boundTo(Class<?> apiClass, ManagementApiVersion serverVersion) {
+        return new ManagementApiBindingImpl(apiClass, serverVersion);
     }
 }

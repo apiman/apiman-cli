@@ -18,8 +18,8 @@ package io.apiman.cli.core.common.util;
 
 import io.apiman.cli.core.common.ActionApi;
 import io.apiman.cli.core.common.model.ServerAction;
-import io.apiman.cli.core.common.model.ServerVersion;
-import io.apiman.cli.server.ServerApiUtil;
+import io.apiman.cli.core.common.model.ManagementApiVersion;
+import io.apiman.cli.management.ManagementApiUtil;
 
 import java.net.HttpURLConnection;
 
@@ -39,7 +39,7 @@ public class ServerActionUtil {
      * @param apiClient     the Server Action API client
      */
     public static void publishApi(String orgName, String apiName, String apiVersion,
-                                  ServerVersion serverVersion, ActionApi apiClient) {
+                                  ManagementApiVersion serverVersion, ActionApi apiClient) {
         String actionType;
         switch (serverVersion) {
             case v11x:
@@ -53,7 +53,7 @@ public class ServerActionUtil {
                 break;
         }
 
-        ServerApiUtil.invokeAndCheckResponse(HttpURLConnection.HTTP_NO_CONTENT, () -> {
+        ManagementApiUtil.invokeAndCheckResponse(HttpURLConnection.HTTP_NO_CONTENT, () -> {
             final ServerAction action = new ServerAction(
                     actionType,
                     orgName,
