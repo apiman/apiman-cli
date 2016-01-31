@@ -17,7 +17,7 @@
 package io.apiman.cli.core.common.action;
 
 import io.apiman.cli.exception.ActionException;
-import io.apiman.cli.util.ApiUtil;
+import io.apiman.cli.server.ServerApiUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kohsuke.args4j.CmdLineParser;
@@ -42,9 +42,9 @@ public abstract class ModelCreateAction<M, A> extends AbstractModelAction<M, A> 
     public void performAction(CmdLineParser parser) throws ActionException {
         LOGGER.debug("Creating {}", this::getModelName);
 
-        ApiUtil.invokeAndCheckResponse(() -> {
+        ServerApiUtil.invokeAndCheckResponse(() -> {
             try {
-                final A apiClient = buildApiClient(getApiClass());
+                final A apiClient = buildServerApiClient(getApiClass());
                 final Method createMethod = apiClient.getClass().getMethod("create", getModelClass());
                 return (Response) createMethod.invoke(apiClient, buildModelInstance());
 

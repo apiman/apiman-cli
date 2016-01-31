@@ -5,7 +5,7 @@ jdk:
 services:
   - docker
 before_install:
- - docker pull jboss/apiman-wildfly:1.1.9.Final
+ - docker pull outofcoffee/apiman-wildfly8:1.2.1.Final
 script:
- - docker run -d -p 8080:8080 jboss/apiman-wildfly:1.1.9.Final
+ - docker run -d -p 8080:8080 outofcoffee/apiman-wildfly8:1.2.1.Final
  - ./gradlew test -PintegrationTest --info

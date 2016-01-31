@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,22 +14,20 @@
  * limitations under the License.
  */
 
-package io.apiman.cli.core.api;
-
-import io.apiman.cli.core.common.action.ModelAction;
-import io.apiman.cli.core.api.model.Api;
+package io.apiman.cli.server.factory;
 
 /**
+ * Builds a server API client proxy for a given API interface.
+ *
+ * @param <T> the API interface
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
-public interface ApiMixin extends ModelAction<Api, Version12xServerApi> {
-    @Override
-    default Class<Version12xServerApi> getApiClass() {
-        return Version12xServerApi.class;
-    }
-
-    @Override
-    default Class<Api> getModelClass() {
-        return Api.class;
-    }
+public interface ServerApiFactory<T> {
+    /**
+     * @param username     the management API username
+     * @param password     the management API password
+     * @param debugLogging whether debug logging should be enabled
+     * @return an API client for the given Class
+     */
+    T build(String endpoint, String username, String password, boolean debugLogging);
 }

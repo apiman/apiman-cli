@@ -16,10 +16,11 @@
 
 package io.apiman.cli.core.gateway.action;
 
-import io.apiman.cli.exception.ActionException;
-import io.apiman.cli.exception.ExitWithCodeException;
 import io.apiman.cli.core.gateway.GatewayApi;
 import io.apiman.cli.core.gateway.model.GatewayTestResponse;
+import io.apiman.cli.exception.ActionException;
+import io.apiman.cli.exception.ExitWithCodeException;
+import io.apiman.cli.util.LogUtil;
 import io.apiman.cli.util.MappingUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,8 +28,6 @@ import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 
 import java.text.MessageFormat;
-
-import static io.apiman.cli.util.LogUtil.OUTPUT;
 
 /**
  * Test a gateway.
@@ -52,10 +51,10 @@ public class GatewayTestAction extends AbstractGatewayCreateAction {
 
         GatewayTestResponse response;
         try {
-            final GatewayApi apiClient = buildApiClient(GatewayApi.class);
+            final GatewayApi apiClient = buildServerApiClient(GatewayApi.class);
             response = apiClient.test(buildModelInstance());
 
-            OUTPUT.info("Test {}", () -> response.isSuccess() ? "successful" : "failed");
+            LogUtil.OUTPUT.info("Test {}", () -> response.isSuccess() ? "successful" : "failed");
             LOGGER.debug("Test result: {}", () -> MappingUtil.safeWriteValueAsJson(response));
 
         } catch (Exception e) {

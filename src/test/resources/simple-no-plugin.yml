@@ -20,7 +20,7 @@
         config:
           endpoint: "http://example.com"
           endpointType: "rest"
-          publicService: true
+          public: true
           gateway: "test-gw"
         policies:
           - name: "CachingPolicy"

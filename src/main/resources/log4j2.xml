@@ -17,7 +17,10 @@
 
 <Configuration status="WARN">
     <Appenders>
-        <Console name="Console" target="SYSTEM_OUT">
+        <Console name="ConsoleTerse" target="SYSTEM_OUT">
+            <PatternLayout pattern="%-5level %msg%n"/>
+        </Console>
+        <Console name="ConsoleVerbose" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </Console>
 
@@ -33,7 +36,7 @@
         </Logger>
 
         <Root level="info">
-            <AppenderRef ref="Console"/>
+            <AppenderRef ref="ConsoleVerbose"/>
         </Root>
     </Loggers>
 </Configuration>

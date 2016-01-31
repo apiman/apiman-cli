@@ -17,6 +17,7 @@
 package io.apiman.cli.core.common.action;
 
 import io.apiman.cli.exception.ActionException;
+import io.apiman.cli.util.LogUtil;
 import io.apiman.cli.util.MappingUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,8 +27,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.List;
-
-import static io.apiman.cli.util.LogUtil.OUTPUT;
 
 /**
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
@@ -51,7 +50,7 @@ public abstract class ModelListAction<M, A> extends AbstractModelAction<M, A> {
         LOGGER.debug("Listing {}", this::getModelName);
 
         try {
-            final A apiClient = buildApiClient(getApiClass());
+            final A apiClient = buildServerApiClient(getApiClass());
             final Method listMethod = apiClient.getClass().getMethod("list");
             processList((List<M>) listMethod.invoke(apiClient));
 
@@ -61,6 +60,6 @@ public abstract class ModelListAction<M, A> extends AbstractModelAction<M, A> {
     }
 
     protected void processList(List<M> model) {
-        OUTPUT.info(MappingUtil.safeWriteValueAsJson(model));
+        LogUtil.OUTPUT.info(MappingUtil.safeWriteValueAsJson(model));
     }
 }

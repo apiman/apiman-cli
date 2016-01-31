@@ -17,15 +17,13 @@
 package io.apiman.cli.core.api.action;
 
 import com.google.common.collect.Lists;
-import io.apiman.cli.exception.ActionException;
-import io.apiman.cli.core.api.ApiApi;
 import io.apiman.cli.core.api.ApiMixin;
-import io.apiman.cli.core.api.ServiceApi;
 import io.apiman.cli.core.api.model.Api;
 import io.apiman.cli.core.api.model.ApiConfig;
 import io.apiman.cli.core.api.model.ApiGateway;
-import io.apiman.cli.core.api.model.ServiceConfig;
-import io.apiman.cli.util.ApiUtil;
+import io.apiman.cli.core.api.VersionAgnosticApi;
+import io.apiman.cli.exception.ActionException;
+import io.apiman.cli.server.ServerApiUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kohsuke.args4j.CmdLineParser;
@@ -76,24 +74,6 @@ public class ApiCreateAction extends AbstractApiAction implements ApiMixin {
                 description,
                 initialVersion);
 
-        switch (serverVersion) {
-            case v119:
-                // legacy apiman 1.1.9 support
-                createLegacyConfiguredApi(api);
-                break;
-
-            default:
-                createConfiguredApi(api);
-                break;
-        }
-    }
-
-    /**
-     * Apiman 1.2.x support
-     *
-     * @param api
-     */
-    private void createConfiguredApi(Api api) {
         final ApiConfig config = new ApiConfig(
                 endpoint,
                 endpointType,
@@ -101,30 +81,10 @@ public class ApiCreateAction extends AbstractApiAction implements ApiMixin {
                 Lists.newArrayList(new ApiGateway(gateway)));
 
         // create
-        final ApiApi apiClient = buildApiClient(ApiApi.class);
-        ApiUtil.invokeAndCheckResponse(() -> apiClient.create(orgName, api));
+        final VersionAgnosticApi apiClient = buildServerApiClient(VersionAgnosticApi.class, serverVersion);
+        ServerApiUtil.invokeAndCheckResponse(() -> apiClient.create(orgName, api));
 
         // configure
-        ApiUtil.invokeAndCheckResponse(() -> apiClient.configure(orgName, name, initialVersion, config));
-    }
-
-    /**
-     * Legacy apiman 1.1.9 support.
-     *
-     * @param api
-     */
-    private void createLegacyConfiguredApi(Api api) {
-        final ServiceConfig config = new ServiceConfig(
-                endpoint,
-                endpointType,
-                publicApi,
-                Lists.newArrayList(new ApiGateway(gateway)));
-
-        // create
-        final ServiceApi apiClient = buildApiClient(ServiceApi.class);
-        ApiUtil.invokeAndCheckResponse(() -> apiClient.create(orgName, api));
-
-        // configure
-        ApiUtil.invokeAndCheckResponse(() -> apiClient.configure(orgName, name, initialVersion, config));
+        ServerApiUtil.invokeAndCheckResponse(() -> apiClient.configure(orgName, name, initialVersion, config));
     }
 }

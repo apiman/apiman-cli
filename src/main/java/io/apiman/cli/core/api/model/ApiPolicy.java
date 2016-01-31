@@ -29,19 +29,25 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ApiPolicy {
     /**
-     * Note: this is a property for requests.
+     * Note: this is a request property.
      */
     @JsonProperty
     private String definitionId;
 
     /**
-     * This is a property for responses.
+     * This is a response property.
      */
     @JsonProperty
     private String policyDefinitionId;
 
     @JsonProperty
     private String configuration;
+
+    /**
+     * This is a response property.
+     */
+    @JsonProperty
+    private Long id;
 
     public ApiPolicy() {
     }
@@ -53,5 +59,9 @@ public class ApiPolicy {
 
     public String getPolicyDefinitionId() {
         return policyDefinitionId;
+    }
+
+    public Long getId() {
+        return id;
     }
 }

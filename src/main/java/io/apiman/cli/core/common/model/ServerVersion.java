@@ -22,6 +22,9 @@ package io.apiman.cli.core.common.model;
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
 public enum ServerVersion {
-    v119,
-    v12x
+    UNSPECIFIED,
+    v11x,
+    v12x;
+
+    public static final ServerVersion DEFAULT_VERSION = v12x;
 }

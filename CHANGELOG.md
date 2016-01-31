@@ -5,7 +5,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
-- N/A
+- Declarative Mode now supports both v1.1.x and v1.2.x management server APIs
+- Declarative Mode will attempt to configure published APIs on v1.2.x
+- Declarative Mode will attempt to republish APIs on v1.2.x
 
 ## [0.1.5] - 2016-01-23
 ### Added
@@ -22,7 +24,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Improved JavaDocs
 - Adds Apache 2.0 license and file headers
 - Renamed 'service' references to 'API'
-- Support for both apiman 1.1.9 and 1.2.x servers, using `--serverVersion` flag (default is 1.1.9)
+- Support for both apiman v1.1.x and v1.2.x servers, using `--serverVersion` flag (default is v1.1.x)
 
 ## [0.1.2] - 2016-01-11
 ### Added
