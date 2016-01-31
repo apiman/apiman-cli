@@ -42,7 +42,7 @@ public class PluginTest extends BaseTest {
                 "--serverPassword", "admin123!",
                 "--groupId", "io.apiman.plugins",
                 "--artifactId", "apiman-plugins-test-policy",
-                "--version", "1.1.8.Final");
+                "--version", "1.2.1.Final");
     }
 
     @Test
