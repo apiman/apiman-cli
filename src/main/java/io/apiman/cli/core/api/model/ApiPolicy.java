@@ -52,8 +52,7 @@ public class ApiPolicy {
     public ApiPolicy() {
     }
 
-    public ApiPolicy(String definitionId, String configuration) {
-        this.definitionId = definitionId;
+    public ApiPolicy(String configuration) {
         this.configuration = configuration;
     }
 
@@ -63,5 +62,9 @@ public class ApiPolicy {
 
     public Long getId() {
         return id;
+    }
+
+    public void setDefinitionId(String definitionId) {
+        this.definitionId = definitionId;
     }
 }

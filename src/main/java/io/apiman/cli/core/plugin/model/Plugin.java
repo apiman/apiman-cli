@@ -29,7 +29,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Plugin {
     @JsonProperty
-    private Integer id;
+    private Long id;
 
     @JsonProperty
     private String name;

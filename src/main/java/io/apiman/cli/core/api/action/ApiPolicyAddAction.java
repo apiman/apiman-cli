@@ -81,7 +81,8 @@ public class ApiPolicyAddAction extends AbstractApiAction implements ApiMixin {
         LOGGER.debug("Adding policy '{}' to API '{}' with configuration: {}",
                 () -> policyName, this::getModelName, () -> policyConfig);
 
-        final ApiPolicy apiPolicy = new ApiPolicy(policyName, policyConfig);
+        final ApiPolicy apiPolicy = new ApiPolicy(policyName);
+        apiPolicy.setDefinitionId(policyName);
 
         ServerApiUtil.invokeAndCheckResponse(() ->
                 buildServerApiClient(VersionAgnosticApi.class, serverVersion).addPolicy(orgName, name, version, apiPolicy));

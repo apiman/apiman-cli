@@ -337,7 +337,6 @@ public class ApplyAction extends AbstractFinalAction {
                 final String policyName = declarativePolicy.getName();
 
                 final ApiPolicy apiPolicy = new ApiPolicy(
-                        policyName,
                         MappingUtil.safeWriteValueAsJson(declarativePolicy.getConfig()));
 
                 // determine if the policy already exists for this API
@@ -360,6 +359,8 @@ public class ApplyAction extends AbstractFinalAction {
                 } else {
                     // add new policy
                     LOGGER.info("Adding policy '{}' to API: {}", policyName, apiName);
+
+                    apiPolicy.setDefinitionId(policyName);
                     apiClient.addPolicy(orgName, apiName, apiVersion, apiPolicy);
                 }
             });
