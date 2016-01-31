@@ -31,7 +31,8 @@ import org.junit.runners.MethodSorters;
 public class PluginTest extends BaseTest {
 
     /**
-     * Requires a plugin whose Maven coordinates are accessible in Maven central.
+     * Adds a plugin to the system. Note: this requires the coordinates of a plugin
+     * whose Maven coordinates are accessible in Maven central.
      */
     @Test
     public void test1_create() {
@@ -41,7 +42,7 @@ public class PluginTest extends BaseTest {
                 "--serverUsername", "admin",
                 "--serverPassword", "admin123!",
                 "--groupId", "io.apiman.plugins",
-                "--artifactId", "apiman-plugins-test-policy",
+                "--artifactId", "apiman-plugins-transformation-policy",
                 "--version", "1.2.1.Final");
     }
 

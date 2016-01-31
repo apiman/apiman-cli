@@ -49,6 +49,9 @@ public class ApiTest extends BaseTest {
                 "--orgName", ORG_NAME);
     }
 
+    /**
+     * Adds a policy, using a built-in plugin, to the API.
+     */
     @Test
     public void test2_addPolicy() {
         Cli.main("api", "policy", "add",
@@ -58,8 +61,8 @@ public class ApiTest extends BaseTest {
                 "--serverPassword", "admin123!",
                 "--name", "example",
                 "--version", "1.0",
-                "--policyName", "test-policy",
-                "--configFile", "examples/policies/empty-policy-config.json",
+                "--policyName", "CachingPolicy",
+                "--configFile", "examples/policies/caching-policy-config.json",
                 "--orgName", ORG_NAME);
     }
 
