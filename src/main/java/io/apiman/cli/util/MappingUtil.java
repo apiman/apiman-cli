@@ -31,7 +31,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
-import org.modelmapper.spi.MappingContext;
 
 /**
  * Shared POJO/JSON/YAML mapping utility methods.
@@ -84,7 +83,7 @@ public class MappingUtil {
      * Return an instance of {@code destinationClass} with a copy of identical fields to those found
      * in {@code source}.
      *
-     * @param source         the source object
+     * @param source           the source object
      * @param destinationClass the return type Class definition
      * @param <D>              the return type
      * @param <S>              the source type
@@ -108,7 +107,7 @@ public class MappingUtil {
     }
 
     /**
-     * Configures a ModelMapper with some specific converters.
+     * Configures a ModelMapper with some specific post-conversion steps.
      *
      * @return a configured ModelMapper
      */
@@ -119,25 +118,25 @@ public class MappingUtil {
                 .setFieldMatchingEnabled(true)
                 .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE);
 
-        // ApiConfig -> ServiceConfig
-        mapper.addConverter((MappingContext<ApiConfig, ServiceConfig> context) -> {
-            final ServiceConfig serviceConfig = context.getMappingEngine().map(context);
+        // PostConverter for ApiConfig -> ServiceConfig
+        mapper.createTypeMap(ApiConfig.class, ServiceConfig.class).setPostConverter(context -> {
+            final ServiceConfig serviceConfig = context.getDestination();
             serviceConfig.setPublicService(context.getSource().isPublicApi());
             return serviceConfig;
         });
 
-        // DeclarativeGateway -> Gateway
-        mapper.addConverter((MappingContext<DeclarativeGateway, Gateway> context) -> {
-            final Gateway gateway = context.getMappingEngine().map(context);
+        // PostConverter for DeclarativeGateway -> Gateway
+        mapper.createTypeMap(DeclarativeGateway.class, Gateway.class).setPostConverter(context -> {
+            final Gateway gateway = context.getDestination();
             gateway.setConfiguration(safeWriteValueAsJson(context.getSource().getConfig()));
             return gateway;
         });
 
-        // DeclarativeApiConfig -> ApiConfig
-        mapper.addConverter((MappingContext<DeclarativeApiConfig, ApiConfig> context) -> {
+        // PostConverter for DeclarativeApiConfig -> ApiConfig
+        mapper.createTypeMap(DeclarativeApiConfig.class, ApiConfig.class).setPostConverter(context -> {
             final DeclarativeApiConfig declarativeApiConfig = context.getSource();
 
-            final ApiConfig apiConfig = context.getMappingEngine().map(context);
+            final ApiConfig apiConfig = context.getDestination();
             apiConfig.setPublicApi(declarativeApiConfig.isMakePublic());
             apiConfig.setGateways(Lists.newArrayList(new ApiGateway(declarativeApiConfig.getGateway())));
 

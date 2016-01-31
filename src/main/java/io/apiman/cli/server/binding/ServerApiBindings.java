@@ -19,6 +19,8 @@ package io.apiman.cli.server.binding;
 import io.apiman.cli.core.common.model.ServerVersion;
 
 /**
+ * Convenience methods for instantiating {@link ServerApiBinding}s.
+ *
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
 public class ServerApiBindings {

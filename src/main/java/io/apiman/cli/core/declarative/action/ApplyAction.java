@@ -144,7 +144,7 @@ public class ApplyAction extends AbstractFinalAction {
     /**
      * Add gateways if they are not present.
      *
-     * @param declaration
+     * @param declaration the Declaration to apply.
      */
     private void applyGateways(Declaration declaration) {
         ofNullable(declaration.getSystem().getGateways()).ifPresent(gateways -> {
@@ -171,7 +171,7 @@ public class ApplyAction extends AbstractFinalAction {
     /**
      * Add plugins if they are not present.
      *
-     * @param declaration
+     * @param declaration the Declaration to apply.
      */
     private void applyPlugins(Declaration declaration) {
         ofNullable(declaration.getSystem().getPlugins()).ifPresent(plugins -> {
@@ -212,7 +212,7 @@ public class ApplyAction extends AbstractFinalAction {
     /**
      * Add and configure APIs if they are not present.
      *
-     * @param declaration
+     * @param declaration the Declaration to apply.
      * @param orgName
      */
     private void applyApis(Declaration declaration, String orgName) {

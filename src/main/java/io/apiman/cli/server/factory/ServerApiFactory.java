@@ -17,6 +17,8 @@
 package io.apiman.cli.server.factory;
 
 /**
+ * Builds a server API client proxy for a given API interface.
+ *
  * @param <T> the API interface
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */

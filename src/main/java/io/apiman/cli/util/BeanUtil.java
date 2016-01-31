@@ -50,8 +50,8 @@ public class BeanUtil {
     /**
      * Whether two nullable objects are equal.
      *
-     * @param o1
-     * @param o2
+     * @param o1 a nullable object
+     * @param o2 a nullable object
      * @return <code>true</code> if objects are equal, otherwise <code>false</code>
      */
     public static <T> boolean safeEquals(T o1, T o2) {

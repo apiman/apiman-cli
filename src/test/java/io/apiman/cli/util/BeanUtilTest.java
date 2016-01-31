@@ -17,14 +17,13 @@
 package io.apiman.cli.util;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import org.junit.Test;
 
 import java.util.List;
-import java.util.Map;
 
-import static com.google.common.collect.Maps.newHashMap;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests for {@link BeanUtil}.
@@ -80,27 +79,22 @@ public class BeanUtilTest {
     }
 
     @Test
-    public void testSafeWriteValueAsJson_Populated() throws Exception {
-        // test data
-        final Map<String, String> input = newHashMap();
-        input.put("key", "value");
-
-        // test
-        final String actual = MappingUtil.safeWriteValueAsJson(input);
-
-        // assertions
-        assertEquals("{\n  \"key\" : \"value\"\n}", actual);
+    public void testSafeEquals_True() throws Exception {
+        assertTrue(BeanUtil.safeEquals("input", "input"));
     }
 
     @Test
-    public void testSafeWriteValueAsJson_Null() throws Exception {
-        // test data
-        final Map<String, String> input = null;
+    public void testSafeEquals_False() throws Exception {
+        assertFalse(BeanUtil.safeEquals("input", "different"));
+    }
 
-        // test
-        final String actual = MappingUtil.safeWriteValueAsJson(input);
+    @Test
+    public void testSafeEquals_FalseNull() throws Exception {
+        assertFalse(BeanUtil.safeEquals("input", null));
+    }
 
-        // assertions
-        assertEquals("null", actual);
+    @Test
+    public void testSafeEquals_BothNull() throws Exception {
+        assertTrue(BeanUtil.safeEquals(null, null));
     }
 }

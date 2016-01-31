@@ -17,6 +17,8 @@
 package io.apiman.cli.server.factory;
 
 /**
+ * Builds a server API client proxy for a given API interface.
+ *
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
 public class SimpleServerApiFactoryImpl<T> extends AbstractServerApiFactory<T, T> {

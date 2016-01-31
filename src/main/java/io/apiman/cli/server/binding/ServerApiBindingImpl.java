@@ -23,6 +23,9 @@ import io.apiman.cli.core.common.model.ServerVersion;
 import java.lang.annotation.Annotation;
 
 /**
+ * Specialises an injection binding between an interface and implementation class. The {@link #value()}
+ * represents the API interface that the implementation provides.
+ *
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
 public class ServerApiBindingImpl implements ServerApiBinding {

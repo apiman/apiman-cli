@@ -26,6 +26,9 @@ import java.lang.annotation.Target;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
+ * Specialises an injection binding between an interface and implementation class. The {@link #value()}
+ * represents the API interface that the implementation provides.
+ *
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
 @Retention(RUNTIME)

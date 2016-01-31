@@ -23,6 +23,8 @@ import retrofit.converter.JacksonConverter;
 import static io.apiman.cli.util.MappingUtil.JSON_MAPPER;
 
 /**
+ * Builds a server API client proxy for a given API interface.
+ *
  * @param <T> the requested API interface
  * @param <A> the actual API interface
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}

@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package io.apiman.cli.util;
+package io.apiman.cli.server;
 
+import io.apiman.cli.core.common.model.ServerVersion;
 import io.apiman.cli.core.org.OrgApi;
 import io.apiman.cli.exception.ActionException;
+import io.apiman.cli.server.ServerApiUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,11 +39,11 @@ import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 /**
- * Tests for {@link ApiUtil}.
+ * Tests for {@link ServerApiUtil}.
  *
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
-public class ApiUtilTest {
+public class ServerApiUtilTest {
     public static final String URL = "http://example.com";
 
     @Mock
@@ -69,7 +71,7 @@ public class ApiUtilTest {
         when(request.get()).thenReturn(response);
 
         // test
-        ApiUtil.invokeAndCheckResponse(request);
+        ServerApiUtil.invokeAndCheckResponse(request);
 
         // assertions
         verify(request).get();
@@ -86,7 +88,7 @@ public class ApiUtilTest {
 
         // test
         try {
-            ApiUtil.invokeAndCheckResponse(HttpURLConnection.HTTP_OK, request);
+            ServerApiUtil.invokeAndCheckResponse(HttpURLConnection.HTTP_OK, request);
             fail(ActionException.class + " expected");
 
         } catch (ActionException ignored) {
@@ -106,7 +108,7 @@ public class ApiUtilTest {
 
         // test
         try {
-            ApiUtil.invokeAndCheckResponse(HttpURLConnection.HTTP_OK, request);
+            ServerApiUtil.invokeAndCheckResponse(HttpURLConnection.HTTP_OK, request);
             fail(ActionException.class + " expected");
 
         } catch (ActionException ignored) {
@@ -125,7 +127,7 @@ public class ApiUtilTest {
 
         // test
         try {
-            ApiUtil.invokeAndCheckResponse(HttpURLConnection.HTTP_OK, request);
+            ServerApiUtil.invokeAndCheckResponse(HttpURLConnection.HTTP_OK, request);
             fail(IllegalArgumentException.class + " expected");
 
         } catch (IllegalArgumentException ignored) {
@@ -137,7 +139,7 @@ public class ApiUtilTest {
     @Test
     public void testBuildApiClient() throws Exception {
         // test
-        final OrgApi actual = ApiUtil.buildApiClient(OrgApi.class, URL, "username", "password", true);
+        final OrgApi actual = ServerApiUtil.buildServerApiClient(OrgApi.class, URL, "username", "password", true, ServerVersion.UNSPECIFIED);
 
         // assertions
         assertNotNull(actual);
