@@ -23,6 +23,7 @@ import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Tests for {@link MappingUtil}.
@@ -40,7 +41,9 @@ public class MappingUtilTest {
         final String actual = MappingUtil.safeWriteValueAsJson(input);
 
         // assertions
-        assertEquals("{\n  \"key\" : \"value\"\n}", actual);
+        assertNotNull(actual);
+        assertEquals("Object should be serialised to JSON (check ignores whitespace)",
+                "{\"key\":\"value\"}", actual.replaceAll("\\s+",""));
     }
 
     @Test
@@ -66,5 +69,4 @@ public class MappingUtilTest {
         // assertions
         assertEquals(input, actual);
     }
-
 }
