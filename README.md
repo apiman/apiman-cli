@@ -297,7 +297,7 @@ If you want to run unit tests, run:
 
     ./gradlew clean test
 
-If you want to run integration tests, run:
+If you want to run integration tests, ensure you have an _apiman_ instance running on http://localhost:8080, then run:
 
     ./gradlew clean test -PintegrationTest
     
