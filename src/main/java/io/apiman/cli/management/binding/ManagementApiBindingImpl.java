@@ -18,7 +18,7 @@ package io.apiman.cli.management.binding;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
-import io.apiman.cli.core.common.model.ServerVersion;
+import io.apiman.cli.core.common.model.ManagementApiVersion;
 
 import java.lang.annotation.Annotation;
 
@@ -30,13 +30,13 @@ import java.lang.annotation.Annotation;
  */
 public class ManagementApiBindingImpl implements ManagementApiBinding {
     private final Class<?> value;
-    private final ServerVersion serverVersion;
+    private final ManagementApiVersion serverVersion;
 
     public ManagementApiBindingImpl(Class<?> apiClass) {
-        this(apiClass, ServerVersion.UNSPECIFIED);
+        this(apiClass, ManagementApiVersion.UNSPECIFIED);
     }
 
-    public ManagementApiBindingImpl(Class<?> apiClass, ServerVersion serverVersion) {
+    public ManagementApiBindingImpl(Class<?> apiClass, ManagementApiVersion serverVersion) {
         this.value = apiClass;
         this.serverVersion = serverVersion;
     }
@@ -73,7 +73,7 @@ public class ManagementApiBindingImpl implements ManagementApiBinding {
         return this.value;
     }
 
-    public ServerVersion serverVersion() {
+    public ManagementApiVersion serverVersion() {
         return serverVersion;
     }
 }

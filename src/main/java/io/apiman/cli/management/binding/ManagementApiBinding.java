@@ -17,7 +17,7 @@
 package io.apiman.cli.management.binding;
 
 import com.google.inject.BindingAnnotation;
-import io.apiman.cli.core.common.model.ServerVersion;
+import io.apiman.cli.core.common.model.ManagementApiVersion;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -37,5 +37,5 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 public @interface ManagementApiBinding {
     Class<?> value();
 
-    ServerVersion serverVersion() default ServerVersion.UNSPECIFIED;
+    ManagementApiVersion serverVersion() default ManagementApiVersion.UNSPECIFIED;
 }

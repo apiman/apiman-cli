@@ -16,7 +16,7 @@
 
 package io.apiman.cli.management;
 
-import io.apiman.cli.core.common.model.ServerVersion;
+import io.apiman.cli.core.common.model.ManagementApiVersion;
 import io.apiman.cli.core.org.OrgApi;
 import io.apiman.cli.exception.CommandException;
 import org.junit.After;
@@ -138,7 +138,7 @@ public class ManagementApiUtilTest {
     @Test
     public void testBuildApiClient() throws Exception {
         // test
-        final OrgApi actual = ManagementApiUtil.buildServerApiClient(OrgApi.class, URL, "username", "password", true, ServerVersion.UNSPECIFIED);
+        final OrgApi actual = ManagementApiUtil.buildServerApiClient(OrgApi.class, URL, "username", "password", true, ManagementApiVersion.UNSPECIFIED);
 
         // assertions
         assertNotNull(actual);

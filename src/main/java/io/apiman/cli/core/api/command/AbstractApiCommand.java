@@ -20,7 +20,7 @@ import io.apiman.cli.core.common.command.AbstractModelCommand;
 import io.apiman.cli.core.api.Version12xServerApi;
 import io.apiman.cli.core.api.ApiMixin;
 import io.apiman.cli.core.api.model.Api;
-import io.apiman.cli.core.common.model.ServerVersion;
+import io.apiman.cli.core.common.model.ManagementApiVersion;
 import org.kohsuke.args4j.Option;
 
 /**
@@ -33,5 +33,5 @@ public abstract class AbstractApiCommand extends AbstractModelCommand<Api, Versi
     protected String orgName;
 
     @Option(name = "--serverVersion", aliases = {"-sv"}, usage = "Management API server version")
-    protected ServerVersion serverVersion = ServerVersion.DEFAULT_VERSION;
+    protected ManagementApiVersion serverVersion = ManagementApiVersion.DEFAULT_VERSION;
 }

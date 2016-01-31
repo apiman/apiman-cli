@@ -20,7 +20,7 @@ import com.google.common.io.CharStreams;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
-import io.apiman.cli.core.common.model.ServerVersion;
+import io.apiman.cli.core.common.model.ManagementApiVersion;
 import io.apiman.cli.exception.CommandException;
 import io.apiman.cli.management.binding.ManagementApiBindings;
 import io.apiman.cli.management.factory.ManagementApiFactory;
@@ -94,7 +94,7 @@ public class ManagementApiUtil {
      */
     @SuppressWarnings("unchecked")
     public static <T> T buildServerApiClient(Class<T> clazz, String endpoint, String username,
-                                             String password, boolean debugLogging, ServerVersion serverVersion) {
+                                             String password, boolean debugLogging, ManagementApiVersion serverVersion) {
 
         if (!factoriesInitialised) {
             LOGGER.trace("Initialising API factories");

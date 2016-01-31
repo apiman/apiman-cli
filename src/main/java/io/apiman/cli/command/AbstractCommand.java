@@ -17,7 +17,7 @@
 package io.apiman.cli.command;
 
 import com.google.common.collect.Maps;
-import io.apiman.cli.core.common.model.ServerVersion;
+import io.apiman.cli.core.common.model.ManagementApiVersion;
 import io.apiman.cli.exception.CommandException;
 import io.apiman.cli.exception.ExitWithCodeException;
 import io.apiman.cli.util.LogUtil;
@@ -267,7 +267,7 @@ public abstract class AbstractCommand implements Command {
      * @return an API client for the given Class
      */
     protected <T> T buildServerApiClient(Class<T> clazz) {
-        return buildServerApiClient(clazz, ServerVersion.UNSPECIFIED);
+        return buildServerApiClient(clazz, ManagementApiVersion.UNSPECIFIED);
     }
 
     /**
@@ -276,7 +276,7 @@ public abstract class AbstractCommand implements Command {
      * @param <T>           the API interface
      * @return an API client for the given Class
      */
-    protected <T> T buildServerApiClient(Class<T> clazz, ServerVersion serverVersion) {
+    protected <T> T buildServerApiClient(Class<T> clazz, ManagementApiVersion serverVersion) {
         return ManagementApiUtil.buildServerApiClient(
                 clazz,
                 getManagementApiEndpoint(),

@@ -24,7 +24,7 @@ import io.apiman.cli.core.api.model.Api;
 import io.apiman.cli.core.api.model.ApiConfig;
 import io.apiman.cli.core.api.model.ApiPolicy;
 import io.apiman.cli.core.common.ActionApi;
-import io.apiman.cli.core.common.model.ServerVersion;
+import io.apiman.cli.core.common.model.ManagementApiVersion;
 import io.apiman.cli.core.common.util.ServerActionUtil;
 import io.apiman.cli.core.declarative.model.Declaration;
 import io.apiman.cli.core.declarative.model.DeclarativeApi;
@@ -77,7 +77,7 @@ public class ApplyCommand extends AbstractFinalCommand {
     private List<String> properties;
 
     @Option(name = "--serverVersion", aliases = {"-sv"}, usage = "Management API server version")
-    protected ServerVersion serverVersion = ServerVersion.DEFAULT_VERSION;
+    protected ManagementApiVersion serverVersion = ManagementApiVersion.DEFAULT_VERSION;
 
     @Override
     protected String getCommandDescription() {
@@ -264,13 +264,13 @@ public class ApplyCommand extends AbstractFinalCommand {
                     final Api api = MappingUtil.map(declarativeApi, Api.class);
                     apiClient.create(orgName, api);
 
-                    if (ServerVersion.v11x.equals(serverVersion)) {
+                    if (ManagementApiVersion.v11x.equals(serverVersion)) {
                         // do this only on initial creation as v1.1.x API throws a 409 if this is called more than once
                         configureApi(declarativeApi, apiClient, orgName, apiName, apiVersion);
                     }
                 });
 
-        if (ServerVersion.v12x.equals(serverVersion)) {
+        if (ManagementApiVersion.v12x.equals(serverVersion)) {
             // The v1.2.x API supports configuration of the API even if published (but not retired)
             final String apiState = fetchCurrentState(apiClient, orgName, apiName, apiVersion);
             if (STATE_RETIRED.equals(apiState.toUpperCase())) {
@@ -345,7 +345,7 @@ public class ApplyCommand extends AbstractFinalCommand {
                         .findFirst();
 
                 if (existingPolicy.isPresent()) {
-                    if (ServerVersion.v12x.equals(serverVersion)) {
+                    if (ManagementApiVersion.v12x.equals(serverVersion)) {
                         // update the existing policy config
                         LOGGER.info("Updating existing policy '{}' configuration for API: {}", policyName, apiName);
 
@@ -470,7 +470,7 @@ public class ApplyCommand extends AbstractFinalCommand {
         this.properties = properties;
     }
 
-    public void setServerVersion(ServerVersion serverVersion) {
+    public void setServerVersion(ManagementApiVersion serverVersion) {
         this.serverVersion = serverVersion;
     }
 }

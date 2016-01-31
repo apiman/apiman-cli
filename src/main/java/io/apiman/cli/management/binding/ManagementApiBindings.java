@@ -16,7 +16,7 @@
 
 package io.apiman.cli.management.binding;
 
-import io.apiman.cli.core.common.model.ServerVersion;
+import io.apiman.cli.core.common.model.ManagementApiVersion;
 
 /**
  * Convenience methods for instantiating {@link ManagementApiBinding}s.
@@ -28,7 +28,7 @@ public class ManagementApiBindings {
         return new ManagementApiBindingImpl(apiClass);
     }
 
-    public static ManagementApiBinding boundTo(Class<?> apiClass, ServerVersion serverVersion) {
+    public static ManagementApiBinding boundTo(Class<?> apiClass, ManagementApiVersion serverVersion) {
         return new ManagementApiBindingImpl(apiClass, serverVersion);
     }
 }

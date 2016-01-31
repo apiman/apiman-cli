@@ -22,7 +22,7 @@ import io.apiman.cli.core.api.factory.Version11XManagementApiFactoryImpl;
 import io.apiman.cli.core.api.factory.Version12XManagementApiFactoryImpl;
 import io.apiman.cli.core.api.VersionAgnosticApi;
 import io.apiman.cli.core.common.ActionApi;
-import io.apiman.cli.core.common.model.ServerVersion;
+import io.apiman.cli.core.common.model.ManagementApiVersion;
 import io.apiman.cli.core.gateway.GatewayApi;
 import io.apiman.cli.core.org.OrgApi;
 import io.apiman.cli.core.plugin.PluginApi;
@@ -55,11 +55,11 @@ public class ManagementApiFactoryModule extends AbstractModule {
                 .toInstance(new SimpleManagementApiFactoryImpl<>(ActionApi.class));
 
         bind(ManagementApiFactory.class)
-                .annotatedWith(ManagementApiBindings.boundTo(VersionAgnosticApi.class, ServerVersion.v11x))
+                .annotatedWith(ManagementApiBindings.boundTo(VersionAgnosticApi.class, ManagementApiVersion.v11x))
                 .to(Version11XManagementApiFactoryImpl.class).in(Singleton.class);
 
         bind(ManagementApiFactory.class)
-                .annotatedWith(ManagementApiBindings.boundTo(VersionAgnosticApi.class, ServerVersion.v12x))
+                .annotatedWith(ManagementApiBindings.boundTo(VersionAgnosticApi.class, ManagementApiVersion.v12x))
                 .to(Version12XManagementApiFactoryImpl.class).in(Singleton.class);
     }
 }

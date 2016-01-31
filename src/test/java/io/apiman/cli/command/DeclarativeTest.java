@@ -18,7 +18,7 @@ package io.apiman.cli.command;
 
 import com.google.common.collect.Lists;
 import io.apiman.cli.common.BaseTest;
-import io.apiman.cli.core.common.model.ServerVersion;
+import io.apiman.cli.core.common.model.ManagementApiVersion;
 import io.apiman.cli.common.IntegrationTest;
 import io.apiman.cli.core.declarative.command.ApplyCommand;
 import io.apiman.cli.core.declarative.model.Declaration;
@@ -51,7 +51,7 @@ public class DeclarativeTest extends BaseTest {
         command.setServerAddress(getApimanUrl());
 
         // version specific test
-        command.setServerVersion(ServerVersion.v12x);
+        command.setServerVersion(ManagementApiVersion.v12x);
 
         // configure logging level
         command.setLogDebug(LOG_DEBUG);
