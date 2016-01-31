@@ -26,5 +26,5 @@ public enum ServerVersion {
     v11x,
     v12x;
 
-    public static final ServerVersion DEFAULT_VERSION = v11x;
+    public static final ServerVersion DEFAULT_VERSION = v12x;
 }
