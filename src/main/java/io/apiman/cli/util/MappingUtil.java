@@ -56,7 +56,7 @@ public class MappingUtil {
      */
     public static String safeWriteValueAsJson(Object obj) {
         try {
-            return MappingUtil.JSON_MAPPER.writeValueAsString(obj);
+            return JSON_MAPPER.writeValueAsString(obj);
 
         } catch (NullPointerException | JsonProcessingException e) {
             LOGGER.trace(String.format("Error writing value as JSON string: %s", obj), e);

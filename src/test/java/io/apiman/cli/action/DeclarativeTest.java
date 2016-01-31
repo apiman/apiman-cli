@@ -18,12 +18,14 @@ package io.apiman.cli.action;
 
 import com.google.common.collect.Lists;
 import io.apiman.cli.common.BaseTest;
+import io.apiman.cli.common.IntegrationTest;
 import io.apiman.cli.core.declarative.action.ApplyAction;
 import io.apiman.cli.core.declarative.model.Declaration;
 import io.apiman.cli.core.declarative.model.DeclarativeGateway;
 import io.apiman.cli.util.MappingUtil;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.nio.file.Paths;
 
@@ -35,7 +37,7 @@ import static org.junit.Assert.assertNotNull;
  *
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
-
+@Category(IntegrationTest.class)
 public class DeclarativeTest extends BaseTest {
     private ApplyAction action;
 

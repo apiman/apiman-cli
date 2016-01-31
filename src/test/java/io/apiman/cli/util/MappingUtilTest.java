@@ -17,10 +17,13 @@
 package io.apiman.cli.util;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import org.junit.Test;
 
 import java.util.List;
+import java.util.Map;
 
+import static com.google.common.collect.Maps.newHashMap;
 import static org.junit.Assert.*;
 
 /**
@@ -74,5 +77,30 @@ public class MappingUtilTest {
 
         // assertions
         assertEquals(INPUT_STRING, actual);
+    }
+
+    @Test
+    public void testSafeWriteValueAsJson_Populated() throws Exception {
+        // test data
+        final Map<String, String> input = newHashMap();
+        input.put("key", "value");
+
+        // test
+        final String actual = MappingUtil.safeWriteValueAsJson(input);
+
+        // assertions
+        assertEquals("{\n  \"key\" : \"value\"\n}", actual);
+    }
+
+    @Test
+    public void testSafeWriteValueAsJson_Null() throws Exception {
+        // test data
+        final Map<String, String> input = null;
+
+        // test
+        final String actual = MappingUtil.safeWriteValueAsJson(input);
+
+        // assertions
+        assertEquals("null", actual);
     }
 }

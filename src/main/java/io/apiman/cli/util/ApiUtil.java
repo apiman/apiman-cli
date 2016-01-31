@@ -47,10 +47,9 @@ public class ApiUtil {
     }
 
     public static void invokeAndCheckResponse(int expectedStatus, Supplier<Response> request) throws ActionException {
-        final Response response;
         try {
             // invoke the request
-            response = request.get();
+            final Response response = request.get();
 
             // check response code is successful
             if (response.getStatus() != expectedStatus) {

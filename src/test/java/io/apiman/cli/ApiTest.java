@@ -17,13 +17,16 @@
 package io.apiman.cli;
 
 import io.apiman.cli.common.BaseTest;
+import io.apiman.cli.common.IntegrationTest;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runners.MethodSorters;
 
 /**
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
+@Category(IntegrationTest.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ApiTest extends BaseTest {
     private static final String ORG_NAME = "apitest";
