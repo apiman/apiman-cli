@@ -7,6 +7,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - ...
 
+## [0.1.7] - 2016-01-31
+- Internal naming changes and unit test improvements.
+
 ## [0.1.6] - 2016-01-31
 - Declarative Mode now supports both v1.1.x and v1.2.x management server APIs
 - Declarative Mode will attempt to configure published APIs on v1.2.x
