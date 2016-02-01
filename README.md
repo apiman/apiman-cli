@@ -284,7 +284,7 @@ If you want to compile the JAR yourself, use:
 
     ./gradlew clean build
     
-Note: for distribution, _apiman-cli_ is build as a 'fat JAR' (aka 'shadow JAR'). To do this, run:
+Note: for distribution, _apiman-cli_ is built as a 'fat JAR' (aka 'shadow JAR'). To do this yourself, run:
 
     ./gradlew clean shadowJar
 
