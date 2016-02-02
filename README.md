@@ -73,7 +73,7 @@ Here's a simple YAML file (you can use JSON if you want):
           config:
             endpoint: "http://example.com"
             endpointType: "rest"
-            publicService: true
+            public: true
             gateway: "TheGateway"
           policies:
             - name: "CachingPolicy"
