@@ -1,11 +1,12 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 set -e
 
 CLI_JAR="./build/libs/apiman-cli.jar"
 
 if [[ ! -f ${CLI_JAR} ]]; then
-    sh ./gradlew clean shadowJar
+    chmod u+x ./gradlew
+    ./gradlew clean shadowJar
     clear
 fi
 
