@@ -7,6 +7,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - ...
 
+## [0.1.8] - 2016-02-07
+- Fixed Bourne shell compatibility.
+- Improved documentation.
+
 ## [0.1.7] - 2016-01-31
 - Internal naming changes and unit test improvements.
 
