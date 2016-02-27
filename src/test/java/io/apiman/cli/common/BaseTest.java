@@ -16,8 +16,12 @@
 
 package io.apiman.cli.common;
 
+import com.google.common.base.Strings;
 import io.apiman.cli.Cli;
 import org.junit.ClassRule;
+
+import static io.apiman.cli.util.Functions.not;
+import static java.util.Optional.of;
 
 /**
  * This base class waits for an instance of apiman.
@@ -29,7 +33,18 @@ public class BaseTest {
      * Wait for apiman to be available.
      */
     @ClassRule
-    public static WaitForHttp apiman = new WaitForHttp("localhost", 8080, "/apiman/system/status");
+    public static WaitForHttp apiman = new WaitForHttp(getApimanHost(), getApimanPort(), "/apiman/system/status");
+
+    private static String getApimanHost() {
+        return System.getProperty("apiman.host", "localhost");
+    }
+
+    private static int getApimanPort() {
+        return of(System.getProperty("apiman.port"))
+                .filter(not(Strings::isNullOrEmpty))
+                .map(Integer::parseInt)
+                .orElse(8080);
+    }
 
     public static String getApimanUrl() {
         return apiman.getAddress() + "/apiman";

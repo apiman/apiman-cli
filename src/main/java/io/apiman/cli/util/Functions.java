@@ -18,32 +18,37 @@ package io.apiman.cli.util;
 
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /**
  * Functional convenience methods.
  *
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
-public class OptionalConsumer<T> {
+public class Functions<T> {
     private Optional<T> optional;
 
-    private OptionalConsumer(Optional<T> optional) {
+    private Functions(Optional<T> optional) {
         this.optional = optional;
     }
 
-    public static <T> OptionalConsumer<T> of(Optional<T> optional) {
-        return new OptionalConsumer<>(optional);
+    public static <T> Functions<T> of(Optional<T> optional) {
+        return new Functions<>(optional);
     }
 
-    public OptionalConsumer<T> ifPresent(Consumer<T> c) {
+    public Functions<T> ifPresent(Consumer<T> c) {
         optional.ifPresent(c);
         return this;
     }
 
-    public OptionalConsumer<T> ifNotPresent(Runnable r) {
+    public Functions<T> ifNotPresent(Runnable r) {
         if (!optional.isPresent()) {
             r.run();
         }
         return this;
+    }
+
+    public static<T> Predicate<T> not(Predicate<T> p) {
+        return t -> !p.test(t);
     }
 }

@@ -49,7 +49,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import static io.apiman.cli.util.OptionalConsumer.of;
+import static io.apiman.cli.util.Functions.of;
 import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 
