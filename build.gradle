@@ -74,4 +74,7 @@ test {
             excludeCategories 'io.apiman.cli.common.IntegrationTest'
         }
     }
+
+    systemProperty "apiman.host", project.properties.get("apiman.host")
+    systemProperty "apiman.port", project.properties.get("apiman.port")
 }
