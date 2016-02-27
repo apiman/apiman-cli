@@ -32,6 +32,9 @@ public class Declaration {
     private DeclarativeSystem system;
 
     @JsonProperty
+    private SharedItems shared;
+
+    @JsonProperty
     private DeclarativeOrg org;
 
     public DeclarativeSystem getSystem() {

@@ -16,13 +16,12 @@
 
 package io.apiman.cli.command;
 
-import com.google.common.collect.Lists;
 import io.apiman.cli.common.BaseTest;
-import io.apiman.cli.core.common.model.ManagementApiVersion;
 import io.apiman.cli.common.IntegrationTest;
+import io.apiman.cli.core.common.model.ManagementApiVersion;
 import io.apiman.cli.core.declarative.command.ApplyCommand;
 import io.apiman.cli.core.declarative.model.Declaration;
-import io.apiman.cli.core.declarative.model.DeclarativeGateway;
+import io.apiman.cli.util.DeclarativeUtil;
 import io.apiman.cli.util.LogUtil;
 import io.apiman.cli.util.MappingUtil;
 import org.junit.Before;
@@ -30,9 +29,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.nio.file.Paths;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import java.util.Collections;
 
 /**
  * Tests for {@link ApplyCommand}.
@@ -59,70 +56,15 @@ public class DeclarativeTest extends BaseTest {
     }
 
     /**
-     * Expect that the declarative model can be loaded from a JSON file.
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testLoadDeclarationJson() throws Exception {
-        final Declaration declaration = command.loadDeclaration(
-                Paths.get(DeclarativeTest.class.getResource("/simple-full.json").toURI()), MappingUtil.JSON_MAPPER);
-
-        assertLoadedModel(declaration);
-    }
-
-    /**
-     * Expect that the declarative model can be loaded from a YAML file.
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testLoadDeclarationYaml() throws Exception {
-        final Declaration declaration = command.loadDeclaration(
-                Paths.get(DeclarativeTest.class.getResource("/simple-full.yml").toURI()), MappingUtil.YAML_MAPPER);
-
-        assertLoadedModel(declaration);
-    }
-
-    /**
-     * Expect that the declarative model can be loaded from a YAML file containing placeholders.
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testLoadDeclarationPlaceholders() throws Exception {
-        // set properties
-        command.setProperties(Lists.newArrayList(
-            "gw.endpoint=http://example.com",
-            "gw.username=myuser",
-            "gw.password=secret"
-        ));
-
-        final Declaration declaration = command.loadDeclaration(
-                Paths.get(DeclarativeTest.class.getResource("/simple-placeholders.yml").toURI()), MappingUtil.YAML_MAPPER);
-
-        // assert loaded with resolved placeholders
-        assertNotNull(declaration);
-        assertNotNull(declaration.getSystem());
-
-        assertNotNull(declaration.getSystem().getGateways());
-        assertEquals(1, declaration.getSystem().getGateways().size());
-
-        final DeclarativeGateway gateway = declaration.getSystem().getGateways().get(0);
-        assertEquals("http://example.com", gateway.getConfig().getEndpoint());
-        assertEquals("myuser", gateway.getConfig().getUsername());
-        assertEquals("secret", gateway.getConfig().getPassword());
-    }
-
-    /**
      * Expect that the plugins specified in the declaration can be installed.
      *
      * @throws Exception
      */
     @Test
     public void testApplyDeclaration_JustPlugins() throws Exception {
-        final Declaration declaration = command.loadDeclaration(
-                Paths.get(DeclarativeTest.class.getResource("/simple-plugin.yml").toURI()), MappingUtil.YAML_MAPPER);
+        final Declaration declaration = DeclarativeUtil.loadDeclaration(
+                Paths.get(DeclarativeTest.class.getResource("/simple-plugin.yml").toURI()), MappingUtil.YAML_MAPPER,
+                Collections.emptyList());
 
         command.applyDeclaration(declaration);
     }
@@ -134,29 +76,10 @@ public class DeclarativeTest extends BaseTest {
      */
     @Test
     public void testApplyDeclaration_Full() throws Exception {
-        final Declaration declaration = command.loadDeclaration(
-                Paths.get(DeclarativeTest.class.getResource("/simple-no-plugin.yml").toURI()), MappingUtil.YAML_MAPPER);
+        final Declaration declaration = DeclarativeUtil.loadDeclaration(
+                Paths.get(DeclarativeTest.class.getResource("/simple-no-plugin.yml").toURI()), MappingUtil.YAML_MAPPER,
+                Collections.emptyList());
 
         command.applyDeclaration(declaration);
-    }
-
-    /**
-     * Asserts the contents of the model.
-     *
-     * @param declaration the model to assert
-     */
-    private void assertLoadedModel(Declaration declaration) {
-        assertNotNull(declaration);
-        assertNotNull(declaration.getSystem());
-
-        assertNotNull(declaration.getSystem().getGateways());
-        assertEquals(1, declaration.getSystem().getGateways().size());
-
-        assertNotNull(declaration.getSystem().getPlugins());
-        assertEquals(1, declaration.getSystem().getPlugins().size());
-
-        assertNotNull(declaration.getOrg());
-        assertNotNull(declaration.getOrg().getApis());
-        assertEquals(1, declaration.getOrg().getApis().size());
     }
 }

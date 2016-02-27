@@ -5,16 +5,19 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
-- ...
+- Adds support for shared policy definitions, allowing you to define a policy configuration once and reuse it in multiple APIs.
 
 ## [0.1.8] - 2016-02-07
+### Added
 - Fixed Bourne shell compatibility.
 - Improved documentation.
 
 ## [0.1.7] - 2016-01-31
+### Added
 - Internal naming changes and unit test improvements.
 
 ## [0.1.6] - 2016-01-31
+### Added
 - Declarative Mode now supports both v1.1.x and v1.2.x management server APIs
 - Declarative Mode will attempt to configure published APIs on v1.2.x
 - Declarative Mode will attempt to republish APIs on v1.2.x

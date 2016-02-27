@@ -1,0 +1,70 @@
+{
+  "system": {
+    "gateways": [
+      {
+        "name": "test-gw",
+        "description": "Test Gateway",
+        "type": "REST",
+        "config": {
+          "endpoint": "http://localhost:8080/apiman-gateway-api",
+          "username": "apimanager",
+          "password": "apiman123!"
+        }
+      }
+    ],
+    "plugins": [
+      {
+        "groupId": "io.apiman.plugins",
+        "artifactId": "apiman-plugins-test-policy",
+        "version": "1.2.1.Final"
+      }
+    ]
+  },
+  "shared": {
+    "policies": [
+      {
+        "$id": "sharedPolicy",
+        "name": "CachingPolicy",
+        "config": {
+          "ttl": 60
+        }
+      }
+    ]
+  },
+  "org": {
+    "name": "test",
+    "description": "Test organisation",
+    "apis": [
+      {
+        "name": "example1",
+        "description": "Example API 1",
+        "initialVersion": "1.0",
+        "published": true,
+        "config": {
+          "endpoint": "http://example.com",
+          "endpointType": "rest",
+          "public": true,
+          "gateway": "test-gw"
+        },
+        "policies": [
+          "sharedPolicy"
+        ]
+      },
+      {
+        "name": "example2",
+        "description": "Example API 2",
+        "initialVersion": "1.0",
+        "published": true,
+        "config": {
+          "endpoint": "http://example.com",
+          "endpointType": "rest",
+          "public": true,
+          "gateway": "test-gw"
+        },
+        "policies": [
+          "sharedPolicy"
+        ]
+      }
+    ]
+  }
+}

@@ -16,8 +16,6 @@
 
 package io.apiman.cli.core.declarative.command;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.io.CharStreams;
 import io.apiman.cli.command.AbstractFinalCommand;
 import io.apiman.cli.core.api.VersionAgnosticApi;
 import io.apiman.cli.core.api.model.Api;
@@ -37,6 +35,7 @@ import io.apiman.cli.core.plugin.model.Plugin;
 import io.apiman.cli.exception.CommandException;
 import io.apiman.cli.exception.DeclarativeException;
 import io.apiman.cli.util.BeanUtil;
+import io.apiman.cli.util.DeclarativeUtil;
 import io.apiman.cli.util.MappingUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,11 +43,7 @@ import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import retrofit.RetrofitError;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
@@ -90,10 +85,10 @@ public class ApplyCommand extends AbstractFinalCommand {
 
         // parse declaration
         if (declarationFile.endsWith(JSON_EXTENSION)) {
-            declaration = loadDeclaration(declarationFile, MappingUtil.JSON_MAPPER);
+            declaration = DeclarativeUtil.loadDeclaration(declarationFile, MappingUtil.JSON_MAPPER, properties);
         } else {
             // default is YAML
-            declaration = loadDeclaration(declarationFile, MappingUtil.YAML_MAPPER);
+            declaration = DeclarativeUtil.loadDeclaration(declarationFile, MappingUtil.YAML_MAPPER, properties);
         }
 
         LOGGER.info("Loaded declaration: {}", declarationFile);
@@ -437,28 +432,6 @@ public class ApplyCommand extends AbstractFinalCommand {
             }
 
             throw new DeclarativeException("Error checking for existence of existing item", re);
-        }
-    }
-
-    /**
-     * Load the Declaration from the given Path, using the mapper provided.
-     *
-     * @param path   the Path to the declaration
-     * @param mapper the Mapper to use
-     * @return the Declaration
-     */
-    public Declaration loadDeclaration(Path path, ObjectMapper mapper) {
-        try (InputStream is = Files.newInputStream(path)) {
-            String fileContents = CharStreams.toString(new InputStreamReader(is));
-            LOGGER.trace("Declaration file raw: {}", fileContents);
-
-            fileContents = BeanUtil.resolvePlaceholders(fileContents, properties);
-            LOGGER.trace("Declaration file after resolving placeholders: {}", fileContents);
-
-            return mapper.readValue(fileContents, Declaration.class);
-
-        } catch (IOException e) {
-            throw new DeclarativeException(e);
         }
     }
 
