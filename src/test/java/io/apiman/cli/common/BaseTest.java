@@ -36,7 +36,9 @@ public class BaseTest {
     public static WaitForHttp apiman = new WaitForHttp(getApimanHost(), getApimanPort(), "/apiman/system/status");
 
     private static String getApimanHost() {
-        return System.getProperty("apiman.host", "localhost");
+        return of(System.getProperty("apiman.host"))
+                .filter(not(Strings::isNullOrEmpty))
+                .orElse("localhost");
     }
 
     private static int getApimanPort() {
