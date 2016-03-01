@@ -5,7 +5,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- ...
+
+## [0.1.9]
+### Added
 - Adds support for shared policy definitions, allowing you to define a policy configuration once and reuse it in multiple APIs.
+- Adds shared policy examples.
 
 ## [0.1.8] - 2016-02-07
 ### Added
