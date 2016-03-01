@@ -16,8 +16,6 @@
 
 package io.apiman.cli.core.declarative.command;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.io.CharStreams;
 import io.apiman.cli.command.AbstractFinalCommand;
 import io.apiman.cli.core.api.VersionAgnosticApi;
 import io.apiman.cli.core.api.model.Api;
@@ -37,25 +35,18 @@ import io.apiman.cli.core.plugin.model.Plugin;
 import io.apiman.cli.exception.CommandException;
 import io.apiman.cli.exception.DeclarativeException;
 import io.apiman.cli.util.BeanUtil;
+import io.apiman.cli.util.DeclarativeUtil;
 import io.apiman.cli.util.MappingUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
-import retrofit.RetrofitError;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 import static io.apiman.cli.util.Functions.of;
-import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -90,10 +81,10 @@ public class ApplyCommand extends AbstractFinalCommand {
 
         // parse declaration
         if (declarationFile.endsWith(JSON_EXTENSION)) {
-            declaration = loadDeclaration(declarationFile, MappingUtil.JSON_MAPPER);
+            declaration = DeclarativeUtil.loadDeclaration(declarationFile, MappingUtil.JSON_MAPPER, properties);
         } else {
             // default is YAML
-            declaration = loadDeclaration(declarationFile, MappingUtil.YAML_MAPPER);
+            declaration = DeclarativeUtil.loadDeclaration(declarationFile, MappingUtil.YAML_MAPPER, properties);
         }
 
         LOGGER.info("Loaded declaration: {}", declarationFile);
@@ -125,7 +116,7 @@ public class ApplyCommand extends AbstractFinalCommand {
             final String orgName = declaration.getOrg().getName();
             final OrgApi orgApiClient = buildServerApiClient(OrgApi.class);
 
-            of(checkExists(() -> orgApiClient.fetch(orgName)))
+            of(DeclarativeUtil.checkExists(() -> orgApiClient.fetch(orgName)))
                     .ifPresent(existing -> {
                         LOGGER.info("Org already exists: {}", orgName);
                     })
@@ -154,7 +145,7 @@ public class ApplyCommand extends AbstractFinalCommand {
                 final GatewayApi apiClient = buildServerApiClient(GatewayApi.class);
                 final String gatewayName = declarativeGateway.getName();
 
-                of(checkExists(() -> apiClient.fetch(gatewayName)))
+                of(DeclarativeUtil.checkExists(() -> apiClient.fetch(gatewayName)))
                         .ifPresent(existing -> {
                             LOGGER.info("Gateway already exists: {}", gatewayName);
                         })
@@ -198,7 +189,7 @@ public class ApplyCommand extends AbstractFinalCommand {
      * @return <code>true</code> if the plugin is installed, otherwise <code>false</code>
      */
     private boolean checkPluginExists(Plugin plugin, PluginApi apiClient) {
-        return checkExists(apiClient::list)
+        return DeclarativeUtil.checkExists(apiClient::list)
                 .map(apiPolicies -> apiPolicies.stream()
                         .anyMatch(installedPlugin ->
                                 plugin.getArtifactId().equals(installedPlugin.getArtifactId()) &&
@@ -253,7 +244,7 @@ public class ApplyCommand extends AbstractFinalCommand {
 
         LOGGER.debug("Applying API: {}", apiName);
 
-        of(checkExists(() -> apiClient.fetch(orgName, apiName, apiVersion)))
+        of(DeclarativeUtil.checkExists(() -> apiClient.fetch(orgName, apiName, apiVersion)))
                 .ifPresent(existing -> {
                     LOGGER.info("API already exists: {}", apiName);
                 })
@@ -415,59 +406,8 @@ public class ApplyCommand extends AbstractFinalCommand {
         ServerActionUtil.publishApi(orgName, apiName, apiVersion, serverVersion, buildServerApiClient(ActionApi.class));
     }
 
-    /**
-     * Check for the presence of an item using the given Supplier.
-     *
-     * @param supplier the Supplier of the item
-     * @param <T>
-     * @return the item or {@link Optional#empty()}
-     */
-    private <T> Optional<T> checkExists(Supplier<T> supplier) {
-        try {
-            // attempt to return the item
-            return ofNullable(supplier.get());
-
-        } catch (RetrofitError re) {
-            // 404 indicates the item does not exist - anything else is an error
-            if (ofNullable(re.getResponse())
-                    .filter(response -> HttpURLConnection.HTTP_NOT_FOUND == response.getStatus())
-                    .isPresent()) {
-
-                return empty();
-            }
-
-            throw new DeclarativeException("Error checking for existence of existing item", re);
-        }
-    }
-
-    /**
-     * Load the Declaration from the given Path, using the mapper provided.
-     *
-     * @param path   the Path to the declaration
-     * @param mapper the Mapper to use
-     * @return the Declaration
-     */
-    public Declaration loadDeclaration(Path path, ObjectMapper mapper) {
-        try (InputStream is = Files.newInputStream(path)) {
-            String fileContents = CharStreams.toString(new InputStreamReader(is));
-            LOGGER.trace("Declaration file raw: {}", fileContents);
-
-            fileContents = BeanUtil.resolvePlaceholders(fileContents, properties);
-            LOGGER.trace("Declaration file after resolving placeholders: {}", fileContents);
-
-            return mapper.readValue(fileContents, Declaration.class);
-
-        } catch (IOException e) {
-            throw new DeclarativeException(e);
-        }
-    }
-
     public void setServerAddress(String serverAddress) {
         this.serverAddress = serverAddress;
-    }
-
-    public void setProperties(List<String> properties) {
-        this.properties = properties;
     }
 
     public void setServerVersion(ManagementApiVersion serverVersion) {
