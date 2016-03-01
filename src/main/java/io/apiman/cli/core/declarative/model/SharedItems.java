@@ -16,41 +16,20 @@
 
 package io.apiman.cli.core.declarative.model;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import java.util.Map;
+import java.util.List;
 
 /**
- * Declarative policy representation.
+ * Represents reusable items.
  *
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="$id")
-public class DeclarativePolicy {
-    @JsonProperty("$id")
-    private String id;
-
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+public class SharedItems {
     @JsonProperty
-    private String name;
-
-    @JsonProperty
-    private Map<String, Object> config;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Map<String, Object> getConfig() {
-        return config;
-    }
-
-    public void setConfig(Map<String, Object> config) {
-        this.config = config;
-    }
+    private List<DeclarativePolicy> policies;
 }

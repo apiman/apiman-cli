@@ -15,7 +15,7 @@
  */
 
 group 'io.apiman.cli'
-version '0.1.8'
+version '0.1.9'
 
 buildscript {
     repositories { jcenter() }
@@ -74,4 +74,7 @@ test {
             excludeCategories 'io.apiman.cli.common.IntegrationTest'
         }
     }
+
+    systemProperty "apiman.host", project.properties.get("apiman.host")
+    systemProperty "apiman.port", project.properties.get("apiman.port")
 }
