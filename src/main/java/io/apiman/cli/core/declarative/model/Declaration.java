@@ -52,4 +52,8 @@ public class Declaration {
     public void setOrg(DeclarativeOrg org) {
         this.org = org;
     }
+
+    public SharedItems getShared() {
+        return shared;
+    }
 }

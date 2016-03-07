@@ -1,0 +1,16 @@
+# Declaration with placeholders and embedded properties.
+---
+  system:
+    gateways:
+      - name: "test-gw"
+        description: "Test Gateway"
+        type: "REST"
+        config:
+          endpoint: "${embedded1}"
+          username: "${embedded2}"
+          password: "${embedded3}"
+  shared:
+    properties:
+      embedded1: "value1"
+      embedded2: "value2"
+      embedded3: "value3"

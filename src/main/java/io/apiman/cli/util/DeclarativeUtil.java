@@ -19,6 +19,7 @@ package io.apiman.cli.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.CharStreams;
 import io.apiman.cli.core.declarative.model.Declaration;
+import io.apiman.cli.core.declarative.model.SharedItems;
 import io.apiman.cli.exception.DeclarativeException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,6 +32,8 @@ import java.net.HttpURLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -54,18 +57,49 @@ public class DeclarativeUtil {
      * @return the Declaration
      */
     public static Declaration loadDeclaration(Path path, ObjectMapper mapper, Collection<String> properties) {
+        final Map<String, String> parsedProperties = BeanUtil.parseReplacements(properties);
+
         try (InputStream is = Files.newInputStream(path)) {
             String fileContents = CharStreams.toString(new InputStreamReader(is));
             LOGGER.trace("Declaration file raw: {}", fileContents);
 
-            fileContents = BeanUtil.resolvePlaceholders(fileContents, properties);
-            LOGGER.trace("Declaration file after resolving placeholders: {}", fileContents);
+            Declaration declaration = loadDeclaration(mapper, fileContents, parsedProperties);
 
-            return mapper.readValue(fileContents, Declaration.class);
+            // check for the presence of shared properties in the declaration
+            final Map<String, String> sharedProperties = ofNullable(declaration.getShared())
+                    .map(SharedItems::getProperties)
+                    .orElse(Collections.emptyMap());
+
+            if (sharedProperties.size() > 0) {
+                LOGGER.trace("Resolving {} shared placeholders", sharedProperties.size());
+                parsedProperties.putAll(sharedProperties);
+
+                // this is not very efficient, as it requires parsing the declaration twice
+                declaration = loadDeclaration(mapper, fileContents, parsedProperties);
+            }
+
+            return declaration;
 
         } catch (IOException e) {
             throw new DeclarativeException(e);
         }
+    }
+
+    /**
+     * Parses the {@link Declaration} from the {@code fileContents}, using the specified {@code properties}.
+     *
+     * @param mapper     the Mapper to use
+     * @param unresolved the contents of the file
+     * @param properties the property placeholders
+     * @return the Declaration
+     * @throws IOException
+     */
+    private static Declaration loadDeclaration(ObjectMapper mapper, String unresolved,
+                                               Map<String, String> properties) throws IOException {
+
+        final String resolved = BeanUtil.resolvePlaceholders(unresolved, properties);
+        LOGGER.trace("Declaration file after resolving {} placeholders: {}", properties.size(), resolved);
+        return mapper.readValue(resolved, Declaration.class);
     }
 
     /**
