@@ -35,6 +35,9 @@ public class DeclarativeApiConfig extends ApiConfig {
     @JsonProperty("public")
     private boolean makePublic;
 
+    @JsonProperty
+    private DeclarativeEndpointProperties endpointProperties;
+
     public String getGateway() {
         return gateway;
     }
