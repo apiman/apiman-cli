@@ -14,7 +14,7 @@ public class EndpointProperties {
     private String authorizationType;
 
     @JsonProperty("basic-auth.requireSSL")
-    private Boolean requireSsl;
+    private boolean requireSsl;
 
     @JsonProperty("basic-auth.username")
     private String username;
@@ -26,7 +26,7 @@ public class EndpointProperties {
         this.authorizationType = authorizationType;
     }
 
-    public void setRequireSsl(Boolean requireSsl) {
+    public void setRequireSsl(boolean requireSsl) {
         this.requireSsl = requireSsl;
     }
 

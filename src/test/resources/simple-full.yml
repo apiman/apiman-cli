@@ -24,7 +24,7 @@
         config:
           endpoint: "http://example.com"
           endpointType: "rest"
-          endpointProperties:
+          security:
             authorizationType: "basic"
             username: "user"
             password: "Password123"

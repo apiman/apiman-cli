@@ -33,7 +33,12 @@
           "endpoint": "http://example.com",
           "endpointType": "rest",
           "public": true,
-          "gateway": "test-gw"
+          "gateway": "test-gw",
+          "security": {
+            "authorizationType": "basic",
+            "username": "user",
+            "password": "Password123"
+          }
         },
         "policies": [
           {

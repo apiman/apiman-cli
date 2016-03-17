@@ -20,24 +20,13 @@
       }
     ]
   },
-  "shared": {
-    "policies": [
-      {
-        "$id": "sharedPolicy",
-        "name": "CachingPolicy",
-        "config": {
-          "ttl": 60
-        }
-      }
-    ]
-  },
   "org": {
     "name": "test",
     "description": "Test organisation",
     "apis": [
       {
-        "name": "example1",
-        "description": "Example API 1",
+        "name": "example",
+        "description": "Example API",
         "initialVersion": "1.0",
         "published": true,
         "config": {
@@ -52,27 +41,12 @@
           }
         },
         "policies": [
-          "sharedPolicy"
-        ]
-      },
-      {
-        "name": "example2",
-        "description": "Example API 2",
-        "initialVersion": "1.0",
-        "published": true,
-        "config": {
-          "endpoint": "http://example.com",
-          "endpointType": "rest",
-          "public": true,
-          "gateway": "test-gw",
-          "security": {
-            "authorizationType": "basic",
-            "username": "user",
-            "password": "Password123"
+          {
+            "name": "CachingPolicy",
+            "config": {
+              "ttl": 60
+            }
           }
-        },
-        "policies": [
-          "sharedPolicy"
         ]
       }
     ]

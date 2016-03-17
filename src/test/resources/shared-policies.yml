@@ -32,6 +32,10 @@
           endpointType: "rest"
           public: true
           gateway: "test-gw"
+          security:
+            authorizationType: "basic"
+            username: "user"
+            password: "Password123"
         policies:
           - "sharedPolicy"
       - name: "example2"
@@ -43,5 +47,9 @@
           endpointType: "rest"
           public: true
           gateway: "test-gw"
+          endpointProperties:
+            authorizationType: "basic"
+            username: "user"
+            password: "Password123"
         policies:
           - "sharedPolicy"

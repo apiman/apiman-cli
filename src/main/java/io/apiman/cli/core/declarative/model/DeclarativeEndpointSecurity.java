@@ -9,12 +9,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DeclarativeEndpointProperties {
+public class DeclarativeEndpointSecurity {
     @JsonProperty
     private String authorizationType;
 
     @JsonProperty
-    private Boolean requireSsl;
+    private boolean requireSsl;
 
     @JsonProperty
     private String username;
@@ -26,7 +26,7 @@ public class DeclarativeEndpointProperties {
         return authorizationType;
     }
 
-    public Boolean getRequireSsl() {
+    public boolean getRequireSsl() {
         return requireSsl;
     }
 

@@ -29,14 +29,14 @@ import io.apiman.cli.core.api.model.ApiConfig;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DeclarativeApiConfig extends ApiConfig {
-    @JsonProperty
+    @JsonProperty("gateway")
     private String gateway;
 
     @JsonProperty("public")
     private boolean makePublic;
 
-    @JsonProperty
-    private DeclarativeEndpointProperties endpointProperties;
+    @JsonProperty("security")
+    private DeclarativeEndpointSecurity security;
 
     public String getGateway() {
         return gateway;
@@ -48,5 +48,9 @@ public class DeclarativeApiConfig extends ApiConfig {
 
     public boolean isMakePublic() {
         return makePublic;
+    }
+
+    public DeclarativeEndpointSecurity getSecurity() {
+        return security;
     }
 }

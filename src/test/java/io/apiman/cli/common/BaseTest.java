@@ -22,6 +22,7 @@ import org.junit.ClassRule;
 
 import static io.apiman.cli.util.Functions.not;
 import static java.util.Optional.of;
+import static java.util.Optional.ofNullable;
 
 /**
  * This base class waits for an instance of apiman.
@@ -36,13 +37,13 @@ public class BaseTest {
     public static WaitForHttp apiman = new WaitForHttp(getApimanHost(), getApimanPort(), "/apiman/system/status");
 
     private static String getApimanHost() {
-        return of(System.getProperty("apiman.host"))
+        return ofNullable(System.getProperty("apiman.host"))
                 .filter(not(Strings::isNullOrEmpty))
-                .orElse("localhost");
+                .orElse("192.168.99.100");
     }
 
     private static int getApimanPort() {
-        return of(System.getProperty("apiman.port"))
+        return ofNullable(System.getProperty("apiman.port"))
                 .filter(not(Strings::isNullOrEmpty))
                 .map(Integer::parseInt)
                 .orElse(8080);

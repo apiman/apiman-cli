@@ -165,5 +165,8 @@ public class DeclarativeUtilTest {
         assertNotNull(declaration.getOrg());
         assertNotNull(declaration.getOrg().getApis());
         assertEquals(expectedApiCount, declaration.getOrg().getApis().size());
+
+        assertNotNull(declaration.getOrg().getApis().get(0).getConfig());
+        assertNotNull(declaration.getOrg().getApis().get(0).getConfig().getSecurity());
     }
 }

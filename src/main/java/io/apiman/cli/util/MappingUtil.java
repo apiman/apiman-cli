@@ -26,7 +26,7 @@ import io.apiman.cli.core.api.model.ApiGateway;
 import io.apiman.cli.core.api.model.EndpointProperties;
 import io.apiman.cli.core.api.model.ServiceConfig;
 import io.apiman.cli.core.declarative.model.DeclarativeApiConfig;
-import io.apiman.cli.core.declarative.model.DeclarativeEndpointProperties;
+import io.apiman.cli.core.declarative.model.DeclarativeEndpointSecurity;
 import io.apiman.cli.core.declarative.model.DeclarativeGateway;
 import io.apiman.cli.core.gateway.model.Gateway;
 import org.apache.logging.log4j.LogManager;
@@ -146,14 +146,14 @@ public class MappingUtil {
         });
 
         // Converter for DeclarativeEndpointProperties -> EndpointProperties
-        mapper.createTypeMap(DeclarativeEndpointProperties.class, EndpointProperties.class).setConverter(context -> {
-            final DeclarativeEndpointProperties declarativeProperties = context.getSource();
+        mapper.createTypeMap(DeclarativeEndpointSecurity.class, EndpointProperties.class).setConverter(context -> {
+            final DeclarativeEndpointSecurity endpointSecurity = context.getSource();
 
-            final EndpointProperties apiProperties = new EndpointProperties();
-            apiProperties.setAuthorizationType(declarativeProperties.getAuthorizationType());
-            apiProperties.setPassword(declarativeProperties.getPassword());
-            apiProperties.setUsername(declarativeProperties.getUsername());
-            apiProperties.setRequireSsl(declarativeProperties.getRequireSsl());
+            final EndpointProperties apiProperties = context.getDestination();
+            apiProperties.setAuthorizationType(endpointSecurity.getAuthorizationType());
+            apiProperties.setPassword(endpointSecurity.getPassword());
+            apiProperties.setUsername(endpointSecurity.getUsername());
+            apiProperties.setRequireSsl(endpointSecurity.getRequireSsl());
 
             return apiProperties;
         });
