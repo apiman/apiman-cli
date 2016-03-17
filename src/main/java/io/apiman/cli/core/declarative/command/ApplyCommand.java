@@ -305,8 +305,10 @@ public class ApplyCommand extends AbstractFinalCommand {
 
         final ApiConfig apiConfig = MappingUtil.map(declarativeApi.getConfig(), ApiConfig.class);
 
-        apiConfig.setEndpointProperties(MappingUtil.map(
-                declarativeApi.getConfig().getSecurity(), EndpointProperties.class));
+        // map security configuration to endpoint properties
+        ofNullable(declarativeApi.getConfig().getSecurity())
+                .ifPresent(securityConfig -> apiConfig.setEndpointProperties(
+                        MappingUtil.map(securityConfig, EndpointProperties.class)));
 
         apiClient.configure(orgName, apiName, apiVersion, apiConfig);
     }
