@@ -32,6 +32,18 @@ import static java.util.Optional.ofNullable;
  */
 public class BeanUtil {
     /**
+     * Parse the {@code replacements} into a Map.
+     *
+     * @param replacements the placeholders and their values in the form <code>key=value</code>
+     * @return the replacements Map
+     */
+    public static Map<String, String> parseReplacements(Collection<String> replacements) {
+        return ofNullable(replacements).orElse(emptyList()).stream()
+                .map(keyValue -> keyValue.split("="))
+                .collect(Collectors.toMap(kv -> kv[0], kv -> (kv.length >= 2 ? kv[1] : "")));
+    }
+
+    /**
      * Replace the placeholders in the given input String.
      *
      * @param original     the input String, containing placeholders in the form <code>Example ${placeholder} text.</code>
@@ -39,12 +51,18 @@ public class BeanUtil {
      * @return the {@code original} string with {@code replacements}
      */
     public static String resolvePlaceholders(String original, Collection<String> replacements) {
-        final Map<String, String> valuesMap =
-                ofNullable(replacements).orElse(emptyList()).stream()
-                        .map(keyValue -> keyValue.split("="))
-                        .collect(Collectors.toMap(kv -> kv[0], kv -> (kv.length >= 2 ? kv[1] : "")));
+        return resolvePlaceholders(original, parseReplacements(replacements));
+    }
 
-        return StrSubstitutor.replace(original, valuesMap);
+    /**
+     * Replace the placeholders in the given input String.
+     *
+     * @param original     the input String, containing placeholders in the form <code>Example ${placeholder} text.</code>
+     * @param replacements the Map of placeholders and their values
+     * @return the {@code original} string with {@code replacements}
+     */
+    public static String resolvePlaceholders(String original, Map<String, String> replacements) {
+        return StrSubstitutor.replace(original, replacements);
     }
 
     /**

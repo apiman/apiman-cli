@@ -95,6 +95,30 @@ public class DeclarativeUtilTest {
     }
 
     /**
+     * Expect that the declarative model can be loaded from a YAML file containing placeholders and embedded properties.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testLoadDeclarationEmbeddedProperties() throws Exception {
+        final Declaration declaration = DeclarativeUtil.loadDeclaration(
+                Paths.get(DeclarativeTest.class.getResource("/embedded-properties.yml").toURI()),
+                MappingUtil.YAML_MAPPER, Collections.emptyList());
+
+        // assert loaded with resolved placeholders
+        assertNotNull(declaration);
+        assertNotNull(declaration.getSystem());
+
+        assertNotNull(declaration.getSystem().getGateways());
+        assertEquals(1, declaration.getSystem().getGateways().size());
+
+        final DeclarativeGateway gateway = declaration.getSystem().getGateways().get(0);
+        assertEquals("value1", gateway.getConfig().getEndpoint());
+        assertEquals("value2", gateway.getConfig().getUsername());
+        assertEquals("value3", gateway.getConfig().getPassword());
+    }
+
+    /**
      * Expect that the declarative model can be loaded from a JSON file with shared items.
      *
      * @throws Exception
