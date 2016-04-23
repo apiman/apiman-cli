@@ -18,14 +18,19 @@ group 'io.apiman.cli'
 version '0.2.0-SNAPSHOT'
 
 buildscript {
-    repositories { jcenter() }
+    repositories {
+        jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
     dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.2'
+        classpath "com.github.jengelman.gradle.plugins:shadow:1.2.3"
     }
 }
 
 apply plugin: 'java'
-apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: "com.github.johnrengelman.shadow"
 
 repositories {
     mavenCentral()
@@ -36,19 +41,19 @@ compileJava {
 }
 
 ext {
-    version_args4j = '2.32'
+    version_args4j = '2.33'
     version_log4j = '2.5'
     version_guava = '19.0'
     version_retrofit = '1.9.0'
     version_jackson = '1.9.0'
-    version_jackson_yaml = '2.5.4'
+    version_jackson_yaml = '2.7.3'
     version_modelmapper = '0.7.5'
     version_commons_lang = '3.4'
     version_guice = '4.0'
 
     // test dependencies
-    version_junit = '4.11'
-    version_ducttape = '1.0.4'
+    version_junit = '4.12'
+    version_ducttape = '1.0.5'
     version_mockito = '1.10.19'
     version_restassured = '2.9.0'
 }
@@ -58,7 +63,7 @@ dependencies {
     compile "org.apache.logging.log4j:log4j-core:$version_log4j"
     compile "com.google.guava:guava:$version_guava"
     compile "com.squareup.retrofit:retrofit:$version_retrofit"
-    compile "com.squareup.retrofit:converter-jackson:$version_jackson"
+    compile "com.squareup.retrofit:converter-jackson:$version_retrofit"
     compile "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$version_jackson_yaml"
     compile "org.modelmapper:modelmapper:$version_modelmapper"
     compile "org.apache.commons:commons-lang3:$version_commons_lang"
@@ -87,9 +92,8 @@ shadowJar {
 
 test {
     useJUnit {
-        if (project.hasProperty('integrationTest')) {
-            includeCategories 'io.apiman.cli.common.IntegrationTest'
-        } else {
+        // exclude integration tests unless explicitly included
+        if (!project.hasProperty('integrationTest')) {
             excludeCategories 'io.apiman.cli.common.IntegrationTest'
         }
     }
