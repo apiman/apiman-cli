@@ -37,6 +37,9 @@ public class ApiConfig {
     @JsonProperty
     private String endpointType;
 
+    @JsonProperty
+    private EndpointProperties endpointProperties;
+
     @JsonProperty("publicAPI")
     private boolean publicApi;
 
@@ -63,5 +66,9 @@ public class ApiConfig {
 
     public boolean isPublicApi() {
         return publicApi;
+    }
+
+    public void setEndpointProperties(EndpointProperties endpointProperties) {
+        this.endpointProperties = endpointProperties;
     }
 }

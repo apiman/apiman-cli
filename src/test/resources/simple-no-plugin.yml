@@ -22,6 +22,10 @@
           endpointType: "rest"
           public: true
           gateway: "test-gw"
+          security:
+            authorizationType: "basic"
+            username: "user"
+            password: "Password123"
         policies:
           - name: "CachingPolicy"
             config:

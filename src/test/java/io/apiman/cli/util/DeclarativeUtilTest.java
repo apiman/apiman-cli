@@ -95,6 +95,30 @@ public class DeclarativeUtilTest {
     }
 
     /**
+     * Expect that the declarative model can be loaded from a YAML file containing placeholders and embedded properties.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testLoadDeclarationSharedProperties() throws Exception {
+        final Declaration declaration = DeclarativeUtil.loadDeclaration(
+                Paths.get(DeclarativeTest.class.getResource("/shared-properties.yml").toURI()),
+                MappingUtil.YAML_MAPPER, Collections.emptyList());
+
+        // assert loaded with resolved placeholders
+        assertNotNull(declaration);
+        assertNotNull(declaration.getSystem());
+
+        assertNotNull(declaration.getSystem().getGateways());
+        assertEquals(1, declaration.getSystem().getGateways().size());
+
+        final DeclarativeGateway gateway = declaration.getSystem().getGateways().get(0);
+        assertEquals("value1", gateway.getConfig().getEndpoint());
+        assertEquals("value2", gateway.getConfig().getUsername());
+        assertEquals("value3", gateway.getConfig().getPassword());
+    }
+
+    /**
      * Expect that the declarative model can be loaded from a JSON file with shared items.
      *
      * @throws Exception
@@ -141,5 +165,8 @@ public class DeclarativeUtilTest {
         assertNotNull(declaration.getOrg());
         assertNotNull(declaration.getOrg().getApis());
         assertEquals(expectedApiCount, declaration.getOrg().getApis().size());
+
+        assertNotNull(declaration.getOrg().getApis().get(0).getConfig());
+        assertNotNull(declaration.getOrg().getApis().get(0).getConfig().getSecurity());
     }
 }

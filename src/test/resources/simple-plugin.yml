@@ -4,4 +4,4 @@
     plugins:
       - groupId: "io.apiman.plugins"
         artifactId: "apiman-plugins-noop-policy"
-        version: "1.2.1.Final"
+        version: "1.2.4.Final"

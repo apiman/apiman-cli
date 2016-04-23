@@ -21,6 +21,7 @@ import io.apiman.cli.core.api.VersionAgnosticApi;
 import io.apiman.cli.core.api.model.Api;
 import io.apiman.cli.core.api.model.ApiConfig;
 import io.apiman.cli.core.api.model.ApiPolicy;
+import io.apiman.cli.core.api.model.EndpointProperties;
 import io.apiman.cli.core.common.ActionApi;
 import io.apiman.cli.core.common.model.ManagementApiVersion;
 import io.apiman.cli.core.common.util.ServerActionUtil;
@@ -303,6 +304,12 @@ public class ApplyCommand extends AbstractFinalCommand {
         LOGGER.info("Configuring API: {}", apiName);
 
         final ApiConfig apiConfig = MappingUtil.map(declarativeApi.getConfig(), ApiConfig.class);
+
+        // map security configuration to endpoint properties
+        ofNullable(declarativeApi.getConfig().getSecurity())
+                .ifPresent(securityConfig -> apiConfig.setEndpointProperties(
+                        MappingUtil.map(securityConfig, EndpointProperties.class)));
+
         apiClient.configure(orgName, apiName, apiVersion, apiConfig);
     }
 

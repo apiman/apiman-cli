@@ -23,8 +23,10 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.common.collect.Lists;
 import io.apiman.cli.core.api.model.ApiConfig;
 import io.apiman.cli.core.api.model.ApiGateway;
+import io.apiman.cli.core.api.model.EndpointProperties;
 import io.apiman.cli.core.api.model.ServiceConfig;
 import io.apiman.cli.core.declarative.model.DeclarativeApiConfig;
+import io.apiman.cli.core.declarative.model.DeclarativeEndpointSecurity;
 import io.apiman.cli.core.declarative.model.DeclarativeGateway;
 import io.apiman.cli.core.gateway.model.Gateway;
 import org.apache.logging.log4j.LogManager;
@@ -141,6 +143,19 @@ public class MappingUtil {
             apiConfig.setGateways(Lists.newArrayList(new ApiGateway(declarativeApiConfig.getGateway())));
 
             return apiConfig;
+        });
+
+        // Converter for DeclarativeEndpointProperties -> EndpointProperties
+        mapper.createTypeMap(DeclarativeEndpointSecurity.class, EndpointProperties.class).setConverter(context -> {
+            final DeclarativeEndpointSecurity endpointSecurity = context.getSource();
+
+            final EndpointProperties apiProperties = context.getDestination();
+            apiProperties.setAuthorizationType(endpointSecurity.getAuthorizationType());
+            apiProperties.setPassword(endpointSecurity.getPassword());
+            apiProperties.setUsername(endpointSecurity.getUsername());
+            apiProperties.setRequireSsl(endpointSecurity.getRequireSsl());
+
+            return apiProperties;
         });
 
         return mapper;

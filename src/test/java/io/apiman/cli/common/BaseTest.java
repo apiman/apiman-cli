@@ -17,11 +17,16 @@
 package io.apiman.cli.common;
 
 import com.google.common.base.Strings;
+import com.jayway.restassured.RestAssured;
 import io.apiman.cli.Cli;
+import io.apiman.cli.util.AuthUtil;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 
+import java.net.HttpURLConnection;
+
 import static io.apiman.cli.util.Functions.not;
-import static java.util.Optional.of;
+import static java.util.Optional.ofNullable;
 
 /**
  * This base class waits for an instance of apiman.
@@ -31,24 +36,32 @@ import static java.util.Optional.of;
 public class BaseTest {
     /**
      * Wait for apiman to be available.
+     * Returns a 200 on 'http://docker.local:8080/apiman/system/status' when ready.
      */
     @ClassRule
-    public static WaitForHttp apiman = new WaitForHttp(getApimanHost(), getApimanPort(), "/apiman/system/status");
+    public static WaitForHttp apiman = new WaitForHttp(getApimanHost(), getApimanPort(), "/apiman/system/status")
+            .withStatusCode(HttpURLConnection.HTTP_OK)
+            .withBasicCredentials(AuthUtil.DEFAULT_SERVER_USERNAME, AuthUtil.DEFAULT_SERVER_PASSWORD);
 
     private static String getApimanHost() {
-        return of(System.getProperty("apiman.host"))
+        return ofNullable(System.getProperty("apiman.host"))
                 .filter(not(Strings::isNullOrEmpty))
                 .orElse("localhost");
     }
 
     private static int getApimanPort() {
-        return of(System.getProperty("apiman.port"))
+        return ofNullable(System.getProperty("apiman.port"))
                 .filter(not(Strings::isNullOrEmpty))
                 .map(Integer::parseInt)
                 .orElse(8080);
     }
 
-    public static String getApimanUrl() {
+    @BeforeClass
+    public static void beforeClass() throws Exception {
+        RestAssured.baseURI = getApimanUrl();
+    }
+
+    protected static String getApimanUrl() {
         return apiman.getAddress() + "/apiman";
     }
 
@@ -61,8 +74,8 @@ public class BaseTest {
         Cli.main("org", "create",
                 "--debug",
                 "--server", getApimanUrl(),
-                "--serverUsername", "admin",
-                "--serverPassword", "admin123!",
+                "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,
+                "--serverPassword", AuthUtil.DEFAULT_SERVER_PASSWORD,
                 "--name", orgName,
                 "--description", "example");
     }

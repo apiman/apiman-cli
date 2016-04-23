@@ -1,4 +1,4 @@
-# Shared policies example
+# Shared properties example
 ---
   system:
     gateways:
@@ -9,16 +9,9 @@
           endpoint: "http://localhost:8080/apiman-gateway-api"
           username: "apimanager"
           password: "apiman123!"
-    plugins:
-      - groupId: "io.apiman.plugins"
-        artifactId: "apiman-plugins-test-policy"
-        version: "1.2.4.Final"
   shared:
-    policies:
-      - $id: "sharedPolicy"
-        name: "CachingPolicy"
-        config:
-          ttl: 60
+    properties:
+      commonApiEndpoint: "http://example.com"
   org:
     name: "test"
     description: "Test organisation"
@@ -28,20 +21,16 @@
         initialVersion: "1.0"
         published: true
         config:
-          endpoint: "http://example.com"
+          endpoint: "${commonApiEndpoint}"
           endpointType: "rest"
           public: true
           gateway: "test-gw"
-        policies:
-          - "sharedPolicy"
       - name: "example2"
         description: "Example API 2"
         initialVersion: "1.0"
         published: true
         config:
-          endpoint: "http://example.com"
+          endpoint: "${commonApiEndpoint}"
           endpointType: "rest"
           public: true
           gateway: "test-gw"
-        policies:
-          - "sharedPolicy"

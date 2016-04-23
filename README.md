@@ -44,7 +44,7 @@ Add a plugin:
     $ ./apiman plugin add \
             --groupId io.apiman.plugins \
             --artifactId apiman-plugins-test-policy \
-            --version 1.2.1.Final
+            --version 1.2.4.Final
 
 You can do much more - see the [Usage](#usage) section.
 
@@ -109,6 +109,17 @@ You can also use placeholders in your declaration files. This helps you reuse de
 ...then pass them in when you run the _apply_ command:
 
     ./apiman apply -f simple.yml -P myApiEndpoint=http://example.com
+
+## Shared policies and properties
+
+To avoid repeating the same policy definitions, you can define them once in the _shared_ section of your declaration file,
+then refer to them by name later.
+
+For example, see the [shared-policies.yml](shared-policies.yml) file.
+
+The same goes for properties - you can define them in the _shared_ section and reuse them.
+
+See the [shared-properties.yml](shared-properties.yml) example file.
 
 # Requirements
 

@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Represents reusable items.
@@ -32,4 +33,14 @@ import java.util.List;
 public class SharedItems {
     @JsonProperty
     private List<DeclarativePolicy> policies;
+
+    /**
+     * Shared properties.
+     */
+    @JsonProperty
+    private Map<String, String> properties;
+
+    public Map<String, String> getProperties() {
+        return properties;
+    }
 }
