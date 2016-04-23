@@ -115,11 +115,11 @@ You can also use placeholders in your declaration files. This helps you reuse de
 To avoid repeating the same policy definitions, you can define them once in the _shared_ section of your declaration file,
 then refer to them by name later.
 
-For example, see the [shared-policies.yml](shared-policies.yml) file.
+For example, see the [shared-policies.yml](examples/declarative/shared-policies.yml) file.
 
 The same goes for properties - you can define them in the _shared_ section and reuse them.
 
-See the [shared-properties.yml](shared-properties.yml) example file.
+See the [shared-properties.yml](examples/declarative/shared-properties.yml) example file.
 
 # Requirements
 
