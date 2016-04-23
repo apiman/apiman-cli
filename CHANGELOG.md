@@ -3,12 +3,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [0.2.0] - 2016-04-23
 ### Added
 - Adds support for shared properties within declaration files, which can be reused throughout the file.
 - Adds support for APIs with HTTP Basic Authorization.
+- Updates versions of various dependencies.
 
-## [0.1.9]
+## [0.1.9] - 2016-03-01
 ### Added
 - Adds support for shared policy definitions, allowing you to define a policy configuration once and reuse it in multiple APIs.
 - Adds shared policy examples.
