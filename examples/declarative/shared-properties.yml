@@ -1,0 +1,36 @@
+# Shared properties example
+---
+  system:
+    gateways:
+      - name: "test-gw"
+        description: "Test Gateway"
+        type: "REST"
+        config:
+          endpoint: "http://localhost:8080/apiman-gateway-api"
+          username: "apimanager"
+          password: "apiman123!"
+  shared:
+    properties:
+      commonApiEndpoint: "http://example.com"
+  org:
+    name: "test"
+    description: "Test organisation"
+    apis:
+      - name: "example1"
+        description: "Example API 1"
+        initialVersion: "1.0"
+        published: true
+        config:
+          endpoint: "${commonApiEndpoint}"
+          endpointType: "rest"
+          public: true
+          gateway: "test-gw"
+      - name: "example2"
+        description: "Example API 2"
+        initialVersion: "1.0"
+        published: true
+        config:
+          endpoint: "${commonApiEndpoint}"
+          endpointType: "rest"
+          public: true
+          gateway: "test-gw"
