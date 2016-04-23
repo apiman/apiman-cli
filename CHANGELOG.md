@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+### Added
+- ...
+
 ## [0.2.0] - 2016-04-23
 ### Added
 - Adds support for shared properties within declaration files, which can be reused throughout the file.
