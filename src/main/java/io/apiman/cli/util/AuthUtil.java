@@ -40,17 +40,17 @@ public final class AuthUtil {
     /**
      * Management API username.
      */
-    public static final String APIMAN_USERNAME = "admin";
+    public static final String DEFAULT_SERVER_USERNAME = "admin";
 
     /**
      * Management API password.
      */
-    public static final String APIMAN_PASSWORD = "admin123!";
+    public static final String DEFAULT_SERVER_PASSWORD = "admin123!";
 
     /**
      * Encoded credentials for Basic auth.
      */
-    public static final String BASIC_AUTH_VALUE = buildAuthString(APIMAN_USERNAME, APIMAN_PASSWORD);
+    public static final String BASIC_AUTH_VALUE = buildAuthString(DEFAULT_SERVER_USERNAME, DEFAULT_SERVER_PASSWORD);
 
     /**
      * @param username the username

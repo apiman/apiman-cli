@@ -41,8 +41,8 @@ public class ApiTest extends BaseTest {
         Cli.main("api", "create",
                 "--debug",
                 "--server", getApimanUrl(),
-                "--serverUsername", AuthUtil.APIMAN_USERNAME,
-                "--serverPassword", AuthUtil.APIMAN_PASSWORD,
+                "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,
+                "--serverPassword", AuthUtil.DEFAULT_SERVER_PASSWORD,
                 "--name", "example",
                 "--endpoint", "http://example.com",
                 "--initialVersion", "1.0",
@@ -58,8 +58,8 @@ public class ApiTest extends BaseTest {
         Cli.main("api", "policy", "add",
                 "--debug",
                 "--server", getApimanUrl(),
-                "--serverUsername", AuthUtil.APIMAN_USERNAME,
-                "--serverPassword", AuthUtil.APIMAN_PASSWORD,
+                "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,
+                "--serverPassword", AuthUtil.DEFAULT_SERVER_PASSWORD,
                 "--name", "example",
                 "--version", "1.0",
                 "--policyName", "CachingPolicy",
@@ -72,8 +72,8 @@ public class ApiTest extends BaseTest {
         Cli.main("api", "publish",
                 "--debug",
                 "--server", getApimanUrl(),
-                "--serverUsername", AuthUtil.APIMAN_USERNAME,
-                "--serverPassword", AuthUtil.APIMAN_PASSWORD,
+                "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,
+                "--serverPassword", AuthUtil.DEFAULT_SERVER_PASSWORD,
                 "--name", "example",
                 "--version", "1.0",
                 "--orgName", ORG_NAME);
@@ -84,8 +84,8 @@ public class ApiTest extends BaseTest {
         Cli.main("api", "list",
                 "--debug",
                 "--server", getApimanUrl(),
-                "--serverUsername", AuthUtil.APIMAN_USERNAME,
-                "--serverPassword", AuthUtil.APIMAN_PASSWORD,
+                "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,
+                "--serverPassword", AuthUtil.DEFAULT_SERVER_PASSWORD,
                 "--orgName", ORG_NAME);
     }
 }

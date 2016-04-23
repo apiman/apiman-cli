@@ -20,8 +20,8 @@ import com.google.common.collect.Maps;
 import io.apiman.cli.core.common.model.ManagementApiVersion;
 import io.apiman.cli.exception.CommandException;
 import io.apiman.cli.exception.ExitWithCodeException;
-import io.apiman.cli.util.LogUtil;
 import io.apiman.cli.management.ManagementApiUtil;
+import io.apiman.cli.util.LogUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kohsuke.args4j.CmdLineException;
@@ -31,6 +31,8 @@ import org.kohsuke.args4j.Option;
 import java.util.List;
 import java.util.Map;
 
+import static io.apiman.cli.util.AuthUtil.DEFAULT_SERVER_PASSWORD;
+import static io.apiman.cli.util.AuthUtil.DEFAULT_SERVER_USERNAME;
 import static io.apiman.cli.util.LogUtil.LINE_SEPARATOR;
 
 /**
@@ -39,8 +41,6 @@ import static io.apiman.cli.util.LogUtil.LINE_SEPARATOR;
 public abstract class AbstractCommand implements Command {
     private static final Logger LOGGER = LogManager.getLogger(AbstractCommand.class);
     private static final String DEFAULT_SERVER_ADDRESS = "http://localhost:8080/apiman";
-    private static final String DEFAULT_SERVER_USERNAME = "admin";
-    private static final String DEFAULT_SERVER_PASSWORD = "admin123!";
 
     /**
      * Maps commands (e.g. 'org' or 'create') to their implementations.
@@ -66,6 +66,10 @@ public abstract class AbstractCommand implements Command {
      * The parent Command (<code>null</code> if root).
      */
     private Command parent;
+
+    /**
+     * The name of this command.
+     */
     private String commandName;
 
     public AbstractCommand() {
@@ -91,10 +95,16 @@ public abstract class AbstractCommand implements Command {
         this.parent = parent;
     }
 
+    /**
+     * @param commandName the name of this command
+     */
     public void setCommandName(String commandName) {
         this.commandName = commandName;
     }
 
+    /**
+     * @return the name of this command
+     */
     public String getCommandName() {
         return commandName;
     }
@@ -287,17 +297,17 @@ public abstract class AbstractCommand implements Command {
     }
 
     protected String getManagementApiEndpoint() {
-        // TODO read from config/environment
+        // TODO consider reading from config file/environment
         return serverAddress;
     }
 
     private String getManagementApiUsername() {
-        // TODO read from config/environment
+        // TODO consider reading from config file/environment
         return serverUsername;
     }
 
     private String getManagementApiPassword() {
-        // TODO read from config/environment
+        // TODO consider reading from config file/environment
         return serverPassword;
     }
 

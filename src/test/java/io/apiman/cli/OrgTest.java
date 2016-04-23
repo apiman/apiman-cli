@@ -41,8 +41,8 @@ public class OrgTest extends BaseTest {
         Cli.main("org", "show",
                 "--debug",
                 "--server", getApimanUrl(),
-                "--serverUsername", AuthUtil.APIMAN_USERNAME,
-                "--serverPassword", AuthUtil.APIMAN_PASSWORD,
+                "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,
+                "--serverPassword", AuthUtil.DEFAULT_SERVER_PASSWORD,
                 "--name", "test-org");
     }
 }

@@ -100,8 +100,8 @@ public class PluginTest extends BaseTest {
         Cli.main("plugin", "add",
                 "--debug",
                 "--server", getApimanUrl(),
-                "--serverUsername", AuthUtil.APIMAN_USERNAME,
-                "--serverPassword", AuthUtil.APIMAN_PASSWORD,
+                "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,
+                "--serverPassword", AuthUtil.DEFAULT_SERVER_PASSWORD,
                 "--groupId", PLUGIN_GROUPID,
                 "--artifactId", PLUGIN_ARTIFACTID,
                 "--version", PLUGIN_VERSION);
@@ -117,8 +117,8 @@ public class PluginTest extends BaseTest {
         Cli.main("plugin", "show",
                 "--debug",
                 "--server", getApimanUrl(),
-                "--serverUsername", AuthUtil.APIMAN_USERNAME,
-                "--serverPassword", AuthUtil.APIMAN_PASSWORD,
+                "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,
+                "--serverPassword", AuthUtil.DEFAULT_SERVER_PASSWORD,
                 "--id", pluginId.toString());
     }
 
@@ -127,7 +127,7 @@ public class PluginTest extends BaseTest {
         Cli.main("plugin", "list",
                 "--debug",
                 "--server", getApimanUrl(),
-                "--serverUsername", AuthUtil.APIMAN_USERNAME,
-                "--serverPassword", AuthUtil.APIMAN_PASSWORD);
+                "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,
+                "--serverPassword", AuthUtil.DEFAULT_SERVER_PASSWORD);
     }
 }

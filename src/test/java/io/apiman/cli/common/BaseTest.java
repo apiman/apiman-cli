@@ -41,7 +41,7 @@ public class BaseTest {
     @ClassRule
     public static WaitForHttp apiman = new WaitForHttp(getApimanHost(), getApimanPort(), "/apiman/system/status")
             .withStatusCode(HttpURLConnection.HTTP_OK)
-            .withBasicCredentials(AuthUtil.APIMAN_USERNAME, AuthUtil.APIMAN_PASSWORD);
+            .withBasicCredentials(AuthUtil.DEFAULT_SERVER_USERNAME, AuthUtil.DEFAULT_SERVER_PASSWORD);
 
     private static String getApimanHost() {
         return ofNullable(System.getProperty("apiman.host"))
@@ -74,8 +74,8 @@ public class BaseTest {
         Cli.main("org", "create",
                 "--debug",
                 "--server", getApimanUrl(),
-                "--serverUsername", AuthUtil.APIMAN_USERNAME,
-                "--serverPassword", AuthUtil.APIMAN_PASSWORD,
+                "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,
+                "--serverPassword", AuthUtil.DEFAULT_SERVER_PASSWORD,
                 "--name", orgName,
                 "--description", "example");
     }

@@ -36,8 +36,8 @@ public class GatewayTest extends BaseTest {
         Cli.main("gateway", "test",
                 "--debug",
                 "--server", getApimanUrl(),
-                "--serverUsername", AuthUtil.APIMAN_USERNAME,
-                "--serverPassword", AuthUtil.APIMAN_PASSWORD,
+                "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,
+                "--serverPassword", AuthUtil.DEFAULT_SERVER_PASSWORD,
                 "--endpoint", "http://localhost:8080/apiman-gateway-api",
                 "--username", "apimanager",
                 "--password", "apiman123!",
@@ -49,8 +49,8 @@ public class GatewayTest extends BaseTest {
         Cli.main("gateway", "create",
                 "--debug",
                 "--server", getApimanUrl(),
-                "--serverUsername", AuthUtil.APIMAN_USERNAME,
-                "--serverPassword", AuthUtil.APIMAN_PASSWORD,
+                "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,
+                "--serverPassword", AuthUtil.DEFAULT_SERVER_PASSWORD,
                 "--name", "test",
                 "--description", "example",
                 "--endpoint", "http://localhost:1234",
@@ -64,8 +64,8 @@ public class GatewayTest extends BaseTest {
         Cli.main("gateway", "show",
                 "--debug",
                 "--server", getApimanUrl(),
-                "--serverUsername", AuthUtil.APIMAN_USERNAME,
-                "--serverPassword", AuthUtil.APIMAN_PASSWORD,
+                "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,
+                "--serverPassword", AuthUtil.DEFAULT_SERVER_PASSWORD,
                 "--name", "test");
     }
 
@@ -74,7 +74,7 @@ public class GatewayTest extends BaseTest {
         Cli.main("gateway", "list",
                 "--debug",
                 "--server", getApimanUrl(),
-                "--serverUsername", AuthUtil.APIMAN_USERNAME,
-                "--serverPassword", AuthUtil.APIMAN_PASSWORD);
+                "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,
+                "--serverPassword", AuthUtil.DEFAULT_SERVER_PASSWORD);
     }
 }
