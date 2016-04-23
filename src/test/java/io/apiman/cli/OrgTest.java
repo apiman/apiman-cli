@@ -40,8 +40,8 @@ public class OrgTest extends BaseTest {
         Cli.main("org", "show",
                 "--debug",
                 "--server", getApimanUrl(),
-                "--serverUsername", "admin",
-                "--serverPassword", "admin123!",
+                "--serverUsername", APIMAN_USERNAME,
+                "--serverPassword", APIMAN_PASSWORD,
                 "--name", "test-org");
     }
 }

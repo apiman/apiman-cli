@@ -16,12 +16,24 @@
 
 package io.apiman.cli;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.jayway.restassured.response.Response;
 import io.apiman.cli.common.BaseTest;
 import io.apiman.cli.common.IntegrationTest;
+import io.apiman.cli.core.plugin.model.Plugin;
+import io.apiman.cli.util.MappingUtil;
+import org.jetbrains.annotations.NotNull;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runners.MethodSorters;
+
+import java.net.HttpURLConnection;
+import java.util.List;
+import java.util.Optional;
+
+import static com.jayway.restassured.RestAssured.given;
+import static org.junit.Assert.*;
 
 /**
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
@@ -29,6 +41,54 @@ import org.junit.runners.MethodSorters;
 @Category(IntegrationTest.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PluginTest extends BaseTest {
+    private static final String PLUGIN_ARTIFACTID = "apiman-plugins-transformation-policy";
+    private static final String PLUGIN_GROUPID = "io.apiman.plugins";
+    private static final String PLUGIN_VERSION = "1.2.1.Final";
+
+    /**
+     * Determine if the given {@link Plugin} matches the expected Maven coordinates.
+     *
+     * @param plugin the Plugin to check
+     * @return {@code true} if plugin matches, otherwise {@code false}
+     */
+    private boolean isArtifactMatch(Plugin plugin) {
+        return PLUGIN_ARTIFACTID.equals(plugin.getArtifactId())
+                && PLUGIN_GROUPID.equals(plugin.getGroupId())
+                && PLUGIN_VERSION.equals(plugin.getVersion());
+    }
+
+    /**
+     * @return the plugin expected to have been added
+     * @throws java.io.IOException
+     */
+    @NotNull
+    private Plugin getPlugin() throws java.io.IOException {
+        // fetch all plugins
+        final Response response = given()
+                .log().all()
+                .header(HEADER_AUTHORIZATION, BASIC_AUTH_VALUE)
+                .when()
+                .get("/plugins")
+                .thenReturn();
+
+        assertEquals(HttpURLConnection.HTTP_OK, response.statusCode());
+
+        @SuppressWarnings("unchecked")
+        final List<Plugin> plugins = MappingUtil.JSON_MAPPER.readValue(
+                response.body().asByteArray(),
+                new TypeReference<List<Plugin>>() {});
+
+        assertNotNull(plugins);
+        assertTrue("At least one plugin should be installed", plugins.size() > 0);
+
+        // find the expected plugin
+        final Optional<Plugin> addedPlugin = plugins.stream()
+                .filter(this::isArtifactMatch)
+                .findAny();
+
+        assertTrue(addedPlugin.isPresent());
+        return addedPlugin.get();
+    }
 
     /**
      * Adds a plugin to the system. Note: this requires the coordinates of a plugin
@@ -39,21 +99,26 @@ public class PluginTest extends BaseTest {
         Cli.main("plugin", "add",
                 "--debug",
                 "--server", getApimanUrl(),
-                "--serverUsername", "admin",
-                "--serverPassword", "admin123!",
-                "--groupId", "io.apiman.plugins",
-                "--artifactId", "apiman-plugins-transformation-policy",
-                "--version", "1.2.1.Final");
+                "--serverUsername", APIMAN_USERNAME,
+                "--serverPassword", APIMAN_PASSWORD,
+                "--groupId", PLUGIN_GROUPID,
+                "--artifactId", PLUGIN_ARTIFACTID,
+                "--version", PLUGIN_VERSION);
     }
 
     @Test
-    public void test2_fetch() {
+    public void test2_fetch() throws Exception {
+        final Plugin addedPlugin = getPlugin();
+
+        // look up plugin by its generated ID
+        final Long pluginId = addedPlugin.getId();
+
         Cli.main("plugin", "show",
                 "--debug",
                 "--server", getApimanUrl(),
-                "--serverUsername", "admin",
-                "--serverPassword", "admin123!",
-                "--id", "1");
+                "--serverUsername", APIMAN_USERNAME,
+                "--serverPassword", APIMAN_PASSWORD,
+                "--id", pluginId.toString());
     }
 
     @Test
@@ -61,7 +126,7 @@ public class PluginTest extends BaseTest {
         Cli.main("plugin", "list",
                 "--debug",
                 "--server", getApimanUrl(),
-                "--serverUsername", "admin",
-                "--serverPassword", "admin123!");
+                "--serverUsername", APIMAN_USERNAME,
+                "--serverPassword", APIMAN_PASSWORD);
     }
 }

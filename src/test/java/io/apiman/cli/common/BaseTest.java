@@ -17,11 +17,14 @@
 package io.apiman.cli.common;
 
 import com.google.common.base.Strings;
+import com.google.common.io.BaseEncoding;
+import com.jayway.restassured.RestAssured;
 import io.apiman.cli.Cli;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 
 import static io.apiman.cli.util.Functions.not;
-import static java.util.Optional.of;
+import static java.util.Optional.ofNullable;
 
 /**
  * This base class waits for an instance of apiman.
@@ -30,25 +33,51 @@ import static java.util.Optional.of;
  */
 public class BaseTest {
     /**
+     * Basic auth header.
+     */
+    protected static final String HEADER_AUTHORIZATION = "Authorization";
+
+    /**
+     * Management API username.
+     */
+    protected static final String APIMAN_USERNAME = "admin";
+
+    /**
+     * Management API password.
+     */
+    protected static final String APIMAN_PASSWORD = "admin123!";
+
+    /**
+     * Encoded credentials for Basic auth.
+     */
+    protected static final String BASIC_AUTH_VALUE = "Basic " + BaseEncoding.base64().encode(
+            (APIMAN_USERNAME + ":" + APIMAN_PASSWORD).getBytes());
+
+    /**
      * Wait for apiman to be available.
      */
     @ClassRule
     public static WaitForHttp apiman = new WaitForHttp(getApimanHost(), getApimanPort(), "/apiman/system/status");
 
     private static String getApimanHost() {
-        return of(System.getProperty("apiman.host"))
+        return ofNullable(System.getProperty("apiman.host"))
                 .filter(not(Strings::isNullOrEmpty))
                 .orElse("localhost");
     }
 
     private static int getApimanPort() {
-        return of(System.getProperty("apiman.port"))
+        return ofNullable(System.getProperty("apiman.port"))
                 .filter(not(Strings::isNullOrEmpty))
                 .map(Integer::parseInt)
                 .orElse(8080);
     }
 
-    public static String getApimanUrl() {
+    @BeforeClass
+    public static void beforeClass() throws Exception {
+        RestAssured.baseURI = getApimanUrl();
+    }
+
+    protected static String getApimanUrl() {
         return apiman.getAddress() + "/apiman";
     }
 
@@ -61,8 +90,8 @@ public class BaseTest {
         Cli.main("org", "create",
                 "--debug",
                 "--server", getApimanUrl(),
-                "--serverUsername", "admin",
-                "--serverPassword", "admin123!",
+                "--serverUsername", APIMAN_USERNAME,
+                "--serverPassword", APIMAN_PASSWORD,
                 "--name", orgName,
                 "--description", "example");
     }

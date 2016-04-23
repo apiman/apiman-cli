@@ -35,8 +35,8 @@ public class GatewayTest extends BaseTest {
         Cli.main("gateway", "test",
                 "--debug",
                 "--server", getApimanUrl(),
-                "--serverUsername", "admin",
-                "--serverPassword", "admin123!",
+                "--serverUsername", APIMAN_USERNAME,
+                "--serverPassword", APIMAN_PASSWORD,
                 "--endpoint", "http://localhost:8080/apiman-gateway-api",
                 "--username", "apimanager",
                 "--password", "apiman123!",
@@ -48,8 +48,8 @@ public class GatewayTest extends BaseTest {
         Cli.main("gateway", "create",
                 "--debug",
                 "--server", getApimanUrl(),
-                "--serverUsername", "admin",
-                "--serverPassword", "admin123!",
+                "--serverUsername", APIMAN_USERNAME,
+                "--serverPassword", APIMAN_PASSWORD,
                 "--name", "test",
                 "--description", "example",
                 "--endpoint", "http://localhost:1234",
@@ -63,8 +63,8 @@ public class GatewayTest extends BaseTest {
         Cli.main("gateway", "show",
                 "--debug",
                 "--server", getApimanUrl(),
-                "--serverUsername", "admin",
-                "--serverPassword", "admin123!",
+                "--serverUsername", APIMAN_USERNAME,
+                "--serverPassword", APIMAN_PASSWORD,
                 "--name", "test");
     }
 
@@ -73,7 +73,7 @@ public class GatewayTest extends BaseTest {
         Cli.main("gateway", "list",
                 "--debug",
                 "--server", getApimanUrl(),
-                "--serverUsername", "admin",
-                "--serverPassword", "admin123!");
+                "--serverUsername", APIMAN_USERNAME,
+                "--serverPassword", APIMAN_PASSWORD);
     }
 }
