@@ -1,4 +1,4 @@
-# Declaration with placeholders and embedded properties.
+# Declaration with placeholders and shared properties.
 ---
   system:
     gateways:

@@ -5,7 +5,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
-- ...
+- Adds support for shared properties within declaration files, which can be reused throughout the file.
+- Adds support for APIs with HTTP Basic Authorization.
 
 ## [0.1.9]
 ### Added

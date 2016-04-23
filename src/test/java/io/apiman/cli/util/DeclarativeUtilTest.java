@@ -100,9 +100,9 @@ public class DeclarativeUtilTest {
      * @throws Exception
      */
     @Test
-    public void testLoadDeclarationEmbeddedProperties() throws Exception {
+    public void testLoadDeclarationSharedProperties() throws Exception {
         final Declaration declaration = DeclarativeUtil.loadDeclaration(
-                Paths.get(DeclarativeTest.class.getResource("/embedded-properties.yml").toURI()),
+                Paths.get(DeclarativeTest.class.getResource("/shared-properties.yml").toURI()),
                 MappingUtil.YAML_MAPPER, Collections.emptyList());
 
         // assert loaded with resolved placeholders
