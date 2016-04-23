@@ -46,7 +46,7 @@ public class BaseTest {
     private static String getApimanHost() {
         return ofNullable(System.getProperty("apiman.host"))
                 .filter(not(Strings::isNullOrEmpty))
-                .orElse("192.168.99.100");
+                .orElse("localhost");
     }
 
     private static int getApimanPort() {
