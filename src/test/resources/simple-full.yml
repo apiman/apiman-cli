@@ -24,6 +24,10 @@
         config:
           endpoint: "http://example.com"
           endpointType: "rest"
+          security:
+            authorizationType: "basic"
+            username: "user"
+            password: "Password123"
           public: true
           gateway: "test-gw"
         policies:
