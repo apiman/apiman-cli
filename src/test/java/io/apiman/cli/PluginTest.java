@@ -18,6 +18,7 @@ package io.apiman.cli;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.jayway.restassured.response.Response;
+import io.apiman.cli.util.AuthUtil;
 import io.apiman.cli.common.BaseTest;
 import io.apiman.cli.common.IntegrationTest;
 import io.apiman.cli.core.plugin.model.Plugin;
@@ -43,7 +44,7 @@ import static org.junit.Assert.*;
 public class PluginTest extends BaseTest {
     private static final String PLUGIN_ARTIFACTID = "apiman-plugins-transformation-policy";
     private static final String PLUGIN_GROUPID = "io.apiman.plugins";
-    private static final String PLUGIN_VERSION = "1.2.1.Final";
+    private static final String PLUGIN_VERSION = "1.2.4.Final";
 
     /**
      * Determine if the given {@link Plugin} matches the expected Maven coordinates.
@@ -66,7 +67,7 @@ public class PluginTest extends BaseTest {
         // fetch all plugins
         final Response response = given()
                 .log().all()
-                .header(HEADER_AUTHORIZATION, BASIC_AUTH_VALUE)
+                .header(AuthUtil.HEADER_AUTHORIZATION, AuthUtil.BASIC_AUTH_VALUE)
                 .when()
                 .get("/plugins")
                 .thenReturn();
@@ -99,8 +100,8 @@ public class PluginTest extends BaseTest {
         Cli.main("plugin", "add",
                 "--debug",
                 "--server", getApimanUrl(),
-                "--serverUsername", APIMAN_USERNAME,
-                "--serverPassword", APIMAN_PASSWORD,
+                "--serverUsername", AuthUtil.APIMAN_USERNAME,
+                "--serverPassword", AuthUtil.APIMAN_PASSWORD,
                 "--groupId", PLUGIN_GROUPID,
                 "--artifactId", PLUGIN_ARTIFACTID,
                 "--version", PLUGIN_VERSION);
@@ -116,8 +117,8 @@ public class PluginTest extends BaseTest {
         Cli.main("plugin", "show",
                 "--debug",
                 "--server", getApimanUrl(),
-                "--serverUsername", APIMAN_USERNAME,
-                "--serverPassword", APIMAN_PASSWORD,
+                "--serverUsername", AuthUtil.APIMAN_USERNAME,
+                "--serverPassword", AuthUtil.APIMAN_PASSWORD,
                 "--id", pluginId.toString());
     }
 
@@ -126,7 +127,7 @@ public class PluginTest extends BaseTest {
         Cli.main("plugin", "list",
                 "--debug",
                 "--server", getApimanUrl(),
-                "--serverUsername", APIMAN_USERNAME,
-                "--serverPassword", APIMAN_PASSWORD);
+                "--serverUsername", AuthUtil.APIMAN_USERNAME,
+                "--serverPassword", AuthUtil.APIMAN_PASSWORD);
     }
 }

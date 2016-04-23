@@ -17,11 +17,13 @@
 package io.apiman.cli.common;
 
 import com.google.common.base.Strings;
-import com.google.common.io.BaseEncoding;
 import com.jayway.restassured.RestAssured;
 import io.apiman.cli.Cli;
+import io.apiman.cli.util.AuthUtil;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
+
+import java.net.HttpURLConnection;
 
 import static io.apiman.cli.util.Functions.not;
 import static java.util.Optional.ofNullable;
@@ -33,31 +35,13 @@ import static java.util.Optional.ofNullable;
  */
 public class BaseTest {
     /**
-     * Basic auth header.
-     */
-    protected static final String HEADER_AUTHORIZATION = "Authorization";
-
-    /**
-     * Management API username.
-     */
-    protected static final String APIMAN_USERNAME = "admin";
-
-    /**
-     * Management API password.
-     */
-    protected static final String APIMAN_PASSWORD = "admin123!";
-
-    /**
-     * Encoded credentials for Basic auth.
-     */
-    protected static final String BASIC_AUTH_VALUE = "Basic " + BaseEncoding.base64().encode(
-            (APIMAN_USERNAME + ":" + APIMAN_PASSWORD).getBytes());
-
-    /**
      * Wait for apiman to be available.
+     * Returns a 200 on 'http://docker.local:8080/apiman/system/status' when ready.
      */
     @ClassRule
-    public static WaitForHttp apiman = new WaitForHttp(getApimanHost(), getApimanPort(), "/apiman/system/status");
+    public static WaitForHttp apiman = new WaitForHttp(getApimanHost(), getApimanPort(), "/apiman/system/status")
+            .withStatusCode(HttpURLConnection.HTTP_OK)
+            .withBasicCredentials(AuthUtil.APIMAN_USERNAME, AuthUtil.APIMAN_PASSWORD);
 
     private static String getApimanHost() {
         return ofNullable(System.getProperty("apiman.host"))
@@ -90,8 +74,8 @@ public class BaseTest {
         Cli.main("org", "create",
                 "--debug",
                 "--server", getApimanUrl(),
-                "--serverUsername", APIMAN_USERNAME,
-                "--serverPassword", APIMAN_PASSWORD,
+                "--serverUsername", AuthUtil.APIMAN_USERNAME,
+                "--serverPassword", AuthUtil.APIMAN_PASSWORD,
                 "--name", orgName,
                 "--description", "example");
     }

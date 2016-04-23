@@ -16,6 +16,7 @@
 
 package io.apiman.cli;
 
+import io.apiman.cli.util.AuthUtil;
 import io.apiman.cli.common.BaseTest;
 import io.apiman.cli.common.IntegrationTest;
 import org.junit.FixMethodOrder;
@@ -35,8 +36,8 @@ public class GatewayTest extends BaseTest {
         Cli.main("gateway", "test",
                 "--debug",
                 "--server", getApimanUrl(),
-                "--serverUsername", APIMAN_USERNAME,
-                "--serverPassword", APIMAN_PASSWORD,
+                "--serverUsername", AuthUtil.APIMAN_USERNAME,
+                "--serverPassword", AuthUtil.APIMAN_PASSWORD,
                 "--endpoint", "http://localhost:8080/apiman-gateway-api",
                 "--username", "apimanager",
                 "--password", "apiman123!",
@@ -48,8 +49,8 @@ public class GatewayTest extends BaseTest {
         Cli.main("gateway", "create",
                 "--debug",
                 "--server", getApimanUrl(),
-                "--serverUsername", APIMAN_USERNAME,
-                "--serverPassword", APIMAN_PASSWORD,
+                "--serverUsername", AuthUtil.APIMAN_USERNAME,
+                "--serverPassword", AuthUtil.APIMAN_PASSWORD,
                 "--name", "test",
                 "--description", "example",
                 "--endpoint", "http://localhost:1234",
@@ -63,8 +64,8 @@ public class GatewayTest extends BaseTest {
         Cli.main("gateway", "show",
                 "--debug",
                 "--server", getApimanUrl(),
-                "--serverUsername", APIMAN_USERNAME,
-                "--serverPassword", APIMAN_PASSWORD,
+                "--serverUsername", AuthUtil.APIMAN_USERNAME,
+                "--serverPassword", AuthUtil.APIMAN_PASSWORD,
                 "--name", "test");
     }
 
@@ -73,7 +74,7 @@ public class GatewayTest extends BaseTest {
         Cli.main("gateway", "list",
                 "--debug",
                 "--server", getApimanUrl(),
-                "--serverUsername", APIMAN_USERNAME,
-                "--serverPassword", APIMAN_PASSWORD);
+                "--serverUsername", AuthUtil.APIMAN_USERNAME,
+                "--serverPassword", AuthUtil.APIMAN_PASSWORD);
     }
 }

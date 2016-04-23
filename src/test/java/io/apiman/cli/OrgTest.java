@@ -16,6 +16,7 @@
 
 package io.apiman.cli;
 
+import io.apiman.cli.util.AuthUtil;
 import io.apiman.cli.common.BaseTest;
 import io.apiman.cli.common.IntegrationTest;
 import org.junit.FixMethodOrder;
@@ -40,8 +41,8 @@ public class OrgTest extends BaseTest {
         Cli.main("org", "show",
                 "--debug",
                 "--server", getApimanUrl(),
-                "--serverUsername", APIMAN_USERNAME,
-                "--serverPassword", APIMAN_PASSWORD,
+                "--serverUsername", AuthUtil.APIMAN_USERNAME,
+                "--serverPassword", AuthUtil.APIMAN_PASSWORD,
                 "--name", "test-org");
     }
 }

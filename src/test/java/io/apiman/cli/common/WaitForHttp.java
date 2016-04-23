@@ -16,6 +16,8 @@
 
 package io.apiman.cli.common;
 
+import com.google.common.base.Strings;
+import io.apiman.cli.util.AuthUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.rules.TestRule;
@@ -54,9 +56,16 @@ public class WaitForHttp implements TestRule {
      */
     private static final int START_TIMEOUT = 120;
 
+    /**
+     * The status code to expect.
+     */
+    private int statusCode = HttpURLConnection.HTTP_OK;
+
     private String host;
     private int port;
     private final String path;
+    private String username;
+    private String password;
 
     public WaitForHttp(String host, int port, String path) {
         this.host = host;
@@ -95,10 +104,16 @@ public class WaitForHttp implements TestRule {
                     try {
                         final HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
 
+                        // authenticate
+                        if (!Strings.isNullOrEmpty(username)) {
+                            connection.setRequestProperty(AuthUtil.HEADER_AUTHORIZATION, AuthUtil.buildAuthString(username, password));
+                            connection.setUseCaches(false);
+                        }
+
                         connection.setRequestMethod("GET");
                         connection.connect();
 
-                        if (HttpURLConnection.HTTP_OK != connection.getResponseCode()) {
+                        if (statusCode != connection.getResponseCode()) {
                             throw new RuntimeException(String.format("HTTP response code was: %s",
                                     connection.getResponseCode()));
                         }
@@ -112,11 +127,33 @@ public class WaitForHttp implements TestRule {
 
         } catch (TimeoutException e) {
             throw new RuntimeException(String.format(
-                    "Timed out waiting for URL to be accessible (%s should return HTTP 200 OK)", url));
+                    "Timed out waiting for URL to be accessible (%s should return HTTP %s)", url, statusCode));
         }
     }
 
     public String getAddress() {
         return String.format("http://%s:%s", host, port);
+    }
+
+    /**
+     * @param statusCode the status code to expect
+     * @return this
+     */
+    public WaitForHttp withStatusCode(int statusCode) {
+        this.statusCode = statusCode;
+        return this;
+    }
+
+    /**
+     * Authenticate with HTTP basic auth credentials.
+     *
+     * @param username the username
+     * @param password the password
+     * @return this
+     */
+    public WaitForHttp withBasicCredentials(String username, String password) {
+        this.username = username;
+        this.password = password;
+        return this;
     }
 }

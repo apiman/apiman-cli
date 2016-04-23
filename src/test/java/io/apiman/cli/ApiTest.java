@@ -16,6 +16,7 @@
 
 package io.apiman.cli;
 
+import io.apiman.cli.util.AuthUtil;
 import io.apiman.cli.common.BaseTest;
 import io.apiman.cli.common.IntegrationTest;
 import org.junit.FixMethodOrder;
@@ -40,8 +41,8 @@ public class ApiTest extends BaseTest {
         Cli.main("api", "create",
                 "--debug",
                 "--server", getApimanUrl(),
-                "--serverUsername", APIMAN_USERNAME,
-                "--serverPassword", APIMAN_PASSWORD,
+                "--serverUsername", AuthUtil.APIMAN_USERNAME,
+                "--serverPassword", AuthUtil.APIMAN_PASSWORD,
                 "--name", "example",
                 "--endpoint", "http://example.com",
                 "--initialVersion", "1.0",
@@ -57,8 +58,8 @@ public class ApiTest extends BaseTest {
         Cli.main("api", "policy", "add",
                 "--debug",
                 "--server", getApimanUrl(),
-                "--serverUsername", APIMAN_USERNAME,
-                "--serverPassword", APIMAN_PASSWORD,
+                "--serverUsername", AuthUtil.APIMAN_USERNAME,
+                "--serverPassword", AuthUtil.APIMAN_PASSWORD,
                 "--name", "example",
                 "--version", "1.0",
                 "--policyName", "CachingPolicy",
@@ -71,8 +72,8 @@ public class ApiTest extends BaseTest {
         Cli.main("api", "publish",
                 "--debug",
                 "--server", getApimanUrl(),
-                "--serverUsername", APIMAN_USERNAME,
-                "--serverPassword", APIMAN_PASSWORD,
+                "--serverUsername", AuthUtil.APIMAN_USERNAME,
+                "--serverPassword", AuthUtil.APIMAN_PASSWORD,
                 "--name", "example",
                 "--version", "1.0",
                 "--orgName", ORG_NAME);
@@ -83,8 +84,8 @@ public class ApiTest extends BaseTest {
         Cli.main("api", "list",
                 "--debug",
                 "--server", getApimanUrl(),
-                "--serverUsername", APIMAN_USERNAME,
-                "--serverPassword", APIMAN_PASSWORD,
+                "--serverUsername", AuthUtil.APIMAN_USERNAME,
+                "--serverPassword", AuthUtil.APIMAN_PASSWORD,
                 "--orgName", ORG_NAME);
     }
 }
