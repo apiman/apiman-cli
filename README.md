@@ -44,7 +44,7 @@ Add a plugin:
     $ ./apiman plugin add \
             --groupId io.apiman.plugins \
             --artifactId apiman-plugins-test-policy \
-            --version 1.2.1.Final
+            --version 1.2.4.Final
 
 You can do much more - see the [Usage](#usage) section.
 

@@ -12,7 +12,7 @@
     plugins:
       - groupId: "io.apiman.plugins"
         artifactId: "apiman-plugins-test-policy"
-        version: "1.2.1.Final"
+        version: "1.2.4.Final"
   shared:
     policies:
       - $id: "sharedPolicy"

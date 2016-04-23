@@ -17,11 +17,15 @@
 package io.apiman.cli.common;
 
 import com.google.common.base.Strings;
+import com.jayway.restassured.RestAssured;
 import io.apiman.cli.Cli;
+import io.apiman.cli.util.AuthUtil;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 
+import java.net.HttpURLConnection;
+
 import static io.apiman.cli.util.Functions.not;
-import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -32,9 +36,12 @@ import static java.util.Optional.ofNullable;
 public class BaseTest {
     /**
      * Wait for apiman to be available.
+     * Returns a 200 on 'http://docker.local:8080/apiman/system/status' when ready.
      */
     @ClassRule
-    public static WaitForHttp apiman = new WaitForHttp(getApimanHost(), getApimanPort(), "/apiman/system/status");
+    public static WaitForHttp apiman = new WaitForHttp(getApimanHost(), getApimanPort(), "/apiman/system/status")
+            .withStatusCode(HttpURLConnection.HTTP_OK)
+            .withBasicCredentials(AuthUtil.APIMAN_USERNAME, AuthUtil.APIMAN_PASSWORD);
 
     private static String getApimanHost() {
         return ofNullable(System.getProperty("apiman.host"))
@@ -49,7 +56,12 @@ public class BaseTest {
                 .orElse(8080);
     }
 
-    public static String getApimanUrl() {
+    @BeforeClass
+    public static void beforeClass() throws Exception {
+        RestAssured.baseURI = getApimanUrl();
+    }
+
+    protected static String getApimanUrl() {
         return apiman.getAddress() + "/apiman";
     }
 
@@ -62,8 +74,8 @@ public class BaseTest {
         Cli.main("org", "create",
                 "--debug",
                 "--server", getApimanUrl(),
-                "--serverUsername", "admin",
-                "--serverPassword", "admin123!",
+                "--serverUsername", AuthUtil.APIMAN_USERNAME,
+                "--serverPassword", AuthUtil.APIMAN_PASSWORD,
                 "--name", orgName,
                 "--description", "example");
     }

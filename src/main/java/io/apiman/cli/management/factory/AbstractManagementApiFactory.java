@@ -16,10 +16,11 @@
 
 package io.apiman.cli.management.factory;
 
-import com.google.common.io.BaseEncoding;
+import io.apiman.cli.util.AuthUtil;
 import retrofit.RestAdapter;
 import retrofit.converter.JacksonConverter;
 
+import static io.apiman.cli.util.AuthUtil.HEADER_AUTHORIZATION;
 import static io.apiman.cli.util.MappingUtil.JSON_MAPPER;
 
 /**
@@ -30,9 +31,6 @@ import static io.apiman.cli.util.MappingUtil.JSON_MAPPER;
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
 public abstract class AbstractManagementApiFactory<T, A> implements ManagementApiFactory<T> {
-    private static final String HEADER_AUTHORIZATION = "Authorization";
-    private static final String AUTH_BASIC = "Basic ";
-
     /**
      * @param apiClass     the Class for which to build a client
      * @param username     the management API username
@@ -45,8 +43,7 @@ public abstract class AbstractManagementApiFactory<T, A> implements ManagementAp
                 .setConverter(new JacksonConverter(JSON_MAPPER))
                 .setEndpoint(endpoint)
                 .setRequestInterceptor(request -> {
-                    final String credentials = String.format("%s:%s", username, password);
-                    request.addHeader(HEADER_AUTHORIZATION, AUTH_BASIC + BaseEncoding.base64().encode(credentials.getBytes()));
+                    request.addHeader(HEADER_AUTHORIZATION, AuthUtil.buildAuthString(username, password));
                 });
 
         if (debugLogging) {
