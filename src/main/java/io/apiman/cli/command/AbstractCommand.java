@@ -158,6 +158,7 @@ public abstract class AbstractCommand implements Command {
 
             } catch (Exception e) {
                 LOGGER.error("Error in " + getCommandDescription(), e);
+                System.exit(1);
             }
 
         } else {
