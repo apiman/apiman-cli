@@ -17,6 +17,7 @@
 package io.apiman.cli.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Maps;
 import com.google.common.io.CharStreams;
 import io.apiman.cli.core.declarative.model.Declaration;
 import io.apiman.cli.core.declarative.model.SharedItems;
@@ -31,7 +32,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
@@ -56,14 +56,12 @@ public class DeclarativeUtil {
      * @param properties property placeholders to resolve
      * @return the Declaration
      */
-    public static Declaration loadDeclaration(Path path, ObjectMapper mapper, Collection<String> properties) {
-        final Map<String, String> parsedProperties = BeanUtil.parseReplacements(properties);
-
+    public static Declaration loadDeclaration(Path path, ObjectMapper mapper, Map<String, String> properties) {
         try (InputStream is = Files.newInputStream(path)) {
             String fileContents = CharStreams.toString(new InputStreamReader(is));
             LOGGER.trace("Declaration file raw: {}", fileContents);
 
-            Declaration declaration = loadDeclaration(mapper, fileContents, parsedProperties);
+            Declaration declaration = loadDeclaration(mapper, fileContents, properties);
 
             // check for the presence of shared properties in the declaration
             final Map<String, String> sharedProperties = ofNullable(declaration.getShared())
@@ -72,10 +70,11 @@ public class DeclarativeUtil {
 
             if (sharedProperties.size() > 0) {
                 LOGGER.trace("Resolving {} shared placeholders", sharedProperties.size());
-                parsedProperties.putAll(sharedProperties);
+                final Map<String, String> mutableProperties = Maps.newHashMap(properties);
+                mutableProperties.putAll(sharedProperties);
 
                 // this is not very efficient, as it requires parsing the declaration twice
-                declaration = loadDeclaration(mapper, fileContents, parsedProperties);
+                declaration = loadDeclaration(mapper, fileContents, mutableProperties);
             }
 
             return declaration;

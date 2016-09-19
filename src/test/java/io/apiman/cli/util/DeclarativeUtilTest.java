@@ -16,15 +16,15 @@
 
 package io.apiman.cli.util;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableMap;
 import io.apiman.cli.command.DeclarativeTest;
 import io.apiman.cli.core.declarative.model.Declaration;
 import io.apiman.cli.core.declarative.model.DeclarativeGateway;
 import org.junit.Test;
 
 import java.nio.file.Paths;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -45,7 +45,7 @@ public class DeclarativeUtilTest {
     public void testLoadDeclarationJson() throws Exception {
         final Declaration declaration = DeclarativeUtil.loadDeclaration(
                 Paths.get(DeclarativeTest.class.getResource("/simple-full.json").toURI()), MappingUtil.JSON_MAPPER,
-                Collections.emptyList());
+                Collections.emptyMap());
 
         assertLoadedModel(declaration, 1);
     }
@@ -59,7 +59,7 @@ public class DeclarativeUtilTest {
     public void testLoadDeclarationYaml() throws Exception {
         final Declaration declaration = DeclarativeUtil.loadDeclaration(
                 Paths.get(DeclarativeTest.class.getResource("/simple-full.yml").toURI()), MappingUtil.YAML_MAPPER,
-                Collections.emptyList());
+                Collections.emptyMap());
 
         assertLoadedModel(declaration, 1);
     }
@@ -72,10 +72,10 @@ public class DeclarativeUtilTest {
     @Test
     public void testLoadDeclarationPlaceholders() throws Exception {
         // set properties
-        final Collection<String> properties = Lists.newArrayList(
-                "gw.endpoint=http://example.com",
-                "gw.username=myuser",
-                "gw.password=secret"
+        final Map<String, String> properties = ImmutableMap.of(
+                "gw.endpoint", "http://example.com",
+                "gw.username", "myuser",
+                "gw.password", "secret"
         );
 
         final Declaration declaration = DeclarativeUtil.loadDeclaration(
@@ -103,7 +103,7 @@ public class DeclarativeUtilTest {
     public void testLoadDeclarationSharedProperties() throws Exception {
         final Declaration declaration = DeclarativeUtil.loadDeclaration(
                 Paths.get(DeclarativeTest.class.getResource("/shared-properties.yml").toURI()),
-                MappingUtil.YAML_MAPPER, Collections.emptyList());
+                MappingUtil.YAML_MAPPER, Collections.emptyMap());
 
         // assert loaded with resolved placeholders
         assertNotNull(declaration);
@@ -127,7 +127,7 @@ public class DeclarativeUtilTest {
     public void testLoadDeclarationSharedJson() throws Exception {
         final Declaration declaration = DeclarativeUtil.loadDeclaration(
                 Paths.get(DeclarativeTest.class.getResource("/shared-policies.json").toURI()), MappingUtil.JSON_MAPPER,
-                Collections.emptyList());
+                Collections.emptyMap());
 
         assertLoadedModel(declaration, 2);
     }
@@ -141,7 +141,7 @@ public class DeclarativeUtilTest {
     public void testLoadDeclarationSharedYaml() throws Exception {
         final Declaration declaration = DeclarativeUtil.loadDeclaration(
                 Paths.get(DeclarativeTest.class.getResource("/shared-policies.yml").toURI()), MappingUtil.YAML_MAPPER,
-                Collections.emptyList());
+                Collections.emptyMap());
 
         assertLoadedModel(declaration, 2);
     }
@@ -149,7 +149,7 @@ public class DeclarativeUtilTest {
     /**
      * Asserts the contents of the model.
      *
-     * @param declaration the model to assert
+     * @param declaration      the model to assert
      * @param expectedApiCount the number of API items
      */
     private void assertLoadedModel(Declaration declaration, int expectedApiCount) {
