@@ -75,7 +75,7 @@ public class ApplyCommand extends AbstractFinalCommand {
     private List<String> properties;
 
     @Option(name = "--propertiesFile", usage = "Properties file")
-    private Path propertiesFile;
+    private List<Path> propertiesFiles;
 
     @Option(name = "--serverVersion", aliases = {"-sv"}, usage = "Management API server version")
     private ManagementApiVersion serverVersion = ManagementApiVersion.DEFAULT_VERSION;
@@ -97,18 +97,22 @@ public class ApplyCommand extends AbstractFinalCommand {
         final Map<String, String> parsedProperties = BeanUtil.parseReplacements(properties);
 
         // check for properties file
-        if (null != propertiesFile) {
+        ofNullable(propertiesFiles).ifPresent(propertiesFiles -> propertiesFiles.forEach(propertiesFile -> {
             LOGGER.trace("Loading properties file: {}", propertiesFile);
 
             final Properties fileProperties = new Properties();
             try (final InputStream propertiesIn = Files.newInputStream(propertiesFile, StandardOpenOption.READ)) {
-                fileProperties.load(propertiesIn);
+                if (propertiesFile.toAbsolutePath().toString().toLowerCase().endsWith(".xml")) {
+                    fileProperties.loadFromXML(propertiesIn);
+                } else {
+                    fileProperties.load(propertiesIn);
+                }
             } catch (IOException e) {
                 throw new CommandException(String.format("Error loading properties file: %s", propertiesFile), e);
             }
 
             fileProperties.forEach((key, value) -> parsedProperties.put((String) key, (String) value));
-        }
+        }));
 
         final Declaration declaration;
 
@@ -453,8 +457,8 @@ public class ApplyCommand extends AbstractFinalCommand {
         this.properties = properties;
     }
 
-    public void setPropertiesFile(Path propertiesFile) {
-        this.propertiesFile = propertiesFile;
+    public void setPropertiesFiles(List<Path> propertiesFiles) {
+        this.propertiesFiles = propertiesFiles;
     }
 
     public void setServerAddress(String serverAddress) {
