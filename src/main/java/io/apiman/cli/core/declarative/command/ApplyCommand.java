@@ -43,9 +43,15 @@ import org.apache.logging.log4j.Logger;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Properties;
 
 import static io.apiman.cli.util.Functions.of;
 import static java.util.Optional.ofNullable;
@@ -68,8 +74,11 @@ public class ApplyCommand extends AbstractFinalCommand {
     @Option(name = "-P", usage = "Set property (key=value)")
     private List<String> properties;
 
+    @Option(name = "--propertiesFile", usage = "Properties file")
+    private Path propertiesFile;
+
     @Option(name = "--serverVersion", aliases = {"-sv"}, usage = "Management API server version")
-    protected ManagementApiVersion serverVersion = ManagementApiVersion.DEFAULT_VERSION;
+    private ManagementApiVersion serverVersion = ManagementApiVersion.DEFAULT_VERSION;
 
     @Override
     protected String getCommandDescription() {
@@ -78,14 +87,37 @@ public class ApplyCommand extends AbstractFinalCommand {
 
     @Override
     public void performAction(CmdLineParser parser) throws CommandException {
+        applyDeclaration();
+    }
+
+    /**
+     * Load and then apply the Declaration.
+     */
+    public void applyDeclaration() {
+        final Map<String, String> parsedProperties = BeanUtil.parseReplacements(properties);
+
+        // check for properties file
+        if (null != propertiesFile) {
+            LOGGER.trace("Loading properties file: {}", propertiesFile);
+
+            final Properties fileProperties = new Properties();
+            try (final InputStream propertiesIn = Files.newInputStream(propertiesFile, StandardOpenOption.READ)) {
+                fileProperties.load(propertiesIn);
+            } catch (IOException e) {
+                throw new CommandException(String.format("Error loading properties file: %s", propertiesFile), e);
+            }
+
+            fileProperties.forEach((key, value) -> parsedProperties.put((String) key, (String) value));
+        }
+
         final Declaration declaration;
 
         // parse declaration
         if (declarationFile.endsWith(JSON_EXTENSION)) {
-            declaration = DeclarativeUtil.loadDeclaration(declarationFile, MappingUtil.JSON_MAPPER, properties);
+            declaration = DeclarativeUtil.loadDeclaration(declarationFile, MappingUtil.JSON_MAPPER, parsedProperties);
         } else {
             // default is YAML
-            declaration = DeclarativeUtil.loadDeclaration(declarationFile, MappingUtil.YAML_MAPPER, properties);
+            declaration = DeclarativeUtil.loadDeclaration(declarationFile, MappingUtil.YAML_MAPPER, parsedProperties);
         }
 
         LOGGER.info("Loaded declaration: {}", declarationFile);
@@ -411,6 +443,18 @@ public class ApplyCommand extends AbstractFinalCommand {
     private void performPublish(String orgName, String apiName, String apiVersion) {
         LOGGER.info("Publishing API: {}", apiName);
         ServerActionUtil.publishApi(orgName, apiName, apiVersion, serverVersion, buildServerApiClient(ActionApi.class));
+    }
+
+    public void setDeclarationFile(Path declarationFile) {
+        this.declarationFile = declarationFile;
+    }
+
+    public void setProperties(List<String> properties) {
+        this.properties = properties;
+    }
+
+    public void setPropertiesFile(Path propertiesFile) {
+        this.propertiesFile = propertiesFile;
     }
 
     public void setServerAddress(String serverAddress) {
