@@ -16,6 +16,7 @@
 
 package io.apiman.cli.command;
 
+import com.google.common.collect.Lists;
 import io.apiman.cli.common.BaseTest;
 import io.apiman.cli.common.IntegrationTest;
 import io.apiman.cli.core.common.model.ManagementApiVersion;
@@ -30,6 +31,7 @@ import org.junit.experimental.categories.Category;
 
 import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Tests for {@link ApplyCommand}.
@@ -64,7 +66,7 @@ public class DeclarativeTest extends BaseTest {
     public void testApplyDeclaration_JustPlugins() throws Exception {
         final Declaration declaration = DeclarativeUtil.loadDeclaration(
                 Paths.get(DeclarativeTest.class.getResource("/simple-plugin.yml").toURI()), MappingUtil.YAML_MAPPER,
-                Collections.emptyList());
+                Collections.emptyMap());
 
         command.applyDeclaration(declaration);
     }
@@ -78,8 +80,27 @@ public class DeclarativeTest extends BaseTest {
     public void testApplyDeclaration_Full() throws Exception {
         final Declaration declaration = DeclarativeUtil.loadDeclaration(
                 Paths.get(DeclarativeTest.class.getResource("/simple-no-plugin.yml").toURI()), MappingUtil.YAML_MAPPER,
-                Collections.emptyList());
+                Collections.emptyMap());
 
         command.applyDeclaration(declaration);
+    }
+
+    /**
+     * Expect that the configuration in the declaration can be applied, resolving placeholders passed
+     * from the command line as well as from a properties file.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testApplyDeclaration_WithProperties() throws Exception {
+        final List<String> inlineProperties = Lists.newArrayList(
+                "gw.endpoint=http://example.com"
+        );
+
+        command.setDeclarationFile(Paths.get(DeclarativeTest.class.getResource("/simple-placeholders.yml").toURI()));
+        command.setProperties(inlineProperties);
+        command.setPropertiesFile(Paths.get(DeclarativeTest.class.getResource("/declaration-test.properties").toURI()));
+
+        command.applyDeclaration();
     }
 }

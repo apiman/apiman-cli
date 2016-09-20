@@ -28,12 +28,12 @@ public final class AuthUtil {
     }
 
     /**
-     * Basic auth header.
+     * Authorization HTTP header.
      */
     public static final String HEADER_AUTHORIZATION = "Authorization";
 
     /**
-     * Scheme prefix.
+     * Basic Authorization scheme prefix.
      */
     private static final String AUTH_BASIC = "Basic ";
 

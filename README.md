@@ -100,7 +100,7 @@ The following things just happened:
     
 Declarations also allow you to add gateways, install plugins and more. See the `examples` directory.
 
-## Using placeholders
+## Using placeholder properties
 
 You can also use placeholders in your declaration files. This helps you reuse declaration files across different environments. For example:
 
@@ -109,6 +109,10 @@ You can also use placeholders in your declaration files. This helps you reuse de
 ...then pass them in when you run the _apply_ command:
 
     ./apiman apply -f simple.yml -P myApiEndpoint=http://example.com
+
+Additionally, you can specify a properties files, containing key-value pairs, such as:
+
+    ./apiman apply -f simple.yml --propertiesFile /path/to/placeholder.properties
 
 ## Shared policies and properties
 
