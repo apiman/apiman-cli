@@ -87,7 +87,12 @@ public class DeclarativeTest extends BaseTest {
 
     /**
      * Expect that the configuration in the declaration can be applied, resolving placeholders passed
-     * from the command line as well as from a properties file.
+     * from:
+     * <ul>
+     * <li>the command line (using '-P key=value')</li>
+     * <li>a key=value format Java properties file (.properties)</li>
+     * <li>an XML format Java properties file (.xml)</li>
+     * </ul>
      *
      * @throws Exception
      */
@@ -99,7 +104,10 @@ public class DeclarativeTest extends BaseTest {
 
         command.setDeclarationFile(Paths.get(DeclarativeTest.class.getResource("/simple-placeholders.yml").toURI()));
         command.setProperties(inlineProperties);
-        command.setPropertiesFile(Paths.get(DeclarativeTest.class.getResource("/declaration-test.properties").toURI()));
+        command.setPropertiesFiles(Lists.newArrayList(
+                Paths.get(DeclarativeTest.class.getResource("/placeholder-test.properties").toURI()),
+                Paths.get(DeclarativeTest.class.getResource("/placeholder-test.xml").toURI())
+        ));
 
         command.applyDeclaration();
     }
