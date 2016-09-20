@@ -7,6 +7,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - ...
 
+## [0.2.1] - 2016-09-20
+### Added
+- Adds the ability to resolve placeholder properties using a file.
+
 ## [0.2.0] - 2016-04-23
 ### Added
 - Adds support for shared properties within declaration files, which can be reused throughout the file.
