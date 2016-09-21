@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+### Added
+- Adds support for multiple versions of an API in the same declaration file.
+### Changed
+- Use of 'initialVersion' in declaration files is deprecated and will be removed in future - use 'version' instead.
+
 ## [0.2.2] - 2016-09-20
 ### Added
 - Adds support for XML format Java properties files.

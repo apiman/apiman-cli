@@ -37,6 +37,9 @@ public class Api {
     @JsonProperty
     private String organizationName;
 
+    /**
+     * Note: use {@link #version} instead for declarative API configuration.
+     */
     @JsonProperty
     private String initialVersion;
 
@@ -59,8 +62,20 @@ public class Api {
         return name;
     }
 
+    public void setInitialVersion(String initialVersion) {
+        this.initialVersion = initialVersion;
+    }
+
     public String getInitialVersion() {
         return initialVersion;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public String getVersion() {
+        return version;
     }
 
     public String getStatus() {

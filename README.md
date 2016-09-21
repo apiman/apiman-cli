@@ -68,7 +68,7 @@ Here's a simple YAML file (you can use JSON if you want):
       apis:
         - name: "example"
           description: "Example API"
-          initialVersion: "1.0"
+          version: "1.0"
           published: true
           config:
             endpoint: "http://example.com"

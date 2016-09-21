@@ -19,6 +19,7 @@ package io.apiman.cli.core.api;
 import io.apiman.cli.core.api.model.Api;
 import io.apiman.cli.core.api.model.ApiConfig;
 import io.apiman.cli.core.api.model.ApiPolicy;
+import io.apiman.cli.core.api.model.ApiVersion;
 import retrofit.client.Response;
 
 import java.util.List;
@@ -29,9 +30,13 @@ import java.util.List;
 public interface VersionAgnosticApi {
     Response create(String orgName, Api api);
 
+    Response createVersion(String orgName, String apiName, ApiVersion apiVersion);
+
     List<Api> list(String orgName);
 
-    Api fetch(String orgName, String apiName, String version);
+    Api fetch(String orgName, String apiName);
+
+    Api fetchVersion(String orgName, String apiName, String version);
 
     Response configure(String orgName, String apiName,
                        String version, ApiConfig config);

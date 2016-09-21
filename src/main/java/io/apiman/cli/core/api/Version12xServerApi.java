@@ -19,6 +19,7 @@ package io.apiman.cli.core.api;
 import io.apiman.cli.core.api.model.Api;
 import io.apiman.cli.core.api.model.ApiConfig;
 import io.apiman.cli.core.api.model.ApiPolicy;
+import io.apiman.cli.core.api.model.ApiVersion;
 import retrofit.client.Response;
 import retrofit.http.*;
 
@@ -33,11 +34,17 @@ public interface Version12xServerApi {
     @POST("/organizations/{orgName}/apis")
     Response create(@Path("orgName") String orgName, @Body Api api);
 
+    @POST("/organizations/{orgName}/apis/{apiName}/versions")
+    Response createVersion(@Path("orgName") String orgName, @Path("apiName") String apiName, @Body ApiVersion apiVersion);
+
     @GET("/organizations/{orgName}/apis")
     List<Api> list(@Path("orgName") String orgName);
 
+    @GET("/organizations/{orgName}/apis/{apiName}")
+    Api fetch(@Path("orgName") String orgName, @Path("apiName") String apiName);
+
     @GET("/organizations/{orgName}/apis/{apiName}/versions/{version}")
-    Api fetch(@Path("orgName") String orgName, @Path("apiName") String apiName, @Path("version") String version);
+    Api fetchVersion(@Path("orgName") String orgName, @Path("apiName") String apiName, @Path("version") String version);
 
     @PUT("/organizations/{orgName}/apis/{apiName}/versions/{version}")
     Response configure(@Path("orgName") String orgName, @Path("apiName") String apiName,
