@@ -18,7 +18,7 @@
     apis:
       - name: "example1"
         description: "Example API 1"
-        initialVersion: "1.0"
+        version: "1.0"
         published: true
         config:
           endpoint: "${commonApiEndpoint}"
@@ -27,7 +27,7 @@
           gateway: "test-gw"
       - name: "example2"
         description: "Example API 2"
-        initialVersion: "1.0"
+        version: "1.0"
         published: true
         config:
           endpoint: "${commonApiEndpoint}"

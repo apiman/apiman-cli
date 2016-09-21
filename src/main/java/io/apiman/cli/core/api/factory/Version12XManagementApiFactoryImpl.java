@@ -21,6 +21,7 @@ import io.apiman.cli.core.api.VersionAgnosticApi;
 import io.apiman.cli.core.api.model.Api;
 import io.apiman.cli.core.api.model.ApiConfig;
 import io.apiman.cli.core.api.model.ApiPolicy;
+import io.apiman.cli.core.api.model.ApiVersion;
 import io.apiman.cli.management.factory.AbstractManagementApiFactory;
 import io.apiman.cli.management.factory.ManagementApiFactory;
 import retrofit.client.Response;
@@ -44,13 +45,23 @@ public class Version12XManagementApiFactoryImpl extends AbstractManagementApiFac
             }
 
             @Override
+            public Response createVersion(String orgName, String apiName, ApiVersion apiVersion) {
+                return delegate.createVersion(orgName, apiName, apiVersion);
+            }
+
+            @Override
             public List<Api> list(String orgName) {
                 return delegate.list(orgName);
             }
 
             @Override
-            public Api fetch(String orgName, String apiName, String version) {
-                return delegate.fetch(orgName, apiName, version);
+            public Api fetch(String orgName, String apiName) {
+                return delegate.fetch(orgName, apiName);
+            }
+
+            @Override
+            public Api fetchVersion(String orgName, String apiName, String version) {
+                return delegate.fetchVersion(orgName, apiName, version);
             }
 
             @Override

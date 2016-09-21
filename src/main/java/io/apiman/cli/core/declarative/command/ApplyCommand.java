@@ -18,10 +18,7 @@ package io.apiman.cli.core.declarative.command;
 
 import io.apiman.cli.command.AbstractFinalCommand;
 import io.apiman.cli.core.api.VersionAgnosticApi;
-import io.apiman.cli.core.api.model.Api;
-import io.apiman.cli.core.api.model.ApiConfig;
-import io.apiman.cli.core.api.model.ApiPolicy;
-import io.apiman.cli.core.api.model.EndpointProperties;
+import io.apiman.cli.core.api.model.*;
 import io.apiman.cli.core.common.ActionApi;
 import io.apiman.cli.core.common.model.ManagementApiVersion;
 import io.apiman.cli.core.common.util.ServerActionUtil;
@@ -139,7 +136,7 @@ public class ApplyCommand extends AbstractFinalCommand {
      *
      * @param declaration the Declaration to apply.
      */
-    public void applyDeclaration(Declaration declaration) {
+    private void applyDeclaration(Declaration declaration) {
         LOGGER.debug("Applying declaration");
 
         // add gateways
@@ -250,7 +247,12 @@ public class ApplyCommand extends AbstractFinalCommand {
             declarativeApis.forEach(declarativeApi -> {
                 final VersionAgnosticApi apiClient = buildServerApiClient(VersionAgnosticApi.class, serverVersion);
                 final String apiName = declarativeApi.getName();
-                final String apiVersion = declarativeApi.getInitialVersion();
+
+                // determine the version of the API being configured
+                ofNullable(declarativeApi.getInitialVersion()).ifPresent(v ->
+                        LOGGER.warn("Use of 'initialVersion' is deprecated and will be removed in future - use 'version' instead."));
+
+                final String apiVersion = ofNullable(declarativeApi.getVersion()).orElse(declarativeApi.getInitialVersion());
 
                 // create and configure API
                 applyApi(apiClient, declarativeApi, orgName, apiName, apiVersion);
@@ -281,16 +283,34 @@ public class ApplyCommand extends AbstractFinalCommand {
 
         LOGGER.debug("Applying API: {}", apiName);
 
-        of(DeclarativeUtil.checkExists(() -> apiClient.fetch(orgName, apiName, apiVersion)))
+        // base API
+        of(DeclarativeUtil.checkExists(() -> apiClient.fetch(orgName, apiName)))
                 .ifPresent(existing -> {
-                    LOGGER.info("API already exists: {}", apiName);
+                    LOGGER.info("API '{}' already exists", apiName);
                 })
                 .ifNotPresent(() -> {
-                    LOGGER.info("Adding API: {}", apiName);
-
-                    // create API
+                    LOGGER.info("Adding '{}' API", apiName);
                     final Api api = MappingUtil.map(declarativeApi, Api.class);
+
+                    // IMPORTANT: don't include version in the creation request
+                    api.setInitialVersion(null);
+                    api.setVersion(null);
+
+                    // create API *without* version
                     apiClient.create(orgName, api);
+                });
+
+        // API version
+        of(DeclarativeUtil.checkExists(() -> apiClient.fetchVersion(orgName, apiName, apiVersion)))
+                .ifPresent(existing -> {
+                    LOGGER.info("API '{}' version '{}' already exists", apiName, apiVersion);
+                })
+                .ifNotPresent(() -> {
+                    LOGGER.info("Adding API '{}' version '{}'", apiName, apiVersion);
+
+                    // create version
+                    final ApiVersion apiVersionWrapper = new ApiVersion(apiVersion);
+                    apiClient.createVersion(orgName, apiName, apiVersionWrapper);
 
                     if (ManagementApiVersion.v11x.equals(serverVersion)) {
                         // do this only on initial creation as v1.1.x API throws a 409 if this is called more than once
@@ -320,7 +340,7 @@ public class ApplyCommand extends AbstractFinalCommand {
      * @return the API state
      */
     private String fetchCurrentState(VersionAgnosticApi apiClient, String orgName, String apiName, String apiVersion) {
-        final String apiState = ofNullable(apiClient.fetch(orgName, apiName, apiVersion).getStatus()).orElse("");
+        final String apiState = ofNullable(apiClient.fetchVersion(orgName, apiName, apiVersion).getStatus()).orElse("");
         LOGGER.debug("API '{}' state: {}", apiName, apiState);
         return apiState;
     }
