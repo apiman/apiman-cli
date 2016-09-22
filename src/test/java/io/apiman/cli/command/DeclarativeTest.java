@@ -21,16 +21,12 @@ import io.apiman.cli.common.BaseTest;
 import io.apiman.cli.common.IntegrationTest;
 import io.apiman.cli.core.common.model.ManagementApiVersion;
 import io.apiman.cli.core.declarative.command.ApplyCommand;
-import io.apiman.cli.core.declarative.model.Declaration;
-import io.apiman.cli.util.DeclarativeUtil;
 import io.apiman.cli.util.LogUtil;
-import io.apiman.cli.util.MappingUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -64,11 +60,8 @@ public class DeclarativeTest extends BaseTest {
      */
     @Test
     public void testApplyDeclaration_JustPlugins() throws Exception {
-        final Declaration declaration = DeclarativeUtil.loadDeclaration(
-                Paths.get(DeclarativeTest.class.getResource("/simple-plugin.yml").toURI()), MappingUtil.YAML_MAPPER,
-                Collections.emptyMap());
-
-        command.applyDeclaration(declaration);
+        command.setDeclarationFile(Paths.get(DeclarativeTest.class.getResource("/simple-plugin.yml").toURI()));
+        command.applyDeclaration();
     }
 
     /**
@@ -78,11 +71,8 @@ public class DeclarativeTest extends BaseTest {
      */
     @Test
     public void testApplyDeclaration_Full() throws Exception {
-        final Declaration declaration = DeclarativeUtil.loadDeclaration(
-                Paths.get(DeclarativeTest.class.getResource("/simple-no-plugin.yml").toURI()), MappingUtil.YAML_MAPPER,
-                Collections.emptyMap());
-
-        command.applyDeclaration(declaration);
+        command.setDeclarationFile(Paths.get(DeclarativeTest.class.getResource("/simple-no-plugin.yml").toURI()));
+        command.applyDeclaration();
     }
 
     /**
@@ -108,7 +98,18 @@ public class DeclarativeTest extends BaseTest {
                 Paths.get(DeclarativeTest.class.getResource("/placeholder-test.properties").toURI()),
                 Paths.get(DeclarativeTest.class.getResource("/placeholder-test.xml").toURI())
         ));
+        command.applyDeclaration();
+    }
 
+    /**
+     * Expect that the configuration in the declaration can be applied, when there is more than one version
+     * of a single API in the same file.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testApplyDeclaration_MultipleVersions() throws Exception {
+        command.setDeclarationFile(Paths.get(DeclarativeTest.class.getResource("/multiple-versions.yml").toURI()));
         command.applyDeclaration();
     }
 }
