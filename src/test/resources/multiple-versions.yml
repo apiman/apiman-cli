@@ -1,4 +1,4 @@
-# Simple apiman example, without adding a plugin
+# Multiple versions of an API defined in a single file.
 ---
   system:
     gateways:
