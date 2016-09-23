@@ -6,6 +6,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [0.2.3] - 2016-09-22
 ### Added
 - Adds support for multiple versions of an API in the same declaration file.
+
 ### Changed
 - Use of 'initialVersion' in declaration files is deprecated and will be removed in future - use 'version' instead.
 
