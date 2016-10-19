@@ -18,6 +18,7 @@ package io.apiman.cli.command.api.command;
 
 import io.apiman.cli.command.core.AbstractCommand;
 import io.apiman.cli.command.core.Command;
+import io.apiman.cli.core.api.command.ApiDefinitionCommand;
 import io.apiman.cli.service.ManagementApiService;
 
 import javax.inject.Inject;
@@ -40,6 +41,7 @@ public class ApiCommand extends AbstractCommand {
         commandMap.put("list", ApiListCommand.class);
         commandMap.put("publish", ApiPublishCommand.class);
         commandMap.put("policy", ApiPolicyCommand.class);
+        commandMap.put("definition", ApiDefinitionCommand.class);
     }
 
     @Override
