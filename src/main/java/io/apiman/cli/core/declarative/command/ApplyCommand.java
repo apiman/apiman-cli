@@ -16,6 +16,7 @@
 
 package io.apiman.cli.core.declarative.command;
 
+import com.google.common.io.CharStreams;
 import io.apiman.cli.command.AbstractFinalCommand;
 import io.apiman.cli.core.api.VersionAgnosticApi;
 import io.apiman.cli.core.api.model.*;
@@ -35,15 +36,19 @@ import io.apiman.cli.exception.DeclarativeException;
 import io.apiman.cli.util.BeanUtil;
 import io.apiman.cli.util.DeclarativeUtil;
 import io.apiman.cli.util.MappingUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
+import retrofit.mime.TypedString;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.Map;
@@ -257,6 +262,9 @@ public class ApplyCommand extends AbstractFinalCommand {
                 // create and configure API
                 applyApi(apiClient, declarativeApi, orgName, apiName, apiVersion);
 
+                // add definition
+                applyDefinition(apiClient, declarativeApi, orgName, apiName, apiVersion);
+
                 // add policies
                 applyPolicies(apiClient, declarativeApi, orgName, apiName, apiVersion);
 
@@ -419,6 +427,43 @@ public class ApplyCommand extends AbstractFinalCommand {
                 }
             });
         });
+    }
+
+    /**
+     * Adds a definition to the API.
+     *
+     * @param apiClient
+     * @param declarativeApi
+     * @param orgName
+     * @param apiName
+     * @param apiVersion
+     */
+    private void applyDefinition(VersionAgnosticApi apiClient, DeclarativeApi declarativeApi, String orgName,
+                                 String apiName, String apiVersion) {
+
+        ofNullable(declarativeApi.getDefinition()).ifPresent(declarativeApiDefinition -> {
+
+            if (StringUtils.isNotEmpty(declarativeApiDefinition.getFile())
+                    || StringUtils.isNotEmpty(declarativeApiDefinition.getBody())) {
+                LOGGER.debug("Applying definition to API: {}", apiName);
+                String definition = "";
+                if (StringUtils.isNotEmpty(declarativeApiDefinition.getFile())) {
+                    try (InputStream is = Files.newInputStream(Paths.get(declarativeApiDefinition.getFile()), StandardOpenOption.READ)) {
+                        definition = CharStreams.toString(new InputStreamReader(is));
+                    } catch (IOException e) {
+                        LOGGER.error("Failed to apply api definition, invalid file: " + declarativeApiDefinition.getFile(), e);
+                    }
+                } else {
+                    definition = declarativeApiDefinition.getBody();
+                }
+
+                apiClient.setDefinition(orgName, apiName, apiVersion, declarativeApiDefinition.getType(), new TypedString(definition));
+
+                LOGGER.info("Setting definition for API: {}", apiName);
+            }
+
+        });
+
     }
 
     /**

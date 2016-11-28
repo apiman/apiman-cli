@@ -16,12 +16,10 @@
 
 package io.apiman.cli.core.api;
 
-import io.apiman.cli.core.api.model.Api;
-import io.apiman.cli.core.api.model.ApiPolicy;
-import io.apiman.cli.core.api.model.ApiVersion;
-import io.apiman.cli.core.api.model.ServiceConfig;
+import io.apiman.cli.core.api.model.*;
 import retrofit.client.Response;
 import retrofit.http.*;
+import retrofit.mime.TypedString;
 
 import java.util.List;
 
@@ -49,6 +47,10 @@ public interface Version11xServerApi {
     @PUT("/organizations/{orgName}/services/{serviceName}/versions/{version}")
     Response configure(@Path("orgName") String orgName, @Path("serviceName") String serviceName,
                        @Path("version") String version, @Body ServiceConfig config);
+
+    @PUT("/organizations/{orgName}/services/{serviceName}/versions/{version}/definition")
+    Response setDefinition(@Path("orgName") String orgName, @Path("serviceName") String serviceName,
+                           @Path("version") String version, @Header("Content-Type") String type, @Body TypedString content);
 
     @POST("/organizations/{orgName}/services/{serviceName}/versions/{version}/policies")
     Response addPolicy(@Path("orgName") String orgName, @Path("serviceName") String serviceName,

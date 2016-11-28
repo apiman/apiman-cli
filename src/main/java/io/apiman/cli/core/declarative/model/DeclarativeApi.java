@@ -40,6 +40,9 @@ public class DeclarativeApi extends Api {
     @JsonProperty
     private List<DeclarativePolicy> policies;
 
+    @JsonProperty
+    private DeclarativeApiDefinition definition;
+
     public boolean isPublished() {
         return published;
     }
@@ -62,5 +65,9 @@ public class DeclarativeApi extends Api {
 
     public void setPolicies(List<DeclarativePolicy> policies) {
         this.policies = policies;
+    }
+
+    public DeclarativeApiDefinition getDefinition() {
+        return definition;
     }
 }

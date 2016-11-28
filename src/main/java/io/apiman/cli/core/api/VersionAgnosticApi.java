@@ -16,11 +16,9 @@
 
 package io.apiman.cli.core.api;
 
-import io.apiman.cli.core.api.model.Api;
-import io.apiman.cli.core.api.model.ApiConfig;
-import io.apiman.cli.core.api.model.ApiPolicy;
-import io.apiman.cli.core.api.model.ApiVersion;
+import io.apiman.cli.core.api.model.*;
 import retrofit.client.Response;
+import retrofit.mime.TypedString;
 
 import java.util.List;
 
@@ -43,6 +41,9 @@ public interface VersionAgnosticApi {
 
     Response addPolicy(String orgName, String apiName,
                        String version, ApiPolicy policyConfig);
+
+    Response setDefinition(String orgName, String apiName,
+                       String version, String definitionType,  TypedString definition);
 
     List<ApiPolicy> fetchPolicies(String orgName, String serviceName,
                                   String version);

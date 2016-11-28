@@ -22,6 +22,7 @@ import io.apiman.cli.core.api.model.*;
 import io.apiman.cli.management.factory.AbstractManagementApiFactory;
 import io.apiman.cli.management.factory.ManagementApiFactory;
 import retrofit.client.Response;
+import retrofit.mime.TypedString;
 
 import java.util.List;
 
@@ -73,6 +74,11 @@ public class Version11XManagementApiFactoryImpl extends AbstractManagementApiFac
             @Override
             public Response addPolicy(String orgName, String apiName, String version, ApiPolicy policyConfig) {
                 return delegate.addPolicy(orgName, apiName, version, policyConfig);
+            }
+
+            @Override
+            public Response setDefinition(String orgName, String apiName, String version, String definitionType, TypedString definition) {
+                return delegate.setDefinition(orgName, apiName, version, definitionType, definition);
             }
 
             @Override
