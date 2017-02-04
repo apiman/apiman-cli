@@ -1,11 +1,11 @@
 /*
- * Copyright 2016 Pete Cornish
+ * Copyright 2017 Pete Cornish
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,14 +21,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.common.collect.Lists;
-import io.apiman.cli.core.api.model.ApiConfig;
-import io.apiman.cli.core.api.model.ApiGateway;
-import io.apiman.cli.core.api.model.EndpointProperties;
-import io.apiman.cli.core.api.model.ServiceConfig;
-import io.apiman.cli.core.declarative.model.DeclarativeApiConfig;
-import io.apiman.cli.core.declarative.model.DeclarativeEndpointSecurity;
-import io.apiman.cli.core.declarative.model.DeclarativeGateway;
-import io.apiman.cli.core.gateway.model.Gateway;
+import io.apiman.cli.command.api.model.ApiConfig;
+import io.apiman.cli.command.api.model.ApiGateway;
+import io.apiman.cli.command.api.model.EndpointProperties;
+import io.apiman.cli.command.api.model.ServiceConfig;
+import io.apiman.cli.command.declarative.model.DeclarativeApiConfig;
+import io.apiman.cli.command.declarative.model.DeclarativeEndpointSecurity;
+import io.apiman.cli.command.declarative.model.DeclarativeGateway;
+import io.apiman.cli.command.gateway.model.Gateway;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
@@ -39,7 +39,7 @@ import org.modelmapper.config.Configuration;
  *
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
-public class MappingUtil {
+public final class MappingUtil {
     private static final Logger LOGGER = LogManager.getLogger(MappingUtil.class);
 
     /**
@@ -65,6 +65,9 @@ public class MappingUtil {
         YAML_MAPPER.enable(SerializationFeature.INDENT_OUTPUT);
 
         MODEL_MAPPER = buildModelMapper();
+    }
+
+    private MappingUtil() {
     }
 
     /**

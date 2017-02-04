@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Pete Cornish
+ * Copyright 2017 Pete Cornish
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 
 package io.apiman.cli.management;
 
-import io.apiman.cli.core.common.model.ManagementApiVersion;
-import io.apiman.cli.core.org.OrgApi;
 import io.apiman.cli.exception.CommandException;
 import org.junit.After;
 import org.junit.Before;
@@ -31,8 +29,6 @@ import java.net.HttpURLConnection;
 import java.util.function.Supplier;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -43,7 +39,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
 public class ManagementApiUtilTest {
-    public static final String URL = "http://example.com";
+    private static final String URL = "http://example.com";
 
     @Mock
     private Supplier<Response> request;
@@ -133,15 +129,5 @@ public class ManagementApiUtilTest {
             // verify behaviour
             verify(request).get();
         }
-    }
-
-    @Test
-    public void testBuildApiClient() throws Exception {
-        // test
-        final OrgApi actual = ManagementApiUtil.buildServerApiClient(OrgApi.class, URL, "username", "password", true, ManagementApiVersion.UNSPECIFIED);
-
-        // assertions
-        assertNotNull(actual);
-        assertTrue(OrgApi.class.isAssignableFrom(actual.getClass()));
     }
 }

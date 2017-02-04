@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Pete Cornish
+ * Copyright 2017 Pete Cornish
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ public class Functions<T> {
         return this;
     }
 
-    public static<T> Predicate<T> not(Predicate<T> p) {
+    public static <T> Predicate<T> not(Predicate<T> p) {
         return t -> !p.test(t);
     }
 }

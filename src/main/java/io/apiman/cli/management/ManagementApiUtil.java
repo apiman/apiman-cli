@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Pete Cornish
+ * Copyright 2017 Pete Cornish
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,7 @@
 package io.apiman.cli.management;
 
 import com.google.common.io.CharStreams;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import io.apiman.cli.core.common.model.ManagementApiVersion;
 import io.apiman.cli.exception.CommandException;
-import io.apiman.cli.management.binding.ManagementApiBindings;
-import io.apiman.cli.management.factory.ManagementApiFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import retrofit.RetrofitError;
@@ -33,7 +27,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.util.Optional;
 import java.util.function.Supplier;
+
+import static java.util.Optional.empty;
+import static java.util.Optional.ofNullable;
 
 /**
  * Shared Management API utility methods.
@@ -42,8 +40,6 @@ import java.util.function.Supplier;
  */
 public class ManagementApiUtil {
     private static final Logger LOGGER = LogManager.getLogger(ManagementApiUtil.class);
-    private static boolean factoriesInitialised;
-    private static Injector apiFactories;
 
     public static void invokeAndCheckResponse(Supplier<Response> request) throws CommandException {
         invokeAndCheckResponse(HttpURLConnection.HTTP_OK, request);
@@ -84,39 +80,27 @@ public class ManagementApiUtil {
     }
 
     /**
-     * @param clazz         the Class for which to build a client
-     * @param username      the management API username
-     * @param password      the management API password
-     * @param debugLogging  whether debug logging should be enabled
-     * @param serverVersion the server version
-     * @param <T>           the API interface
-     * @return an API client for the given Class
+     * Check for the presence of an item using the given Supplier.
+     *
+     * @param supplier the Supplier of the item
+     * @param <T>
+     * @return the item or {@link Optional#empty()}
      */
-    @SuppressWarnings("unchecked")
-    public static <T> T buildServerApiClient(Class<T> clazz, String endpoint, String username,
-                                             String password, boolean debugLogging, ManagementApiVersion serverVersion) {
-
-        if (!factoriesInitialised) {
-            LOGGER.trace("Initialising API factories");
-            apiFactories = Guice.createInjector(new ManagementApiFactoryModule());
-            factoriesInitialised = true;
-        }
-
-        // locate the Management API factory
-        final ManagementApiFactory managementApiFactory;
+    public static <T> Optional<T> checkExists(Supplier<T> supplier) {
         try {
-            managementApiFactory = apiFactories.getInstance(
-                    Key.get(ManagementApiFactory.class, ManagementApiBindings.boundTo(clazz, serverVersion)));
+            // attempt to return the item
+            return ofNullable(supplier.get());
 
-        } catch (Exception e) {
-            throw new CommandException(String.format(
-                    "Error locating API factory for %s, with server version %s", clazz, serverVersion), e);
+        } catch (RetrofitError re) {
+            // 404 indicates the item does not exist - anything else is an error
+            if (ofNullable(re.getResponse())
+                    .filter(response -> HttpURLConnection.HTTP_NOT_FOUND == response.getStatus())
+                    .isPresent()) {
+
+                return empty();
+            }
+
+            throw new CommandException("Error checking for existence of existing item", re);
         }
-
-        LOGGER.debug("Located API factory {} for {}, with server version {}",
-                managementApiFactory.getClass(), clazz, serverVersion);
-
-        // use the factory to construct the Management API client
-        return (T) managementApiFactory.build(endpoint, username, password, debugLogging);
     }
 }
