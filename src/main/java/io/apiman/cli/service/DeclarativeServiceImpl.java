@@ -32,7 +32,6 @@ import io.apiman.cli.util.MappingUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import retrofit.mime.TypedString;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -41,6 +40,11 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import retrofit.mime.TypedString;
+
+import javax.inject.Inject;
 import java.util.List;
 
 import static io.apiman.cli.command.common.model.ManagementApiVersion.v11x;
