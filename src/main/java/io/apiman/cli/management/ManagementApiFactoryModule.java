@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Pete Cornish
+ * Copyright 2017 Pete Cornish
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,17 +18,18 @@ package io.apiman.cli.management;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
-import io.apiman.cli.core.api.factory.Version11XManagementApiFactoryImpl;
-import io.apiman.cli.core.api.factory.Version12XManagementApiFactoryImpl;
-import io.apiman.cli.core.api.VersionAgnosticApi;
-import io.apiman.cli.core.common.ActionApi;
-import io.apiman.cli.core.common.model.ManagementApiVersion;
-import io.apiman.cli.core.gateway.GatewayApi;
-import io.apiman.cli.core.org.OrgApi;
-import io.apiman.cli.core.plugin.PluginApi;
+import io.apiman.cli.command.api.factory.Version11XManagementApiFactoryImpl;
+import io.apiman.cli.command.api.factory.Version12XManagementApiFactoryImpl;
+import io.apiman.cli.command.api.VersionAgnosticApi;
+import io.apiman.cli.command.common.ActionApi;
+import io.apiman.cli.command.common.model.ManagementApiVersion;
+import io.apiman.cli.command.gateway.GatewayApi;
+import io.apiman.cli.command.org.OrgApi;
+import io.apiman.cli.command.plugin.PluginApi;
 import io.apiman.cli.management.binding.ManagementApiBindings;
 import io.apiman.cli.management.factory.ManagementApiFactory;
 import io.apiman.cli.management.factory.SimpleManagementApiFactoryImpl;
+import io.apiman.cli.management.api.StatusApi;
 
 /**
  * Bindings for Management API factories.
@@ -38,6 +39,10 @@ import io.apiman.cli.management.factory.SimpleManagementApiFactoryImpl;
 public class ManagementApiFactoryModule extends AbstractModule {
     @Override
     protected void configure() {
+        bind(ManagementApiFactory.class)
+                .annotatedWith(ManagementApiBindings.boundTo(StatusApi.class))
+                .toInstance(new SimpleManagementApiFactoryImpl<>(StatusApi.class));
+
         bind(ManagementApiFactory.class)
                 .annotatedWith(ManagementApiBindings.boundTo(GatewayApi.class))
                 .toInstance(new SimpleManagementApiFactoryImpl<>(GatewayApi.class));

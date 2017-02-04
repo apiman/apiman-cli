@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Pete Cornish
+ * Copyright 2017 Pete Cornish
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package io.apiman.cli.management.binding;
 
-import io.apiman.cli.core.common.model.ManagementApiVersion;
+import io.apiman.cli.command.common.model.ManagementApiVersion;
 
 /**
  * Convenience methods for instantiating {@link ManagementApiBinding}s.

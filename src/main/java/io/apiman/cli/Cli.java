@@ -1,11 +1,11 @@
 /*
- * Copyright 2016 Pete Cornish
+ * Copyright 2017 Pete Cornish
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,14 +17,17 @@
 package io.apiman.cli;
 
 import com.google.common.collect.Lists;
-import io.apiman.cli.command.AbstractCommand;
-import io.apiman.cli.command.Command;
-import io.apiman.cli.core.api.command.ApiCommand;
-import io.apiman.cli.core.declarative.command.ApplyCommand;
-import io.apiman.cli.core.gateway.command.GatewayCommand;
-import io.apiman.cli.core.org.command.OrgCommand;
-import io.apiman.cli.core.plugin.command.PluginCommand;
+import io.apiman.cli.command.api.command.ApiCommand;
+import io.apiman.cli.command.core.AbstractCommand;
+import io.apiman.cli.command.core.Command;
+import io.apiman.cli.command.declarative.command.ApplyCommand;
+import io.apiman.cli.command.gateway.command.GatewayCommand;
+import io.apiman.cli.command.org.command.OrgCommand;
+import io.apiman.cli.command.plugin.command.PluginCommand;
+import io.apiman.cli.service.ManagementApiService;
+import io.apiman.cli.util.InjectionUtil;
 
+import javax.inject.Inject;
 import java.util.Map;
 
 /**
@@ -33,8 +36,13 @@ import java.util.Map;
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
 public class Cli extends AbstractCommand {
+    @Inject
+    public Cli(ManagementApiService managementApiService) {
+        super(managementApiService);
+    }
+
     public static void main(String... args) {
-        new Cli().run(Lists.newArrayList(args));
+        InjectionUtil.getInjector().getInstance(Cli.class).run(Lists.newArrayList(args));
     }
 
     @Override
