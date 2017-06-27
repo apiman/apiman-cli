@@ -60,7 +60,7 @@ Here's how it works:
 
 Here's a simple YAML file (you can use JSON if you want):
 
-    # simple.yml
+    # simpleApi.yml
     ---
     org:
       name: "test"
@@ -73,17 +73,34 @@ Here's a simple YAML file (you can use JSON if you want):
           config:
             endpoint: "http://example.com"
             endpointType: "rest"
-            public: true
+            public: false
             gateway: "TheGateway"
+            plans:
+              - planId: "planExample"
+                version: "1.0"
           policies:
             - name: "CachingPolicy"
               config:
                 ttl: 60
 
+    # simplePlan.yml
+    ---
+    org:
+      name: "test"
+      description: "Test organisation"
+      plans:
+        - name: "planExample"
+          description: "This is a plan"
+          version: "1.0"
+          policies:
+            - name: "CachingPolicy"
+              config:
+                ttl: 120
+
 ### Step 2: Apply the environment declaration
 
-    $ ./apiman apply -f simple.yml
-    INFO Loaded declaration: examples/declarative/simple.yml
+    $ ./apiman apply -f simpleApi.yml
+    INFO Loaded declaration: examples/declarative/simpleApi.yml
     INFO Adding org: test
     INFO Adding API: example
     INFO Configuring API: example
