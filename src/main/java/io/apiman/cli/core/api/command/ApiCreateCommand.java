@@ -30,6 +30,8 @@ import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 
 import java.text.MessageFormat;
+import java.util.List;
+import java.util.StringTokenizer;
 
 /**
  * Create an API.
@@ -60,6 +62,9 @@ public class ApiCreateCommand extends AbstractApiCommand implements ApiMixin {
     @Option(name = "--gateway", aliases = {"-g"}, usage = "Gateway")
     private String gateway = "TheGateway";
 
+    @Option(name = "--gateways", aliases = {"-gs"}, usage = "Gateways")
+    private String gateways = "";
+
     @Override
     protected String getCommandDescription() {
         return MessageFormat.format("Create {0}", getModelName());
@@ -74,12 +79,22 @@ public class ApiCreateCommand extends AbstractApiCommand implements ApiMixin {
                 description,
                 initialVersion);
 
+        final List gatewaysList = Lists.newArrayList();
+        if (!gateways.equals("")) {
+            final StringTokenizer st = new StringTokenizer(gateways);
+            while (st.hasMoreTokens()) {
+                gatewaysList.add(new ApiGateway(st.nextToken()));
+            }
+        } else {
+            gatewaysList.add(new ApiGateway(gateway));
+        }
+        
         final ApiConfig config = new ApiConfig(
                 endpoint,
                 endpointType,
                 publicApi,
-                Lists.newArrayList(new ApiGateway(gateway)));
-
+                gatewaysList);
+        
         // create
         final VersionAgnosticApi apiClient = buildServerApiClient(VersionAgnosticApi.class, serverVersion);
         ManagementApiUtil.invokeAndCheckResponse(() -> apiClient.create(orgName, api));

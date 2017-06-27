@@ -25,10 +25,14 @@ import io.apiman.cli.core.common.model.ManagementApiVersion;
 import io.apiman.cli.core.common.util.ServerActionUtil;
 import io.apiman.cli.core.declarative.model.Declaration;
 import io.apiman.cli.core.declarative.model.DeclarativeApi;
+import io.apiman.cli.core.declarative.model.DeclarativePlan;
 import io.apiman.cli.core.gateway.GatewayApi;
 import io.apiman.cli.core.gateway.model.Gateway;
 import io.apiman.cli.core.org.OrgApi;
 import io.apiman.cli.core.org.model.Org;
+import io.apiman.cli.core.plan.PlanApi;
+import io.apiman.cli.core.plan.model.Plan;
+import io.apiman.cli.core.plan.model.PlanVersion;
 import io.apiman.cli.core.plugin.PluginApi;
 import io.apiman.cli.core.plugin.model.Plugin;
 import io.apiman.cli.exception.CommandException;
@@ -166,6 +170,9 @@ public class ApplyCommand extends AbstractFinalCommand {
 
             // add apis
             applyApis(declaration, orgName);
+
+            // add plans
+            applyPlans(declaration, orgName);
         });
 
         LOGGER.info("Applied declaration");
@@ -195,6 +202,38 @@ public class ApplyCommand extends AbstractFinalCommand {
                             apiClient.create(gateway);
                         });
             });
+        });
+    }
+
+    /**
+     * Add plans if they are not present.
+     *
+     * @param declaration the Declaration to apply.
+     */
+    private void applyPlans(Declaration declaration, String orgName) {
+        ofNullable(declaration.getOrg().getPlans()).ifPresent(declarativePlans -> {
+            LOGGER.debug("Applying Plans");
+            declarativePlans.forEach(declarativePlan ->  {
+                final PlanApi planClient = buildServerApiClient(PlanApi.class);
+
+                of(DeclarativeUtil.checkExists(() -> planClient.fetch(orgName, declarativePlan.getName())))
+                        .ifPresent(existing -> {
+                            LOGGER.info("Plan already exists: {}",  declarativePlan.getName());                            // create and configure Plan version
+                            applyPlanVersion(planClient, declarativePlan, orgName, declarativePlan.getName(), declarativePlan.getVersion());
+                        })
+                        .ifNotPresent(() -> {
+                            LOGGER.info("Adding plan: {}",  declarativePlan.getName());
+
+                            final Plan plan = MappingUtil.map(declarativePlan, Plan.class);
+                            plan.setInitialVersion(plan.getVersion());
+                            plan.setVersion(null); // Needs to be blank for the creation
+                            planClient.create(orgName, plan);
+                        });
+
+                        // add policies
+                        applyPolicies(planClient, declarativePlan, orgName, declarativePlan.getName(), declarativePlan.getVersion());
+            });
+
         });
     }
 
@@ -238,6 +277,7 @@ public class ApplyCommand extends AbstractFinalCommand {
                         ))
                 .orElse(false);
     }
+
 
     /**
      * Add and configure APIs if they are not present.
@@ -339,6 +379,37 @@ public class ApplyCommand extends AbstractFinalCommand {
     }
 
     /**
+     * Add and configure the Plan if it is not present.
+     *
+     * @param planClient
+     * @param declarativePlan
+     * @param orgName
+     * @param planName
+     * @param planVersion
+     * @return the state of the Plan
+     */
+    private void applyPlanVersion(PlanApi planClient, DeclarativePlan declarativePlan, String orgName,
+                                  String planName, String planVersion) {
+
+        LOGGER.debug("Applying Plan: {}", planName);
+
+        // Plan version
+        of(DeclarativeUtil.checkExists(() -> planClient.fetchVersion(orgName, planName, planVersion)))
+                .ifPresent(existing -> {
+                    LOGGER.info("Plan '{}' version '{}' already exists", planName, planVersion);
+                })
+                .ifNotPresent(() -> {
+                    LOGGER.info("Adding Plan '{}' version '{}'", planName, planVersion);
+
+                    // create version
+                    final PlanVersion planVersionWrapper = new PlanVersion(planVersion);
+                    planClient.createVersion(orgName, planName, planVersionWrapper);
+                });
+    }
+
+
+
+    /**
      * Return the current state of the API.
      *
      * @param apiClient
@@ -376,6 +447,60 @@ public class ApplyCommand extends AbstractFinalCommand {
 
         apiClient.configure(orgName, apiName, apiVersion, apiConfig);
     }
+
+
+    /**
+     * Add policies to the Plan if they are not present.
+     *
+     * @param planClient
+     * @param declarativePlan
+     * @param orgName
+     * @param planName
+     * @param planVersion
+     */
+    private void applyPolicies(PlanApi planClient, DeclarativePlan declarativePlan, String orgName,
+                               String planName, String planVersion) {
+
+        ofNullable(declarativePlan.getPolicies()).ifPresent(declarativePolicies -> {
+            LOGGER.debug("Applying policies to Plan: {}", planName);
+
+            // existing policies for the Plan
+            final List<ApiPolicy> planPolicies = planClient.fetchPolicies(orgName, planName, planVersion);
+
+            declarativePolicies.forEach(declarativePolicy -> {
+                final String policyName = declarativePolicy.getName();
+
+                final ApiPolicy planPolicy = new ApiPolicy(
+                        MappingUtil.safeWriteValueAsJson(declarativePolicy.getConfig()));
+
+                // determine if the policy already exists for this Plan
+                final Optional<ApiPolicy> existingPolicy = planPolicies.stream()
+                        .filter(p -> policyName.equals(p.getPolicyDefinitionId()))
+                        .findFirst();
+
+                if (existingPolicy.isPresent()) {
+                    if (ManagementApiVersion.v12x.equals(serverVersion)) {
+                        // update the existing policy config
+                        LOGGER.info("Updating existing policy '{}' configuration for Plan: {}", policyName, planName);
+
+                        final Long policyId = existingPolicy.get().getId();
+                        planClient.configurePolicy(orgName, planName, planVersion, policyId, planPolicy);
+
+                    } else {
+                        LOGGER.info("Policy '{}' already exists for Plan '{}' - skipping configuration update", policyName, planName);
+                    }
+
+                } else {
+                    // add new policy
+                    LOGGER.info("Adding policy '{}' to Plan: {}", policyName, planName);
+
+                    planPolicy.setDefinitionId(policyName);
+                    planClient.addPolicy(orgName, planName, planVersion, planPolicy);
+                }
+            });
+        });
+    }
+
 
     /**
      * Add policies to the API if they are not present.
