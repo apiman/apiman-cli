@@ -22,6 +22,8 @@ import io.apiman.cli.command.api.model.Api;
 import io.apiman.cli.command.api.model.ApiConfig;
 import io.apiman.cli.command.api.model.ApiGateway;
 import io.apiman.cli.command.api.VersionAgnosticApi;
+import io.apiman.cli.command.api.model.ApiPlan;
+import io.apiman.cli.command.plan.PlanApi;
 import io.apiman.cli.exception.CommandException;
 import io.apiman.cli.management.ManagementApiUtil;
 import io.apiman.cli.service.ManagementApiService;
@@ -32,6 +34,7 @@ import org.kohsuke.args4j.Option;
 
 import javax.inject.Inject;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -101,7 +104,8 @@ public class ApiCreateCommand extends AbstractApiCommand implements ApiMixin {
                 endpoint,
                 endpointType,
                 publicApi,
-                gatewaysList);
+                gatewaysList,
+                new ArrayList<ApiPlan>());
 
         // create
         final VersionAgnosticApi apiClient = buildServerApiClient(VersionAgnosticApi.class, serverVersion);

@@ -46,18 +46,25 @@ public class ApiConfig {
     @JsonProperty
     private List<ApiGateway> gateways;
 
+    @JsonProperty
+    private List<ApiPlan> plans;
+
     public ApiConfig() {
     }
 
-    public ApiConfig(String endpoint, String endpointType, boolean publicApi, List<ApiGateway> gateways) {
+    public ApiConfig(String endpoint, String endpointType, boolean publicApi, List<ApiGateway> gateways, List<ApiPlan> plans) {
         this.endpoint = endpoint;
         this.endpointType = endpointType;
         this.publicApi = publicApi;
         this.gateways = gateways;
+        this.plans = plans;
     }
 
     public void setGateways(ArrayList<ApiGateway> gateways) {
         this.gateways = gateways;
+    }
+    public void setPlans(ArrayList<ApiPlan> plans) {
+        this.plans = plans;
     }
 
     public void setPublicApi(boolean publicApi) {
