@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Pete Cornish
+ * Copyright 2017 Jean-Charles Quantin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,39 +17,30 @@
 package io.apiman.cli.command.declarative.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import io.apiman.cli.command.org.model.Org;
+import io.apiman.cli.command.plan.model.Plan;
 
 import java.util.List;
 
 /**
- * Declarative organisation representation.
+ * Declarative Plan representation.
  *
- * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
+ * @author Jean-Charles Quantin {@literal <jeancharles.quantin@gmail.com>}
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class DeclarativeOrg extends Org {
-    @JsonProperty
-    private List<DeclarativeApi> apis;
+public class DeclarativePlan extends Plan {
 
     @JsonProperty
-    private List<DeclarativePlan> plans;
+    private List<DeclarativePolicy> policies;
 
-    public List<DeclarativeApi> getApis() {
-        return apis;
+    public List<DeclarativePolicy> getPolicies() {
+        return policies;
     }
 
-    public void setApis(List<DeclarativeApi> apis) {
-        this.apis = apis;
+    public void setPolicies(List<DeclarativePolicy> policies) {
+        this.policies = policies;
     }
 
-    public List<DeclarativePlan> getPlans() {
-        return plans;
-    }
-
-    public void setPlans(List<DeclarativePlan> plans) {
-        this.plans = plans;
-    }
 }

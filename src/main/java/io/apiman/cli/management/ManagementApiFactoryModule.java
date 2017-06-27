@@ -25,6 +25,7 @@ import io.apiman.cli.command.common.ActionApi;
 import io.apiman.cli.command.common.model.ManagementApiVersion;
 import io.apiman.cli.command.gateway.GatewayApi;
 import io.apiman.cli.command.org.OrgApi;
+import io.apiman.cli.command.plan.PlanApi;
 import io.apiman.cli.command.plugin.PluginApi;
 import io.apiman.cli.management.binding.ManagementApiBindings;
 import io.apiman.cli.management.factory.ManagementApiFactory;
@@ -66,5 +67,9 @@ public class ManagementApiFactoryModule extends AbstractModule {
         bind(ManagementApiFactory.class)
                 .annotatedWith(ManagementApiBindings.boundTo(VersionAgnosticApi.class, ManagementApiVersion.v12x))
                 .to(Version12XManagementApiFactoryImpl.class).in(Singleton.class);
+
+        bind(ManagementApiFactory.class)
+                .annotatedWith(ManagementApiBindings.boundTo(PlanApi.class))
+                .toInstance(new SimpleManagementApiFactoryImpl<>(PlanApi.class));
     }
 }

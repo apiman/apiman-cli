@@ -19,13 +19,15 @@ package io.apiman.cli.service;
 import io.apiman.cli.command.api.VersionAgnosticApi;
 import io.apiman.cli.command.api.model.*;
 import io.apiman.cli.command.common.model.ManagementApiVersion;
-import io.apiman.cli.command.declarative.model.DeclarativeApi;
-import io.apiman.cli.command.declarative.model.DeclarativeGateway;
-import io.apiman.cli.command.declarative.model.DeclarativeOrg;
+import io.apiman.cli.command.declarative.DeclarativeUtil;
+import io.apiman.cli.command.declarative.model.*;
 import io.apiman.cli.command.gateway.GatewayApi;
 import io.apiman.cli.command.gateway.model.Gateway;
 import io.apiman.cli.command.org.OrgApi;
 import io.apiman.cli.command.org.model.Org;
+import io.apiman.cli.command.plan.PlanApi;
+import io.apiman.cli.command.plan.model.Plan;
+import io.apiman.cli.command.plan.model.PlanVersion;
 import io.apiman.cli.management.ManagementApiUtil;
 import io.apiman.cli.util.MappingUtil;
 import org.apache.logging.log4j.LogManager;
@@ -33,6 +35,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Optional;
 
 import static io.apiman.cli.command.common.model.ManagementApiVersion.v11x;
 import static io.apiman.cli.command.common.model.ManagementApiVersion.v12x;
@@ -244,6 +247,117 @@ public class DeclarativeServiceImpl implements DeclarativeService {
                         MappingUtil.safeWriteValueAsJson(declarativePolicy.getConfig()));
 
                 policyService.applyPolicies(serverVersion, orgName, apiName, apiVersion, apiPolicies, policyName, apiPolicy);
+            });
+        });
+    }
+
+
+
+    /**
+     * Add plans if they are not present.
+     *
+     * @param planClient the plan Api.
+     * @param declaration the Declaration to apply.
+     * @param orgName the organization name.
+     */
+    public void applyPlans(PlanApi planClient, Declaration declaration, String orgName) {
+        ofNullable(declaration.getOrg().getPlans()).ifPresent(declarativePlans -> {
+            LOGGER.debug("Applying Plans");
+            declarativePlans.forEach(declarativePlan ->  {
+
+                of(ManagementApiUtil.checkExists(() -> planClient.fetch(orgName, declarativePlan.getName())))
+                        .ifPresent(existing -> {
+                            LOGGER.info("Plan already exists: {}",  declarativePlan.getName());
+                            // create and configure Plan version
+                            applyPlanVersion(planClient, declarativePlan, orgName, declarativePlan.getName(), declarativePlan.getVersion());
+                        })
+                        .ifNotPresent(() -> {
+                            LOGGER.info("Adding plan: {}",  declarativePlan.getName());
+
+                            final Plan plan = MappingUtil.map(declarativePlan, Plan.class);
+                            plan.setInitialVersion(plan.getVersion());
+                            plan.setVersion(null);
+                            planClient.create(orgName, plan);
+                        });
+
+                // add policies
+                applyPolicies(planClient, declarativePlan, orgName, declarativePlan.getName(), declarativePlan.getVersion());
+            });
+
+        });
+    }
+
+    /**
+     * Add and configure the Plan if it is not present.
+     *
+     * @param planClient
+     * @param declarativePlan
+     * @param orgName
+     * @param planName
+     * @param planVersion
+     * @return the state of the Plan
+     */
+    private void applyPlanVersion(PlanApi planClient, DeclarativePlan declarativePlan, String orgName,
+                                  String planName, String planVersion) {
+
+        LOGGER.debug("Applying Plan: {}", planName);
+
+        // Plan version
+        of(ManagementApiUtil.checkExists(() -> planClient.fetchVersion(orgName, planName, planVersion)))
+                .ifPresent(existing -> {
+                    LOGGER.info("Plan '{}' version '{}' already exists", planName, planVersion);
+                })
+                .ifNotPresent(() -> {
+                    LOGGER.info("Adding Plan '{}' version '{}'", planName, planVersion);
+
+                    // create version
+                    final PlanVersion planVersionWrapper = new PlanVersion(planVersion);
+                    planClient.createVersion(orgName, planName, planVersionWrapper);
+                });
+    }
+
+    /**
+     * Add policies to the Plan if they are not present.
+     *
+     * @param planClient
+     * @param declarativePlan
+     * @param orgName
+     * @param planName
+     * @param planVersion
+     */
+    private void applyPolicies(PlanApi planClient, DeclarativePlan declarativePlan, String orgName,
+                               String planName, String planVersion) {
+
+        ofNullable(declarativePlan.getPolicies()).ifPresent(declarativePolicies -> {
+            LOGGER.debug("Applying policies to Plan: {}", planName);
+
+            // existing policies for the Plan
+            final List<ApiPolicy> apiPolicies = planClient.fetchPolicies(orgName, planName, planVersion);
+
+            declarativePolicies.forEach(declarativePolicy -> {
+                final String policyName = declarativePolicy.getName();
+
+                final ApiPolicy apiPolicy = new ApiPolicy(
+                        MappingUtil.safeWriteValueAsJson(declarativePolicy.getConfig()));
+
+                // determine if the policy already exists for this Plan
+                final Optional<ApiPolicy> existingPolicy = apiPolicies.stream()
+                        .filter(p -> policyName.equals(p.getPolicyDefinitionId()))
+                        .findFirst();
+
+                if (existingPolicy.isPresent()) {
+                    // update the existing policy config
+                    LOGGER.info("Updating existing policy '{}' configuration for Plan: {}", policyName, planName);
+
+                    final Long policyId = existingPolicy.get().getId();
+                    //planClient.configurePolicy(orgName, planName, planVersion, policyId, apiPolicy);
+                } else {
+                    // add new policy
+                    LOGGER.info("Adding policy '{}' to Plan: {}", policyName, planName);
+
+                    apiPolicy.setDefinitionId(policyName);
+                    planClient.addPolicy(orgName, planName, planVersion, apiPolicy);
+                }
             });
         });
     }

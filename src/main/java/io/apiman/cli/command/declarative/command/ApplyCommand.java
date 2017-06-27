@@ -20,6 +20,9 @@ import io.apiman.cli.command.common.model.ManagementApiVersion;
 import io.apiman.cli.command.core.AbstractFinalCommand;
 import io.apiman.cli.command.declarative.DeclarativeUtil;
 import io.apiman.cli.command.declarative.model.Declaration;
+import io.apiman.cli.command.plan.PlanApi;
+import io.apiman.cli.command.plan.model.Plan;
+import io.apiman.cli.command.plan.model.PlanVersion;
 import io.apiman.cli.exception.CommandException;
 import io.apiman.cli.service.DeclarativeService;
 import io.apiman.cli.service.ManagementApiService;
@@ -155,13 +158,21 @@ public class ApplyCommand extends AbstractFinalCommand {
         // add plugins
         ofNullable(declaration.getSystem().getPlugins()).ifPresent(pluginService::addPlugins);
 
-        // add org and APIs
+        // add org, APIs and Plans
         ofNullable(declaration.getOrg()).ifPresent(org -> {
+            // add org
             declarativeService.applyOrg(org);
 
+            // add apis
             ofNullable(org.getApis()).ifPresent(apis ->
                     declarativeService.applyApis(serverVersion, apis, org.getName()));
+
+            // add plans
+            ofNullable(org.getPlans()).ifPresent(plans ->
+                declarativeService.applyPlans(buildServerApiClient(PlanApi.class), declaration, org.getName()));
         });
+
+
 
         LOGGER.info("Applied declaration");
     }
