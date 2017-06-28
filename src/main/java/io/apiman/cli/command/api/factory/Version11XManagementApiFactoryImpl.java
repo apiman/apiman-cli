@@ -64,6 +64,11 @@ public class Version11XManagementApiFactoryImpl extends AbstractManagementApiFac
             }
 
             @Override
+            public List<Api> fetchVersions(String orgName, String apiName) {
+                return delegate.fetchVersions(orgName, apiName);
+            }
+
+            @Override
             public Response configure(String orgName, String apiName, String version, ApiConfig apiConfig) {
                 // convert to 1.1.x format
                 final ServiceConfig serviceConfig = MODEL_MAPPER.map(apiConfig, ServiceConfig.class);

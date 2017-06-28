@@ -46,6 +46,9 @@ public interface Version12xServerApi {
     @GET("/organizations/{orgName}/apis/{apiName}/versions/{version}")
     Api fetchVersion(@Path("orgName") String orgName, @Path("apiName") String apiName, @Path("version") String version);
 
+    @GET("/organizations/{orgName}/apis/{apiName}/versions")
+    List<Api> fetchVersions(@Path("orgName") String orgName, @Path("apiName") String apiName);
+
     @PUT("/organizations/{orgName}/apis/{apiName}/versions/{version}")
     Response configure(@Path("orgName") String orgName, @Path("apiName") String apiName,
                        @Path("version") String version, @Body ApiConfig config);
