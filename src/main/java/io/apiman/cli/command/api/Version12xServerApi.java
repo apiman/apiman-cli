@@ -61,6 +61,10 @@ public interface Version12xServerApi {
     List<ApiPolicy> fetchPolicies(@Path("orgName") String orgName, @Path("apiName") String apiName,
                                   @Path("version") String version);
 
+    @GET("/organizations/{orgName}/apis/{apiName}/versions/{version}/policies/{policyId}")
+    ApiPolicy fetchPolicy(@Path("orgName") String orgName, @Path("apiName") String apiName,
+                                  @Path("version") String version, @Path("policyId") Long policyId);
+
     @PUT("/organizations/{orgName}/apis/{apiName}/versions/{version}/policies/{policyId}")
     Response configurePolicy(@Path("orgName") String orgName, @Path("apiName") String apiName,
                              @Path("version") String version, @Path("policyId") Long policyId, @Body ApiPolicy policyConfig);

@@ -85,6 +85,11 @@ public class Version12XManagementApiFactoryImpl extends AbstractManagementApiFac
             }
 
             @Override
+            public ApiPolicy fetchPolicy(String orgName, String serviceName, String version, Long policyId) {
+                return delegate.fetchPolicy(orgName, serviceName, version, policyId);
+            }
+
+            @Override
             public Response configurePolicy(String orgName, String apiName, String apiVersion, Long policyId, ApiPolicy policyConfig) {
                 return delegate.configurePolicy(orgName, apiName, apiVersion, policyId, policyConfig);
             }
