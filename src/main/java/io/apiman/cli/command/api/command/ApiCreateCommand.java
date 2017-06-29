@@ -65,11 +65,8 @@ public class ApiCreateCommand extends AbstractApiCommand implements ApiMixin {
     private boolean publicApi;
 
     @Option(name = "--gateway", aliases = {"-g"}, usage = "Gateway")
-    private String gateway = "TheGateway";
+    private List<String> gateway = new ArrayList<String>();
 
-	@Option(name = "--gateways", aliases = {"-gs"}, usage = "Gateways")
-    private String gateways = "";
-	
     @Inject
     public ApiCreateCommand(ManagementApiService managementApiService) {
         super(managementApiService);
@@ -89,16 +86,10 @@ public class ApiCreateCommand extends AbstractApiCommand implements ApiMixin {
                 description,
                 initialVersion);
 
-        final List gatewaysList = Lists.newArrayList();
-        
-        if (!gateways.equals("")) {
-            final StringTokenizer st = new StringTokenizer(gateways);
-            while (st.hasMoreTokens()) {
-                gatewaysList.add(new ApiGateway(st.nextToken()));
-            }
-        } else {
-            gatewaysList.add(new ApiGateway(gateway));
-        }
+        if (gateway.size()==0) { gateway.add("TheGateway"); }
+        // populating the list of Gateway
+        final List<ApiGateway> gatewaysList = Lists.newArrayList();
+        gateway.forEach(strGat -> { gatewaysList.add(new ApiGateway(strGat)); });
         
         final ApiConfig config = new ApiConfig(
                 endpoint,
