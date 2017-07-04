@@ -38,6 +38,7 @@ public class ApiCommand extends AbstractCommand {
     protected void populateCommands(Map<String, Class<? extends Command>> commandMap) {
         commandMap.put("create", ApiCreateCommand.class);
         commandMap.put("list", ApiListCommand.class);
+        commandMap.put("dlist", ApiDeepListCommand.class);
         commandMap.put("publish", ApiPublishCommand.class);
         commandMap.put("policy", ApiPolicyCommand.class);
     }

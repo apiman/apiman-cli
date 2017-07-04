@@ -29,6 +29,8 @@ import java.util.Map;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="$id")
 public class DeclarativePolicy {
+
+
     @JsonProperty("$id")
     private String id;
 
@@ -37,6 +39,14 @@ public class DeclarativePolicy {
 
     @JsonProperty
     private Map<String, Object> config;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;

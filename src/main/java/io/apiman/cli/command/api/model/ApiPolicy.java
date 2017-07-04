@@ -40,6 +40,7 @@ public class ApiPolicy {
     @JsonProperty
     private String policyDefinitionId;
 
+
     @JsonProperty
     private String configuration;
 
@@ -62,6 +63,10 @@ public class ApiPolicy {
 
     public Long getId() {
         return id;
+    }
+
+    public String getConfiguration() {
+        return configuration;
     }
 
     public void setDefinitionId(String definitionId) {

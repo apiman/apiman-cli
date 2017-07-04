@@ -17,22 +17,27 @@
 package io.apiman.cli.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.common.collect.Lists;
-import io.apiman.cli.command.api.model.ApiConfig;
-import io.apiman.cli.command.api.model.ApiGateway;
-import io.apiman.cli.command.api.model.EndpointProperties;
-import io.apiman.cli.command.api.model.ServiceConfig;
+import io.apiman.cli.command.api.model.*;
 import io.apiman.cli.command.declarative.model.DeclarativeApiConfig;
 import io.apiman.cli.command.declarative.model.DeclarativeEndpointSecurity;
 import io.apiman.cli.command.declarative.model.DeclarativeGateway;
+import io.apiman.cli.command.declarative.model.DeclarativePolicy;
 import io.apiman.cli.command.gateway.model.Gateway;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Shared POJO/JSON/YAML mapping utility methods.
@@ -81,6 +86,27 @@ public final class MappingUtil {
         } catch (NullPointerException | JsonProcessingException e) {
             LOGGER.trace(String.format("Error writing value as JSON string: %s", obj), e);
             return null;
+        }
+    }
+
+
+    /**
+     * @param jsonObj the JsonObject to get object from
+     * @return the {@code jsonObj} as Map, or {@code null} if an error occurs
+     */
+    public static Map<String, Object> safeGetValueFromJson(String jsonObj) {
+        try {
+            // convert JSON string to Map
+            return JSON_MAPPER.readValue(jsonObj, new TypeReference<Map<String, String>>(){});
+        } catch (IOException | NullPointerException e) {
+            // insufficient Map structure -> putting in a JsonNode
+            Map m = new HashMap<String, String>();
+            try {
+                m.put("unparsed", JSON_MAPPER.readTree(jsonObj));
+            } catch (IOException e1) {
+                LOGGER.trace(String.format("Error getting value from JSON string: %s", jsonObj), e1);
+            }
+            return m;
         }
     }
 
