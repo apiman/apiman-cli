@@ -35,4 +35,8 @@ public class ApiGateway {
     public ApiGateway(String gatewayId) {
         this.gatewayId = gatewayId;
     }
+
+    public String getGatewayId() {
+        return gatewayId;
+    }
 }

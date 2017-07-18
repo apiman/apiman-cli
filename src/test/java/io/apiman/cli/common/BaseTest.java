@@ -18,7 +18,7 @@ package io.apiman.cli.common;
 
 import com.google.common.base.Strings;
 import com.jayway.restassured.RestAssured;
-import io.apiman.cli.Cli;
+import io.apiman.cli.ManagerCli;
 import io.apiman.cli.util.AuthUtil;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -71,7 +71,7 @@ public class BaseTest {
      * @param orgName the org name
      */
     protected void createOrg(String orgName) {
-        Cli.main("org", "create",
+        ManagerCli.main("org", "create",
                 "--debug",
                 "--server", getApimanUrl(),
                 "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,

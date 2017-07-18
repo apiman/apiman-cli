@@ -37,7 +37,7 @@ public class ExceptionTest {
     public void testExitWithCode1OnException() {
         exit.expectSystemExitWithStatus(1);
 
-        Cli.main("gateway", "list",
+        ManagerCli.main("gateway", "list",
                 "--debug",
                 "--server", INVALID_URL,
                 "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,

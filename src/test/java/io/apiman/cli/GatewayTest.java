@@ -33,7 +33,7 @@ public class GatewayTest extends BaseTest {
 
     @Test
     public void test1_test() {
-        Cli.main("gateway", "test",
+        ManagerCli.main("gateway", "test",
                 "--debug",
                 "--server", getApimanUrl(),
                 "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,
@@ -46,7 +46,7 @@ public class GatewayTest extends BaseTest {
 
     @Test
     public void test2_create() {
-        Cli.main("gateway", "create",
+        ManagerCli.main("gateway", "create",
                 "--debug",
                 "--server", getApimanUrl(),
                 "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,
@@ -61,7 +61,7 @@ public class GatewayTest extends BaseTest {
 
     @Test
     public void test3_fetch() {
-        Cli.main("gateway", "show",
+        ManagerCli.main("gateway", "show",
                 "--debug",
                 "--server", getApimanUrl(),
                 "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,
@@ -71,7 +71,7 @@ public class GatewayTest extends BaseTest {
 
     @Test
     public void test4_list() {
-        Cli.main("gateway", "list",
+        ManagerCli.main("gateway", "list",
                 "--debug",
                 "--server", getApimanUrl(),
                 "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,

@@ -38,7 +38,7 @@ public class OrgTest extends BaseTest {
 
     @Test
     public void test2_fetch() {
-        Cli.main("org", "show",
+        ManagerCli.main("org", "show",
                 "--debug",
                 "--server", getApimanUrl(),
                 "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,

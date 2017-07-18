@@ -17,8 +17,8 @@
 package io.apiman.cli.util;
 
 import com.google.common.collect.ImmutableMap;
-import io.apiman.cli.command.DeclarativeTest;
-import io.apiman.cli.core.declarative.model.Declaration;
+import io.apiman.cli.command.ManagerDeclarativeTest;
+import io.apiman.cli.core.declarative.model.BaseDeclaration;
 import io.apiman.cli.core.declarative.model.DeclarativeGateway;
 import org.junit.Test;
 
@@ -43,8 +43,8 @@ public class DeclarativeUtilTest {
      */
     @Test
     public void testLoadDeclarationJson() throws Exception {
-        final Declaration declaration = DeclarativeUtil.loadDeclaration(
-                Paths.get(DeclarativeTest.class.getResource("/simple-full.json").toURI()), MappingUtil.JSON_MAPPER,
+        final BaseDeclaration declaration = DeclarativeUtil.loadDeclaration(
+                Paths.get(ManagerDeclarativeTest.class.getResource("/simple-full.json").toURI()), MappingUtil.JSON_MAPPER,
                 Collections.emptyMap());
 
         assertLoadedModel(declaration, 1);
@@ -57,8 +57,8 @@ public class DeclarativeUtilTest {
      */
     @Test
     public void testLoadDeclarationYaml() throws Exception {
-        final Declaration declaration = DeclarativeUtil.loadDeclaration(
-                Paths.get(DeclarativeTest.class.getResource("/simple-full.yml").toURI()), MappingUtil.YAML_MAPPER,
+        final BaseDeclaration declaration = DeclarativeUtil.loadDeclaration(
+                Paths.get(ManagerDeclarativeTest.class.getResource("/simple-full.yml").toURI()), MappingUtil.YAML_MAPPER,
                 Collections.emptyMap());
 
         assertLoadedModel(declaration, 1);
@@ -78,8 +78,8 @@ public class DeclarativeUtilTest {
                 "gw.password", "secret"
         );
 
-        final Declaration declaration = DeclarativeUtil.loadDeclaration(
-                Paths.get(DeclarativeTest.class.getResource("/simple-placeholders.yml").toURI()), MappingUtil.YAML_MAPPER, properties);
+        final BaseDeclaration declaration = DeclarativeUtil.loadDeclaration(
+                Paths.get(ManagerDeclarativeTest.class.getResource("/simple-placeholders.yml").toURI()), MappingUtil.YAML_MAPPER, properties);
 
         // assert loaded with resolved placeholders
         assertNotNull(declaration);
@@ -101,8 +101,8 @@ public class DeclarativeUtilTest {
      */
     @Test
     public void testLoadDeclarationSharedProperties() throws Exception {
-        final Declaration declaration = DeclarativeUtil.loadDeclaration(
-                Paths.get(DeclarativeTest.class.getResource("/shared-properties.yml").toURI()),
+        final BaseDeclaration declaration = DeclarativeUtil.loadDeclaration(
+                Paths.get(ManagerDeclarativeTest.class.getResource("/shared-properties.yml").toURI()),
                 MappingUtil.YAML_MAPPER, Collections.emptyMap());
 
         // assert loaded with resolved placeholders
@@ -125,8 +125,8 @@ public class DeclarativeUtilTest {
      */
     @Test
     public void testLoadDeclarationSharedJson() throws Exception {
-        final Declaration declaration = DeclarativeUtil.loadDeclaration(
-                Paths.get(DeclarativeTest.class.getResource("/shared-policies.json").toURI()), MappingUtil.JSON_MAPPER,
+        final BaseDeclaration declaration = DeclarativeUtil.loadDeclaration(
+                Paths.get(ManagerDeclarativeTest.class.getResource("/shared-policies.json").toURI()), MappingUtil.JSON_MAPPER,
                 Collections.emptyMap());
 
         assertLoadedModel(declaration, 2);
@@ -139,8 +139,8 @@ public class DeclarativeUtilTest {
      */
     @Test
     public void testLoadDeclarationSharedYaml() throws Exception {
-        final Declaration declaration = DeclarativeUtil.loadDeclaration(
-                Paths.get(DeclarativeTest.class.getResource("/shared-policies.yml").toURI()), MappingUtil.YAML_MAPPER,
+        final BaseDeclaration declaration = DeclarativeUtil.loadDeclaration(
+                Paths.get(ManagerDeclarativeTest.class.getResource("/shared-policies.yml").toURI()), MappingUtil.YAML_MAPPER,
                 Collections.emptyMap());
 
         assertLoadedModel(declaration, 2);
@@ -152,7 +152,7 @@ public class DeclarativeUtilTest {
      * @param declaration      the model to assert
      * @param expectedApiCount the number of API items
      */
-    private void assertLoadedModel(Declaration declaration, int expectedApiCount) {
+    private void assertLoadedModel(BaseDeclaration declaration, int expectedApiCount) {
         assertNotNull(declaration);
         assertNotNull(declaration.getSystem());
 

@@ -16,12 +16,12 @@
 
 package io.apiman.cli.core.api.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Support for apiman 1.2.x.
@@ -54,6 +54,22 @@ public class ApiConfig {
         this.endpointType = endpointType;
         this.publicApi = publicApi;
         this.gateways = gateways;
+    }
+
+    public List<ApiGateway> getGateways() {
+        return gateways;
+    }
+
+    public String getEndpoint() {
+        return endpoint;
+    }
+
+    public String getEndpointType() {
+        return endpointType;
+    }
+
+    public EndpointProperties getEndpointProperties() {
+        return endpointProperties;
     }
 
     public void setGateways(ArrayList<ApiGateway> gateways) {

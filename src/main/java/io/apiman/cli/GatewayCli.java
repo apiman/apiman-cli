@@ -18,6 +18,7 @@ package io.apiman.cli;
 
 import io.apiman.cli.command.AbstractCommand;
 import io.apiman.cli.command.Command;
+import io.apiman.cli.core.declarative.command.GatewayApplyCommand;
 
 import java.util.Map;
 
@@ -28,24 +29,23 @@ import com.google.common.collect.Lists;
  *
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
-public class Cli extends AbstractCommand {
+public class GatewayCli extends AbstractCommand {
     public static void main(String... args) {
-        new Cli().run(Lists.newArrayList(args));
+        new GatewayCli().run(Lists.newArrayList(args));
     }
 
     @Override
     protected void populateCommands(Map<String, Class<? extends Command>> commandMap) {
-        commandMap.put("manager", ManagerCli.class);
-        commandMap.put("gateway", GatewayCli.class);
+        commandMap.put("apply", GatewayApplyCommand.class);
     }
 
     @Override
     protected String getCommandDescription() {
-        return "apiman-cli";
+        return "apiman-gateway-cli";
     }
 
     @Override
     public String getCommandName() {
-        return "apiman";
+        return "gateway";
     }
 }

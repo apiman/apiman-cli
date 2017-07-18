@@ -38,7 +38,7 @@ public class ApiTest extends BaseTest {
         createOrg(ORG_NAME);
 
         // test
-        Cli.main("api", "create",
+        ManagerCli.main("api", "create",
                 "--debug",
                 "--server", getApimanUrl(),
                 "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,
@@ -55,7 +55,7 @@ public class ApiTest extends BaseTest {
      */
     @Test
     public void test2_addPolicy() {
-        Cli.main("api", "policy", "add",
+        ManagerCli.main("api", "policy", "add",
                 "--debug",
                 "--server", getApimanUrl(),
                 "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,
@@ -69,7 +69,7 @@ public class ApiTest extends BaseTest {
 
     @Test
     public void test3_publish() {
-        Cli.main("api", "publish",
+        ManagerCli.main("api", "publish",
                 "--debug",
                 "--server", getApimanUrl(),
                 "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,
@@ -81,7 +81,7 @@ public class ApiTest extends BaseTest {
 
     @Test
     public void test4_list() {
-        Cli.main("api", "list",
+        ManagerCli.main("api", "list",
                 "--debug",
                 "--server", getApimanUrl(),
                 "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,

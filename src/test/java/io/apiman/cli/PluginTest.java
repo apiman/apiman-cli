@@ -97,7 +97,7 @@ public class PluginTest extends BaseTest {
      */
     @Test
     public void test1_create() {
-        Cli.main("plugin", "add",
+        ManagerCli.main("plugin", "add",
                 "--debug",
                 "--server", getApimanUrl(),
                 "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,
@@ -114,7 +114,7 @@ public class PluginTest extends BaseTest {
         // look up plugin by its generated ID
         final Long pluginId = addedPlugin.getId();
 
-        Cli.main("plugin", "show",
+        ManagerCli.main("plugin", "show",
                 "--debug",
                 "--server", getApimanUrl(),
                 "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,
@@ -124,7 +124,7 @@ public class PluginTest extends BaseTest {
 
     @Test
     public void test3_list() {
-        Cli.main("plugin", "list",
+        ManagerCli.main("plugin", "list",
                 "--debug",
                 "--server", getApimanUrl(),
                 "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,
