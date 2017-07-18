@@ -18,8 +18,8 @@ package io.apiman.cli.util;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import io.apiman.cli.management.ManagementApiFactoryModule;
-import io.apiman.cli.service.ServiceModule;
+import io.apiman.cli.managerapi.management.ManagementApiFactoryModule;
+import io.apiman.cli.managerapi.service.ServiceModule;
 
 /**
  * Manages the injection context.
