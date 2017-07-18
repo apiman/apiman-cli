@@ -16,7 +16,7 @@
 
 package io.apiman.cli.command.common;
 
-import io.apiman.cli.command.common.model.ServerAction;
+import io.apiman.cli.managerapi.core.common.model.ServerAction;
 import retrofit.client.Response;
 import retrofit.http.Body;
 import retrofit.http.POST;

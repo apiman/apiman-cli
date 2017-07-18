@@ -1,0 +1,28 @@
+# Simple apiman gateway declaration
+---
+  system:
+    gateways:
+      - name: "gateway with various spaces in original ᠎ name and forward slash /"
+        type: "REST"
+    plugins:
+      - name: TestPolicy
+        groupId: "io.apiman.plugins"
+        artifactId: "apiman-plugins-test-policy"
+        version: "1.3.1.Final"
+  org:
+    name: "test"
+    apis:
+      - name: "example"
+        version: "1.0"
+        config:
+          endpoint: "http://localhost:8080/services/echo"
+          endpointType: "rest"
+          public: true
+          gateway: "gateway with various spaces in original ᠎ name and forward slash /"
+        policies:
+          - name: "CachingPolicy"
+            config:
+              ttl: 60
+          - plugin: TestPolicy
+            config:
+              foo: 123

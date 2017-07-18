@@ -16,8 +16,7 @@
 
 package io.apiman.cli.command.core;
 
-import io.apiman.cli.service.ManagementApiService;
-import org.kohsuke.args4j.CmdLineParser;
+import com.beust.jcommander.JCommander;
 
 import java.util.List;
 import java.util.Map;
@@ -28,9 +27,6 @@ import java.util.Map;
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
 public abstract class AbstractFinalCommand extends AbstractCommand {
-    public AbstractFinalCommand(ManagementApiService managementApiService) {
-        super(managementApiService);
-    }
 
     /**
      * Indicates that there is no child command and that this instance should handle the request.
@@ -39,8 +35,7 @@ public abstract class AbstractFinalCommand extends AbstractCommand {
      * @param parser
      * @return <code>null</code>
      */
-    @Override
-    protected Command getChildAction(List<String> args, CmdLineParser parser) {
+    protected Command getChildAction(String commandName, JCommander parser) {
         return null;
     }
 

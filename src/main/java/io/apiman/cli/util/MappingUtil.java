@@ -85,6 +85,53 @@ public final class MappingUtil {
     }
 
     /**
+     * Unmarshall the contents of given string into instance of klazz
+     *
+     * @param dataAsString the encoded data
+     * @param klazz the type to unmarshall into
+     * @param <T> the type to unmarshall into
+     * @return the unmarshalled instance of klazz
+     */
+    public static <T> T readJsonValue(String dataAsString, Class<T> klazz) {
+        try {
+            return JSON_MAPPER.readValue(dataAsString, klazz);
+        } catch (IOException e) {
+            throw new RuntimeException(String.format("Error reading JSON from: %s", dataAsString), e);
+        }
+    }
+
+    /**
+     * Unmarshall the contents of given URL into an instance of klazz
+     *
+     * @param url the URL to read
+     * @param klazz the class to marshall into
+     * @return the unmarshalled representation
+     */
+    public static <T> T readJsonValue(URL url, Class<T> klazz) {
+        try {
+            return JSON_MAPPER.readValue(url, klazz);
+        } catch (IOException e) {
+            throw new RuntimeException(String.format("Error reading JSON from: %s", url), e);
+        }
+    }
+
+    /**
+     * Unmarshall the contents of given URL into a collection of type klazz.
+     *
+     * @param url the URL to read
+     * @param collectionClazz the collection class to unmarshall into (e.g. List.class)
+     * @param targetClazz the target class to unmarshall into
+     * @return the unmarshalled representation
+     */
+    public static <C extends Collection<? super T>, T> C readJsonValue(URL url, Class<C> collectionClazz, Class<T> targetClazz) {
+        try {
+            return JSON_MAPPER.readValue(url, TypeFactory.defaultInstance().constructCollectionType(collectionClazz, targetClazz));
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to decode:" + e.getMessage()); //$NON-NLS-1$
+        }
+    }
+
+    /**
      * Return an instance of {@code destinationClass} with a copy of identical fields to those found
      * in {@code source}.
      *
