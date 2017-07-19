@@ -70,7 +70,11 @@ dependencies {
     compile "org.modelmapper:modelmapper:$version_modelmapper"
     compile "org.apache.commons:commons-lang3:$version_commons_lang"
     compile "com.google.inject:guice:$version_guice"
+    
+    // apiman deps
     compile "io.apiman:apiman-gateway-engine-beans:$version_apiman"
+    compile "io.apiman:apiman-common-plugin:$version_apiman"
+    compile "io.apiman:apiman-manager-api-core:$version_apiman"
 
     // route slf4j events to log4j2
     compile "org.apache.logging.log4j:log4j-slf4j-impl:$version_log4j"

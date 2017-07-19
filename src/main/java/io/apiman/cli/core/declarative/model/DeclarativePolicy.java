@@ -16,9 +16,13 @@
 
 package io.apiman.cli.core.declarative.model;
 
-import com.fasterxml.jackson.annotation.*;
-
 import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 /**
  * Declarative policy representation.
@@ -36,7 +40,14 @@ public class DeclarativePolicy {
     private String name;
 
     @JsonProperty
+    private String plugin;
+
+    @JsonProperty
     private Map<String, Object> config;
+
+    public String getId() {
+        return id;
+    }
 
     public String getName() {
         return name;
@@ -52,5 +63,17 @@ public class DeclarativePolicy {
 
     public void setConfig(Map<String, Object> config) {
         this.config = config;
+    }
+
+    public String getPlugin() {
+        return plugin;
+    }
+
+    public void setPlugin(String plugin) {
+        this.plugin = plugin;
+    }
+
+    public boolean isPlugin() {
+        return !(plugin == null || plugin.isEmpty());
     }
 }

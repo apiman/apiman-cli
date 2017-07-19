@@ -16,11 +16,6 @@
 
 package io.apiman.cli.util;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.google.common.collect.Lists;
 import io.apiman.cli.core.api.model.ApiConfig;
 import io.apiman.cli.core.api.model.ApiGateway;
 import io.apiman.cli.core.api.model.EndpointProperties;
@@ -29,10 +24,20 @@ import io.apiman.cli.core.declarative.model.DeclarativeApiConfig;
 import io.apiman.cli.core.declarative.model.DeclarativeEndpointSecurity;
 import io.apiman.cli.core.declarative.model.DeclarativeGateway;
 import io.apiman.cli.core.gateway.model.Gateway;
+
+import java.io.IOException;
+import java.net.URL;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.google.common.collect.Lists;
 
 /**
  * Shared POJO/JSON/YAML mapping utility methods.
@@ -78,6 +83,15 @@ public class MappingUtil {
         } catch (NullPointerException | JsonProcessingException e) {
             LOGGER.trace(String.format("Error writing value as JSON string: %s", obj), e);
             return null;
+        }
+    }
+
+    public static <T> T readJsonValue(URL url, Class<T> klazz) {
+        try {
+            return JSON_MAPPER.readValue(url, klazz);
+        } catch (IOException e) {
+            LOGGER.trace(String.format("Error reading JSON from: %s", url), e);
+            throw new RuntimeException(e);
         }
     }
 

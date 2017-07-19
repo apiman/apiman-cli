@@ -16,7 +16,7 @@
 
 package io.apiman.cli.core.api;
 
-import io.apiman.cli.core.api.model.Api;
+import io.apiman.gateway.engine.beans.Api;
 import io.apiman.gateway.engine.beans.ApiEndpoint;
 import io.apiman.gateway.engine.beans.Client;
 import io.apiman.gateway.engine.beans.SystemStatus;
@@ -30,7 +30,7 @@ import retrofit.http.Path;
 
 public interface GatewayApi {
 
-    @PUT("/apis/publish")
+    @PUT("/apis")
     Response publishApi(@Body Api api);
 
     @DELETE("/apis/{organizationId}/{apiId}/{version}")
