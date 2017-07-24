@@ -128,11 +128,12 @@ public class GatewayApplyCommand extends AbstractApplyCommand {
         api.setPublicAPI(apiConfig.isMakePublic()); // Why is this different to publicApi?
         api.setEndpointType(apiConfig.getEndpointType());
 
-        Map<String, String> endpointProps = MappingUtil.map(apiConfig.getSecurity(), EndpointProperties.class).toMap();
-        api.setEndpointProperties(endpointProps);
 
-        // api.setParsePayload(); TODO how is this determined/stored?
-
+        ofNullable(apiConfig.getSecurity()).ifPresent(declarativeEndpointProperties -> {
+            Map<String, String> endpointProps = MappingUtil.map(declarativeEndpointProperties, EndpointProperties.class).toMap();
+            api.setEndpointProperties(endpointProps);
+        });
+        // api.setParsePayload(); TODO this is not currently modelled
         // Use singular gatewayId or list of gateways
         List<DeclarativeGateway> gateways = ofNullable(apiConfig.getGateways())
                 .orElse(Arrays.asList(new ApiGateway(apiConfig.getGateway()))) // Hmm
