@@ -28,18 +28,22 @@ import io.apiman.cli.core.declarative.model.DeclarativeGateway;
 import io.apiman.cli.core.declarative.model.DeclarativePolicy;
 import io.apiman.cli.core.gateway.model.GatewayConfig;
 import io.apiman.cli.core.plugin.model.Plugin;
+import io.apiman.cli.exception.DeclarativeException;
 import io.apiman.cli.management.ManagementApiUtil;
 import io.apiman.cli.util.DeclarativeUtil;
 import io.apiman.cli.util.MappingUtil;
+import io.apiman.cli.util.PluginRegistry;
+import io.apiman.cli.util.PluginRegistry.PluginResolver;
 import io.apiman.gateway.engine.beans.Api;
 import io.apiman.gateway.engine.beans.Policy;
 import io.apiman.manager.api.beans.policies.PolicyDefinitionBean;
 import io.apiman.manager.api.core.exceptions.InvalidPluginException;
-import io.apiman.manager.api.core.plugin.AbstractPluginRegistry;
 
 import java.nio.file.Path;
 import java.util.AbstractMap;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -48,8 +52,6 @@ import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import com.google.common.io.Files;
 
 /**
  * Apply a gateway declaration.
@@ -61,10 +63,12 @@ public class GatewayApplyCommand extends AbstractApplyCommand {
     private static final Logger LOGGER = LogManager.getLogger(GatewayApplyCommand.class);
     private static final String JSON_EXTENSION = ".json";
 
+    private String orgId;
+
+    private PluginResolver policyResolver = PluginRegistry.getResolver();
     private Map<String, DeclarativeGateway> gatewaysMap;
     private Map<String, Plugin> pluginMap;
     private Map<Api, List<DeclarativeGateway>> apisToPublish;
-    private String orgId;
 
     @Override
     protected String getCommandDescription() {
@@ -74,37 +78,40 @@ public class GatewayApplyCommand extends AbstractApplyCommand {
     @Override
     protected void applyDeclaration(BaseDeclaration declaration) {
         orgId = declaration.getOrg().getName();
+        LOGGER.debug("Organization ID: {}", orgId);
+
         gatewaysMap = declaration.getSystem().getGateways()
                 .stream()
                 .collect(Collectors.toMap(gw -> gw.getName(), gw -> gw));
+        LOGGER.debug("Gateways map: {}", gatewaysMap);
+
         pluginMap = buildPluginMap(declaration);
+        LOGGER.debug("Plugin map: {}", pluginMap);
+
         apisToPublish = buildApis(declaration);
+        LOGGER.debug("APIs to publication map: {}", apisToPublish);
 
         publishAll();
     }
 
-    private void publishAll() {
-        apisToPublish.entrySet().forEach(entry -> {
-            List<DeclarativeGateway> publishTo = entry.getValue();
-            Api api = entry.getKey();
-            publishTo.forEach(gateway -> publishApi(api, gateway));
-        });
+    private Map<String, Plugin> buildPluginMap(BaseDeclaration declaration) {
+        Map<String, Plugin> pluginMap = new LinkedHashMap<>();
+        declaration.getSystem().getPlugins().stream()
+                .forEach(plugin -> {
+                    if (plugin.getName() == null) {
+                        LOGGER.info("A plugin has been specified without a friendly name. References must be by its full coordinates: {}", plugin.getCoordinates());
+                    } else {
+                        pluginMap.put(plugin.getName(), plugin);
+                    }
+                    pluginMap.put(plugin.getCoordinates().toString(), plugin);
+                });
+        return pluginMap;
     }
 
-    private void publishApi(Api api, DeclarativeGateway gateway) {
-        GatewayConfig config = gateway.getConfig();
-        GatewayApi client = buildGatewayApiClient(config.getEndpoint(),
-                config.getUsername(),
-                config.getPassword(),
-                getLogDebug());
-
-        LOGGER.fatal("Publishing {} to {}", api, gateway.getConfig().getEndpoint());
-        client.publishApi(api);
-    }
-
+    // Build map of APIs to Gateway that they should be published on.
     private Map<Api, List<DeclarativeGateway>> buildApis(BaseDeclaration declaration) {
         return ofNullable(declaration.getOrg().getApis())
-                .map(list -> list.stream())
+                .map(Collection::stream)
                 .orElseGet(() -> Stream.<DeclarativeApi>empty())
                 .map(this::initialiseApi)
                 .collect(
@@ -128,7 +135,6 @@ public class GatewayApplyCommand extends AbstractApplyCommand {
         api.setPublicAPI(apiConfig.isMakePublic()); // Why is this different to publicApi?
         api.setEndpointType(apiConfig.getEndpointType());
 
-
         ofNullable(apiConfig.getSecurity()).ifPresent(declarativeEndpointProperties -> {
             Map<String, String> endpointProps = MappingUtil.map(declarativeEndpointProperties, EndpointProperties.class).toMap();
             api.setEndpointProperties(endpointProps);
@@ -141,7 +147,7 @@ public class GatewayApplyCommand extends AbstractApplyCommand {
                 .map(ApiGateway::getGatewayId)
                 .map(gatewaysMap::get)
                 .collect(Collectors.toList());
-
+        // Policy chain
         api.setApiPolicies(buildPolicyChain(modelApi.getPolicies()));
         return new AbstractMap.SimpleImmutableEntry<>(api, gateways);
     }
@@ -158,70 +164,43 @@ public class GatewayApplyCommand extends AbstractApplyCommand {
     }
 
     private String determinePolicyImpl(DeclarativePolicy declarativePolicy) {
+        PolicyDefinitionBean policyDef = null;
+
         if (declarativePolicy.isPlugin()) {
             LOGGER.info("Resolving plugin: {}", declarativePolicy.getPlugin());
             // Get plugin reference first
             Plugin plugin = ofNullable(pluginMap.get(declarativePolicy.getPlugin()))
-                .orElseThrow(() -> new IllegalArgumentException("No such plugin exists " + declarativePolicy.getPlugin()));
-
-            // We need the FQCN for the end of our policy URI. To determine it from *-policyDef.json
-            // * First, download the plugin and inspect the metadata.
-            // * If only a single policy implementation exists, just use it.
-            // * If multiple policy implementations exist then `name` *must* be provided to disambiguate.
-
+                .orElseThrow(() -> new DeclarativeException("No such plugin exists: " + declarativePolicy.getPlugin()));
             try {
-                io.apiman.common.plugin.Plugin apimanPlugin = apimanPluginRegistry.loadPlugin(plugin.getCoordinates());
-                List<PolicyDefinitionBean> policyDefs = apimanPlugin.getPolicyDefinitions().stream()
-                        .map(url -> MappingUtil.readJsonValue(url, PolicyDefinitionBean.class))
-                        .collect(Collectors.toList()); // TODO Consider PluginResourceImpl L189 extract common validation aspects
-
-                LOGGER.info("Plugin contains {} policy definitions", policyDefs.size());
-                PolicyDefinitionBean selected = null;
-
-                if (policyDefs.isEmpty()) {
-                    throw new RuntimeException("Plugin contained no policies");
-                } else if (policyDefs.size() == 1) {
-                    selected = policyDefs.get(0);
-                    LOGGER.info("Automatically selecting policy: {}", selected);
-                } else {
-                    String name = ofNullable(declarativePolicy.getName()) // TODO or Id
-                            .orElseThrow(() -> new RuntimeException("Multiple policyDefs exist in plugin. You must disambiguate "
-                                    + "by providing its name. Run the command FOO BAR BAZ show available policies."));
-
-                    selected = policyDefs.stream()
-                            .filter(def -> name.equals(def.getId()))
-                            .findFirst()
-                            .orElseThrow(() -> new RuntimeException("Plugin did not contain the indicated policy ")); // TODO
-
-                    LOGGER.info("Selecting policy {} ({})", selected.getId(), selected.getName());
-                }
-                LOGGER.debug("Selected policyDef {}", selected);
-                return selected.getPolicyImpl();
-                // TODO print out useful log info
+                 policyDef = policyResolver.getPolicyDefinition(plugin.getCoordinates(), declarativePolicy.getName());
             } catch (InvalidPluginException e) {
-                LOGGER.fatal("Plugin {} could not be found {}", plugin.getCoordinates(), e);
-                throw new RuntimeException(e); // TODO must be a more accurate exception somewhere
+                throw new DeclarativeException("Plugin could not be found: " + plugin.getCoordinates(), e);
             }
         } else {
-            LOGGER.error("Loading inbuilt policy: {}", declarativePolicy.getName());
-            // TODO Look up in baked map rather than guessing!
-            return "class:io.apiman.gateway.engine.policies." + declarativePolicy.getName();
+            policyDef = ofNullable(policyResolver.getInbuiltPolicy(declarativePolicy.getName()))
+                    .orElseThrow(() -> new DeclarativeException("No such policy exists: " + declarativePolicy.getName()));
+            LOGGER.debug("Loading inbuilt policy: {}", declarativePolicy.getName());
         }
+        return policyDef.getPolicyImpl();
     }
 
-    private Map<String, Plugin> buildPluginMap(BaseDeclaration declaration) {
-        LOGGER.info("Building plugin map...");
-        return declaration.getSystem().getPlugins().stream()
-                .collect(Collectors.toMap(this::determineName, p -> p));
+    private void publishAll() {
+        apisToPublish.entrySet().forEach(entry -> {
+            List<DeclarativeGateway> publishTo = entry.getValue();
+            Api api = entry.getKey();
+            publishTo.forEach(gateway -> publishApi(api, gateway));
+        });
     }
 
-    private String determineName(Plugin plugin) {
-        if (plugin.getName() == null) {
-            LOGGER.info("A plugin has been specified without a friendly name. References must be by its full coordinates: {}", plugin.getCoordinates());
-            return plugin.getCoordinates().toString();
-        } else {
-            return plugin.getName();
-        }
+    private void publishApi(Api api, DeclarativeGateway gateway) {
+        GatewayConfig config = gateway.getConfig();
+        GatewayApi client = buildGatewayApiClient(config.getEndpoint(),
+                config.getUsername(),
+                config.getPassword(),
+                getLogDebug());
+
+        LOGGER.info("Publishing {} to {}", api, gateway.getConfig().getEndpoint());
+        client.publishApi(api);
     }
 
     private GatewayApi buildGatewayApiClient(String endpoint, String username, String password, boolean debugLogging) {
@@ -234,20 +213,11 @@ public class GatewayApplyCommand extends AbstractApplyCommand {
 
     @Override
     protected BaseDeclaration loadDeclaration(Path declarationFile, Map<String, String> parsedProperties) {
-        // parse declaration
         if (declarationFile.endsWith(JSON_EXTENSION)) {
             return DeclarativeUtil.loadDeclaration(declarationFile, MappingUtil.JSON_MAPPER, parsedProperties);
         } else {
-            // default is YAML
             return DeclarativeUtil.loadDeclaration(declarationFile, MappingUtil.YAML_MAPPER, parsedProperties);
         }
     }
 
-    private final ApimanPluginRegistry apimanPluginRegistry = new ApimanPluginRegistry();
-
-    private static final class ApimanPluginRegistry extends AbstractPluginRegistry {
-        ApimanPluginRegistry() {
-            super(Files.createTempDir());
-        }
-    }
 }

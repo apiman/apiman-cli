@@ -27,6 +27,7 @@ import io.apiman.cli.core.gateway.model.Gateway;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collection;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,6 +37,7 @@ import org.modelmapper.config.Configuration;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.common.collect.Lists;
 
@@ -86,12 +88,35 @@ public class MappingUtil {
         }
     }
 
+    /**
+     * Unmarshall the contents of given URL into an instance of klazz
+     *
+     * @param url the URL to read
+     * @param klazz the class to marshall into
+     * @return the unmarshalled representation
+     */
     public static <T> T readJsonValue(URL url, Class<T> klazz) {
         try {
             return JSON_MAPPER.readValue(url, klazz);
         } catch (IOException e) {
             LOGGER.trace(String.format("Error reading JSON from: %s", url), e);
             throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Decode the given string
+     *
+     * @param str
+     * @param collectionClazz
+     * @param targetClazz
+     * @return
+     */
+    public static <C extends Collection<? super T>, T> C readJsonValue(URL str, Class<C> collectionClazz, Class<T> targetClazz) {
+        try {
+            return JSON_MAPPER.readValue(str, TypeFactory.defaultInstance().constructCollectionType(collectionClazz, targetClazz));
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to decode:" + e.getMessage()); //$NON-NLS-1$
         }
     }
 

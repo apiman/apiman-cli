@@ -42,7 +42,7 @@ compileJava {
 
 ext {
     version_args4j = '2.33'
-    version_log4j = '2.5'
+    version_log4j = '2.8.2'
     version_guava = '19.0'
     version_retrofit = '1.9.0'
     version_jackson = '1.9.0'
@@ -75,6 +75,7 @@ dependencies {
     compile "io.apiman:apiman-gateway-engine-beans:$version_apiman"
     compile "io.apiman:apiman-common-plugin:$version_apiman"
     compile "io.apiman:apiman-manager-api-core:$version_apiman"
+    runtime "io.apiman:apiman-distro-data:$version_apiman"
 
     // route slf4j events to log4j2
     compile "org.apache.logging.log4j:log4j-slf4j-impl:$version_log4j"
