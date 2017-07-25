@@ -5,3 +5,5 @@ build/
 classes
 /bin/
 .settings
+.classpath
+.project
