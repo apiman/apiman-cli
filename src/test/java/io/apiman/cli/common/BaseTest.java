@@ -16,17 +16,19 @@
 
 package io.apiman.cli.common;
 
-import com.google.common.base.Strings;
-import com.jayway.restassured.RestAssured;
-import io.apiman.cli.ManagerCli;
+import static io.apiman.cli.util.Functions.not;
+import static java.util.Optional.ofNullable;
+
+import io.apiman.cli.Cli;
 import io.apiman.cli.util.AuthUtil;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
 
 import java.net.HttpURLConnection;
 
-import static io.apiman.cli.util.Functions.not;
-import static java.util.Optional.ofNullable;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
+
+import com.google.common.base.Strings;
+import com.jayway.restassured.RestAssured;
 
 /**
  * This base class waits for an instance of apiman.
@@ -71,7 +73,8 @@ public class BaseTest {
      * @param orgName the org name
      */
     protected void createOrg(String orgName) {
-        ManagerCli.main("org", "create",
+        Cli.main("manager",
+                "org", "create",
                 "--debug",
                 "--server", getApimanUrl(),
                 "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,
