@@ -55,7 +55,7 @@ ext {
     // test dependencies
     version_junit = '4.12'
     version_ducttape = '1.0.5'
-    version_mockito = '1.10.19'
+    version_mockito = '2.8.47'
     version_restassured = '2.9.0'
     version_systemrules = '1.16.0'
 }

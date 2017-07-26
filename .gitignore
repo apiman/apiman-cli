@@ -7,3 +7,4 @@ classes
 .settings
 .classpath
 .project
+/out/

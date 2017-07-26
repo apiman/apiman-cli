@@ -20,6 +20,10 @@ import io.apiman.cli.core.api.GatewayApi;
 
 public class GatewayApiFactory extends AbstractManagementApiFactory<GatewayApi, GatewayApi> {
 
+    public GatewayApiFactory() {
+        super();
+    }
+
     @Override
     public GatewayApi build(String endpoint, String username, String password, boolean debugLogging) {
         return buildClient(GatewayApi.class, endpoint, username, password, debugLogging);

@@ -16,19 +16,23 @@
 
 package io.apiman.cli.common;
 
-import static io.apiman.cli.util.Functions.not;
-import static java.util.Optional.ofNullable;
-
+import com.google.common.base.Strings;
+import com.jayway.restassured.RestAssured;
 import io.apiman.cli.Cli;
 import io.apiman.cli.util.AuthUtil;
-
-import java.net.HttpURLConnection;
-
+import io.apiman.cli.util.MappingUtil;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 
-import com.google.common.base.Strings;
-import com.jayway.restassured.RestAssured;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import static io.apiman.cli.util.Functions.not;
+import static java.util.Optional.ofNullable;
 
 /**
  * This base class waits for an instance of apiman.
@@ -81,5 +85,17 @@ public class BaseTest {
                 "--serverPassword", AuthUtil.DEFAULT_SERVER_PASSWORD,
                 "--name", orgName,
                 "--description", "example");
+    }
+
+    protected <T> T expectJson(String resource, Class<T> klazz) throws URISyntaxException, MalformedURLException {
+        return MappingUtil.readJsonValue(getResourceAsURL(resource), klazz);
+    }
+
+    protected URL getResourceAsURL(String resource) throws URISyntaxException, MalformedURLException {
+        return BaseTest.class.getResource(resource).toURI().toURL();
+    }
+
+    protected Path getResourceAsPath(String resource) throws URISyntaxException, MalformedURLException {
+        return Paths.get(getResourceAsURL(resource).toURI());
     }
 }

@@ -18,6 +18,7 @@ package io.apiman.cli.core.declarative.command;
 
 import static java.util.Optional.ofNullable;
 
+import com.google.inject.Inject;
 import io.apiman.cli.core.api.GatewayApi;
 import io.apiman.cli.core.api.model.ApiGateway;
 import io.apiman.cli.core.api.model.EndpointProperties;
@@ -29,8 +30,7 @@ import io.apiman.cli.core.declarative.model.DeclarativePolicy;
 import io.apiman.cli.core.gateway.model.GatewayConfig;
 import io.apiman.cli.core.plugin.model.Plugin;
 import io.apiman.cli.exception.DeclarativeException;
-import io.apiman.cli.management.ManagementApiUtil;
-import io.apiman.cli.util.DeclarativeUtil;
+import io.apiman.cli.management.factory.GatewayApiFactory;
 import io.apiman.cli.util.MappingUtil;
 import io.apiman.cli.util.PluginRegistry;
 import io.apiman.cli.util.PluginRegistry.PluginResolver;
@@ -39,10 +39,10 @@ import io.apiman.gateway.engine.beans.Policy;
 import io.apiman.manager.api.beans.policies.PolicyDefinitionBean;
 import io.apiman.manager.api.core.exceptions.InvalidPluginException;
 
-import java.nio.file.Path;
 import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,14 +61,13 @@ import org.apache.logging.log4j.Logger;
 public class GatewayApplyCommand extends AbstractApplyCommand {
 
     private static final Logger LOGGER = LogManager.getLogger(GatewayApplyCommand.class);
-    private static final String JSON_EXTENSION = ".json";
 
     private String orgId;
-
     private PluginResolver policyResolver = PluginRegistry.getResolver();
     private Map<String, DeclarativeGateway> gatewaysMap;
     private Map<String, Plugin> pluginMap;
     private Map<Api, List<DeclarativeGateway>> apisToPublish;
+    private GatewayApiFactory apiFactory;
 
     @Override
     protected String getCommandDescription() {
@@ -96,7 +95,10 @@ public class GatewayApplyCommand extends AbstractApplyCommand {
 
     private Map<String, Plugin> buildPluginMap(BaseDeclaration declaration) {
         Map<String, Plugin> pluginMap = new LinkedHashMap<>();
-        declaration.getSystem().getPlugins().stream()
+        List<Plugin> pluginsList = ofNullable(declaration.getSystem().getPlugins())
+                .orElse(Collections.emptyList());
+
+        pluginsList.stream()
                 .forEach(plugin -> {
                     if (plugin.getName() == null) {
                         LOGGER.info("A plugin has been specified without a friendly name. References must be by its full coordinates: {}", plugin.getCoordinates());
@@ -204,20 +206,16 @@ public class GatewayApplyCommand extends AbstractApplyCommand {
     }
 
     private GatewayApi buildGatewayApiClient(String endpoint, String username, String password, boolean debugLogging) {
-        return ManagementApiUtil.buildGatewayApiClient(
+        return apiFactory.build(
                 endpoint,
                 username,
                 password,
                 debugLogging);
     }
 
-    @Override
-    protected BaseDeclaration loadDeclaration(Path declarationFile, Map<String, String> parsedProperties) {
-        if (declarationFile.endsWith(JSON_EXTENSION)) {
-            return DeclarativeUtil.loadDeclaration(declarationFile, MappingUtil.JSON_MAPPER, parsedProperties);
-        } else {
-            return DeclarativeUtil.loadDeclaration(declarationFile, MappingUtil.YAML_MAPPER, parsedProperties);
-        }
+    @Inject
+    public void setGatewayApiFactory(GatewayApiFactory apiFactory) {
+        this.apiFactory = apiFactory;
     }
 
 }

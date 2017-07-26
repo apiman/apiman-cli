@@ -45,11 +45,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
@@ -69,17 +67,6 @@ public class ManagerApplyCommand extends AbstractApplyCommand {
 
     @Option(name = "--serverVersion", aliases = {"-sv"}, usage = "Management API server version")
     private ManagementApiVersion serverVersion = ManagementApiVersion.DEFAULT_VERSION;
-
-    @Override
-    protected BaseDeclaration loadDeclaration(Path declarationFile, Map<String, String> parsedProperties) {
-      // parse declaration
-      if (declarationFile.endsWith(JSON_EXTENSION)) {
-          return DeclarativeUtil.loadDeclaration(declarationFile, MappingUtil.JSON_MAPPER, parsedProperties);
-      } else {
-          // default is YAML
-          return DeclarativeUtil.loadDeclaration(declarationFile, MappingUtil.YAML_MAPPER, parsedProperties);
-      }
-    }
 
     /**
      * Apply the given Declaration.

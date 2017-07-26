@@ -36,6 +36,8 @@ import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 
 import com.google.common.collect.Maps;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 /**
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
@@ -73,11 +75,13 @@ public abstract class AbstractCommand implements Command {
      * The name of this command.
      */
     private String commandName;
+    private Injector injector;
 
     public AbstractCommand() {
         // get child commands
         commandMap = Maps.newHashMap();
         populateCommands(commandMap);
+        injector = Guice.createInjector();
     }
 
     /**
@@ -264,12 +268,12 @@ public abstract class AbstractCommand implements Command {
         final Class<? extends Command> commandClass = commandMap.get(commandName);
         if (null != commandClass) {
             try {
-                final Command command = commandClass.newInstance();
+                final Command command = injector.getInstance(commandClass);
                 command.setParent(this);
                 command.setCommandName(commandName);
 
                 return command;
-            } catch (InstantiationException | IllegalAccessException e) {
+            } catch (Exception e) {
                 throw new CommandException(String.format("Error getting child command for args: %s", args), e);
             }
         }

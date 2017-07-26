@@ -22,6 +22,7 @@ import io.apiman.cli.command.AbstractFinalCommand;
 import io.apiman.cli.core.declarative.model.BaseDeclaration;
 import io.apiman.cli.exception.CommandException;
 import io.apiman.cli.util.BeanUtil;
+import io.apiman.cli.util.DeclarativeUtil;
 import io.apiman.cli.util.MappingUtil;
 
 import java.io.IOException;
@@ -106,7 +107,15 @@ public abstract class AbstractApplyCommand extends AbstractFinalCommand {
 
     protected abstract void applyDeclaration(BaseDeclaration declaration);
 
-    protected abstract BaseDeclaration loadDeclaration(Path declarationFilePath, Map<String, String> parsedProperties);
+    protected BaseDeclaration loadDeclaration(Path declarationFile, Map<String, String> parsedProperties) {
+      // parse declaration
+      if (declarationFile.endsWith(JSON_EXTENSION)) {
+          return DeclarativeUtil.loadDeclaration(declarationFile, MappingUtil.JSON_MAPPER, parsedProperties);
+      } else {
+          // default is YAML
+          return DeclarativeUtil.loadDeclaration(declarationFile, MappingUtil.YAML_MAPPER, parsedProperties);
+      }
+    }
 
     public void setDeclarationFile(Path declarationFile) {
         this.declarationFile = declarationFile;
