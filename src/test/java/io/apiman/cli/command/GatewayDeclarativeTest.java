@@ -22,6 +22,7 @@ import io.apiman.cli.core.api.GatewayApi;
 import io.apiman.cli.core.declarative.command.GatewayApplyCommand;
 import io.apiman.cli.management.factory.GatewayApiFactory;
 import io.apiman.cli.util.LogUtil;
+import io.apiman.cli.util.PolicyResolver;
 import io.apiman.gateway.engine.beans.Api;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.junit.Before;
@@ -48,6 +49,7 @@ public class GatewayDeclarativeTest extends BaseTest {
     public void setUp() {
         command = new GatewayApplyCommand();
         command.setGatewayApiFactory(mGatewayApiFactory);
+        command.setPolicyResolver(new PolicyResolver());
         // Configure logging level
         command.setLogDebug(LOG_DEBUG);
         LogUtil.configureLogging(LOG_DEBUG);

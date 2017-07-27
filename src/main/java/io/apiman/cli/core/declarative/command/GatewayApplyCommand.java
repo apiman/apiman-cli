@@ -32,8 +32,7 @@ import io.apiman.cli.core.plugin.model.Plugin;
 import io.apiman.cli.exception.DeclarativeException;
 import io.apiman.cli.management.factory.GatewayApiFactory;
 import io.apiman.cli.util.MappingUtil;
-import io.apiman.cli.util.PluginRegistry;
-import io.apiman.cli.util.PluginRegistry.PluginResolver;
+import io.apiman.cli.util.PolicyResolver;
 import io.apiman.gateway.engine.beans.Api;
 import io.apiman.gateway.engine.beans.Policy;
 import io.apiman.manager.api.beans.policies.PolicyDefinitionBean;
@@ -63,11 +62,11 @@ public class GatewayApplyCommand extends AbstractApplyCommand {
     private static final Logger LOGGER = LogManager.getLogger(GatewayApplyCommand.class);
 
     private String orgId;
-    private PluginResolver policyResolver = PluginRegistry.getResolver();
     private Map<String, DeclarativeGateway> gatewaysMap;
     private Map<String, Plugin> pluginMap;
     private Map<Api, List<DeclarativeGateway>> apisToPublish;
     private GatewayApiFactory apiFactory;
+    private PolicyResolver policyResolver;
 
     @Override
     protected String getCommandDescription() {
@@ -216,6 +215,11 @@ public class GatewayApplyCommand extends AbstractApplyCommand {
     @Inject
     public void setGatewayApiFactory(GatewayApiFactory apiFactory) {
         this.apiFactory = apiFactory;
+    }
+
+    @Inject
+    public void setPolicyResolver(PolicyResolver policyResolver) {
+        this.policyResolver = policyResolver;
     }
 
 }
