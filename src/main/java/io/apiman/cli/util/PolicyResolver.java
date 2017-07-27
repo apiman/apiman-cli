@@ -89,7 +89,7 @@ public final class PolicyResolver extends AbstractPluginRegistry {
                 throw new ResolverException("Contains no policies", coordinates, policyId);
             } else if (policyDefs.size() == 1) {
                 selected = policyDefs.get(0);
-                if (policyId != null && !selected.getName().equals(policyId)) {
+                if (policyId != null && !selected.getId().equals(policyId)) {
                     throw new NoSuchPolicyException(policyDefs, coordinates, policyId);
                 }
                 LOGGER.info("Automatically selecting policy: {}", selected.getName());
