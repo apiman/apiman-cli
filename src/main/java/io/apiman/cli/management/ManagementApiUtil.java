@@ -16,11 +16,9 @@
 
 package io.apiman.cli.management;
 
-import io.apiman.cli.core.api.GatewayApi;
 import io.apiman.cli.core.common.model.ManagementApiVersion;
 import io.apiman.cli.exception.CommandException;
 import io.apiman.cli.management.binding.ManagementApiBindings;
-import io.apiman.cli.management.factory.GatewayApiFactory;
 import io.apiman.cli.management.factory.ManagementApiFactory;
 
 import java.io.IOException;
@@ -88,22 +86,6 @@ public class ManagementApiUtil {
                 + response.getReason() + " but expected " + expectedStatus + ":\n" + body);
     }
 
-    static final GatewayApiFactory gatewayApiFactory = new GatewayApiFactory();
-
-    public static GatewayApi buildGatewayApiClient(String endpoint, String username,
-            String password, boolean debugLogging) {
-        init();
-        return gatewayApiFactory.build(endpoint, username, password, debugLogging);
-    }
-
-    private static void init() {
-        if (!factoriesInitialised) {
-            LOGGER.trace("Initialising API factories");
-            apiFactories = Guice.createInjector(new ManagementApiFactoryModule());
-            factoriesInitialised = true;
-        }
-    }
-
     /**
      * @param clazz         the Class for which to build a client
      * @param username      the management API username
@@ -116,8 +98,11 @@ public class ManagementApiUtil {
     @SuppressWarnings("unchecked")
     public static <T> T buildServerApiClient(Class<T> clazz, String endpoint, String username,
                                              String password, boolean debugLogging, ManagementApiVersion serverVersion) {
-        init();
-
+        if (!factoriesInitialised) {
+            LOGGER.trace("Initialising API factories");
+            apiFactories = Guice.createInjector(new ManagementApiFactoryModule());
+            factoriesInitialised = true;
+        }
         // locate the Management API factory
         final ManagementApiFactory managementApiFactory;
         try {

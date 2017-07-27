@@ -88,7 +88,7 @@ public class GatewayDeclarativeTest extends BaseTest {
 
     /**
      * Two policy versions, with the latter containing security properties that must be converted into endpoint
-     * properties such
+     * properties such as 'basic-auth.username', etc.
      *
      * @throws Exception any exception
      */

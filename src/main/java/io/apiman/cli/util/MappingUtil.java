@@ -99,22 +99,21 @@ public class MappingUtil {
         try {
             return JSON_MAPPER.readValue(url, klazz);
         } catch (IOException e) {
-            LOGGER.trace(String.format("Error reading JSON from: %s", url), e);
-            throw new RuntimeException(e);
+            throw new RuntimeException(String.format("Error reading JSON from: %s", url), e);
         }
     }
 
     /**
-     * Decode the given string
+     * Unmarshall the contents of given URL into a collection of type klazz.
      *
-     * @param str
-     * @param collectionClazz
-     * @param targetClazz
-     * @return
+     * @param url the URL to read
+     * @param collectionClazz the collection class to unmarshall into (e.g. List.class)
+     * @param targetClazz the target class to unmarshall into
+     * @return the unmarshalled representation
      */
-    public static <C extends Collection<? super T>, T> C readJsonValue(URL str, Class<C> collectionClazz, Class<T> targetClazz) {
+    public static <C extends Collection<? super T>, T> C readJsonValue(URL url, Class<C> collectionClazz, Class<T> targetClazz) {
         try {
-            return JSON_MAPPER.readValue(str, TypeFactory.defaultInstance().constructCollectionType(collectionClazz, targetClazz));
+            return JSON_MAPPER.readValue(url, TypeFactory.defaultInstance().constructCollectionType(collectionClazz, targetClazz));
         } catch (Exception e) {
             throw new RuntimeException("Failed to decode:" + e.getMessage()); //$NON-NLS-1$
         }
