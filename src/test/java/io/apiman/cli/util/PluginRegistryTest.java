@@ -51,15 +51,37 @@ public class PluginRegistryTest {
     @Test
     public void testGetPluginPolicy_BadPolicyId() throws Exception {
         exception.expect(PolicyResolver.NoSuchPolicyException.class);
-        PolicyDefinitionBean policyDef = policyResolver.getPolicyDefinition(TEST_PLUGIN_COORDS, "foo-bar");
+        policyResolver.getPolicyDefinition(TEST_PLUGIN_COORDS, "foo-bar");
     }
 
     @Test
     public void testGetPluginPolicy_NoSuchPlugin() throws Exception {
         exception.expect(InvalidPluginException.class);
-        PolicyDefinitionBean policyDef = policyResolver.getPolicyDefinition(
+        policyResolver.getPolicyDefinition(
                 new PluginCoordinates("bad", "coord", "s"),
                 "foo-bar");
+    }
+
+    @Test
+    public void testGetBuiltinPolicy_ValidPolicy() throws Exception {
+        PolicyDefinitionBean pdb = policyResolver.getInbuiltPolicy("BasicAuthenticationPolicy");
+        Assert.assertNotNull(pdb);
+        Assert.assertEquals("BASICAuthenticationPolicy", pdb.getId());
+        Assert.assertEquals("class:io.apiman.gateway.engine.policies.BasicAuthenticationPolicy", pdb.getPolicyImpl());
+    }
+
+    @Test
+    public void testGetBuiltinPolicy_ValidPolicyHumanName() throws Exception {
+        PolicyDefinitionBean pdb = policyResolver.getInbuiltPolicy("Basic Authentication Policy");
+        Assert.assertNotNull(pdb);
+        Assert.assertEquals("BASICAuthenticationPolicy", pdb.getId());
+        Assert.assertEquals("class:io.apiman.gateway.engine.policies.BasicAuthenticationPolicy", pdb.getPolicyImpl());
+    }
+
+    @Test
+    public void testGetBuiltinPolicy_InvalidPolicyName() throws Exception {
+        exception.expect(PolicyResolver.NoSuchBuiltInPolicyException.class);
+        policyResolver.getInbuiltPolicy("This Policy Does Not Exist");
     }
 
 }

@@ -178,8 +178,7 @@ public class GatewayApplyCommand extends AbstractApplyCommand {
                 throw new DeclarativeException("Plugin could not be found: " + plugin.getCoordinates(), e);
             }
         } else {
-            policyDef = ofNullable(policyResolver.getInbuiltPolicy(declarativePolicy.getName()))
-                    .orElseThrow(() -> new DeclarativeException("No such policy exists: " + declarativePolicy.getName()));
+            policyDef = policyResolver.getInbuiltPolicy(declarativePolicy.getName());
             LOGGER.debug("Loading inbuilt policy: {}", declarativePolicy.getName());
         }
         return policyDef.getPolicyImpl();

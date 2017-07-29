@@ -29,6 +29,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -107,7 +108,8 @@ public final class PolicyResolver extends AbstractPluginRegistry {
         }
 
         public PolicyDefinitionBean getInbuiltPolicy(String shortName) {
-            return inbuiltPolicyMap.get(shortName.toLowerCase());
+        return ofNullable(inbuiltPolicyMap.get(shortName.toLowerCase()))
+                .orElseThrow(() -> new NoSuchBuiltInPolicyException(shortName));
         }
 
         public PolicyDefinitionBean getPolicyDefinition(PluginCoordinates coordinates) throws InvalidPluginException {
@@ -137,12 +139,17 @@ public final class PolicyResolver extends AbstractPluginRegistry {
             }
         }
 
-        private static String getPolicyIds(List<PolicyDefinitionBean> policyDefs) {
+    public static class NoSuchBuiltInPolicyException extends RuntimeException {
+        public NoSuchBuiltInPolicyException(String message) {
+            super("Unknown built-in policy: " + message + " Available: " + getPolicyIds(inbuiltPolicyMap.values()));
+        }
+    }
+
+    private static String getPolicyIds(Collection<PolicyDefinitionBean> policyDefs) {
             return policyDefs.stream()
                     .map(PolicyDefinitionBean::getId)
                     .collect(Collectors.joining(", "));
         }
-
 }
 
 
