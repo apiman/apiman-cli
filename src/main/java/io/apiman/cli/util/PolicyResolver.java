@@ -40,104 +40,102 @@ import static java.util.Optional.ofNullable;
 
 public final class PolicyResolver extends AbstractPluginRegistry {
 
-        private static final Logger LOGGER = LogManager.getLogger(PolicyResolver.class);
-        private static final Map<String, PolicyDefinitionBean> inbuiltPolicyMap = new LinkedHashMap<>();
+    private static final Logger LOGGER = LogManager.getLogger(PolicyResolver.class);
+    private static final Map<String, PolicyDefinitionBean> inbuiltPolicyMap = new LinkedHashMap<>();
 
-        public PolicyResolver() {
-            super(Files.createTempDir());
-            buildInbuiltPolicyMap();
-            LOGGER.debug("Inbuilt policy map: {}", inbuiltPolicyMap);
-        }
+    public PolicyResolver() {
+        super(Files.createTempDir());
+        buildInbuiltPolicyMap();
+        LOGGER.debug("Inbuilt policy map: {}", inbuiltPolicyMap);
+    }
 
-        private void buildInbuiltPolicyMap() {
-            URL policyDefResource = Resources.getResource("data/all-policyDefs.json");
-            List<PolicyDefinitionBean> inbuilts = new ArrayList<>(MappingUtil.readJsonValue(policyDefResource, List.class, PolicyDefinitionBean.class));
-            inbuilts.stream().forEach(policyDef -> {
-                inbuiltPolicyMap.put(policyDef.getId().toLowerCase(), policyDef);
-                inbuiltPolicyMap.put(policyDef.getName().toLowerCase(), policyDef);
-                ofNullable(policyDef.getPolicyImpl().split("class:", 2))
+    private void buildInbuiltPolicyMap() {
+        URL policyDefResource = Resources.getResource("data/all-policyDefs.json");
+        List<PolicyDefinitionBean> inbuilts = new ArrayList<>(MappingUtil.readJsonValue(policyDefResource, List.class, PolicyDefinitionBean.class));
+        inbuilts.stream().forEach(policyDef -> {
+            inbuiltPolicyMap.put(policyDef.getId().toLowerCase(), policyDef);
+            inbuiltPolicyMap.put(policyDef.getName().toLowerCase(), policyDef);
+            ofNullable(policyDef.getPolicyImpl().split("class:", 2))
                     .orElseThrow(() -> new CommandException("Unexpected format in built-in policyImpl field: " + policyDef.getPolicyImpl()));
-                String policyFqdn = policyDef.getPolicyImpl().split("class:", 2)[1];
-                inbuiltPolicyMap.put(policyFqdn.toLowerCase(), policyDef);
-            });
-        }
+            String policyFqdn = policyDef.getPolicyImpl().split("class:", 2)[1];
+            inbuiltPolicyMap.put(policyFqdn.toLowerCase(), policyDef);
+        });
+    }
 
-        /**
-         * We need the FQCN for the end of our policy URI.
-         *
-         * To determine it we need to discover the respective *-policyDef.json:
-         *
-         * First, download the plugin and inspect the metadata.
-         * If only a single policy implementation exists, just use it.
-         * If multiple policy implementations exist then `name` *must* be provided to disambiguate.
-         *
-         * @param coordinates apiman plugin coordinates GAV(C)
-         * @param policyId the policy to select from the plugin.
-         * @return the extracted policy definition
-         *
-         * @throws InvalidPluginException if the plugin is invalid
-         */
-        public PolicyDefinitionBean getPolicyDefinition(PluginCoordinates coordinates, String policyId) throws InvalidPluginException {
-            Plugin plugin = super.loadPlugin(coordinates);
-            List<PolicyDefinitionBean> policyDefs = plugin.getPolicyDefinitions().stream()
-                    .map(url -> MappingUtil.readJsonValue(url, PolicyDefinitionBean.class))
-                    .collect(Collectors.toList()); // TODO Consider PluginResourceImpl L189 extract common validation aspects
+    /**
+     * We need the FQCN for the end of our policy URI.
+     * <p>
+     * To determine it we need to discover the respective *-policyDef.json:
+     * <p>
+     * First, download the plugin and inspect the metadata. If only a single policy implementation exists, just use it.
+     * If multiple policy implementations exist then `name` *must* be provided to disambiguate.
+     *
+     * @param coordinates apiman plugin coordinates GAV(C)
+     * @param policyId    the policy to select from the plugin.
+     * @return the extracted policy definition
+     * @throws InvalidPluginException if the plugin is invalid
+     */
+    public PolicyDefinitionBean getPolicyDefinition(PluginCoordinates coordinates, String policyId) throws InvalidPluginException {
+        Plugin plugin = super.loadPlugin(coordinates);
+        List<PolicyDefinitionBean> policyDefs = plugin.getPolicyDefinitions().stream()
+                .map(url -> MappingUtil.readJsonValue(url, PolicyDefinitionBean.class))
+                .collect(Collectors.toList()); // TODO Consider PluginResourceImpl L189 extract common validation aspects
 
-            LOGGER.debug("Plugin {} contains {} policy definitions", plugin.getCoordinates(), policyDefs.size());
-            PolicyDefinitionBean selected = null;
+        LOGGER.debug("Plugin {} contains {} policy definitions", plugin.getCoordinates(), policyDefs.size());
+        PolicyDefinitionBean selected = null;
 
-            if (policyDefs.isEmpty()) {
-                throw new ResolverException("Contains no policies", coordinates, policyId);
-            } else if (policyDefs.size() == 1) {
-                selected = policyDefs.get(0);
-                if (policyId != null && !selected.getId().equals(policyId)) {
-                    throw new NoSuchPolicyException(policyDefs, coordinates, policyId);
-                }
-                LOGGER.info("Automatically selecting policy: {}", selected.getName());
-            } else {
-                String name = ofNullable(policyId)
-                        .orElseThrow(() -> new AmbiguousPluginException(policyDefs, coordinates, policyId));
-
-                selected = policyDefs.stream()
-                        .filter(def -> name.equals(def.getId()))
-                        .findFirst()
-                        .orElseThrow(() -> new NoSuchPolicyException(policyDefs, coordinates, policyId));
+        if (policyDefs.isEmpty()) {
+            throw new ResolverException("Contains no policies", coordinates, policyId);
+        } else if (policyDefs.size() == 1) {
+            selected = policyDefs.get(0);
+            if (policyId != null && !selected.getId().equals(policyId)) {
+                throw new NoSuchPolicyException(policyDefs, coordinates, policyId);
             }
-            LOGGER.debug("Selecting policy {} ({})", selected.getId(), selected.getName());
-            return selected;
-        }
+            LOGGER.info("Automatically selecting policy: {}", selected.getName());
+        } else {
+            String name = ofNullable(policyId)
+                    .orElseThrow(() -> new AmbiguousPluginException(policyDefs, coordinates, policyId));
 
-        public PolicyDefinitionBean getInbuiltPolicy(String shortName) {
+            selected = policyDefs.stream()
+                    .filter(def -> name.equals(def.getId()))
+                    .findFirst()
+                    .orElseThrow(() -> new NoSuchPolicyException(policyDefs, coordinates, policyId));
+        }
+        LOGGER.debug("Selecting policy {} ({})", selected.getId(), selected.getName());
+        return selected;
+    }
+
+    public PolicyDefinitionBean getInbuiltPolicy(String shortName) {
         return ofNullable(inbuiltPolicyMap.get(shortName.toLowerCase()))
                 .orElseThrow(() -> new NoSuchBuiltInPolicyException(shortName));
+    }
+
+    public PolicyDefinitionBean getPolicyDefinition(PluginCoordinates coordinates) throws InvalidPluginException {
+        return getPolicyDefinition(coordinates, null);
+    }
+
+    public static class ResolverException extends InvalidPluginException {
+
+        public ResolverException(String message, PluginCoordinates coordinates, String policyId) {
+            super(String.format("[Plugin: %s, PolicyID: %s] %s", coordinates, policyId, message));
         }
 
-        public PolicyDefinitionBean getPolicyDefinition(PluginCoordinates coordinates) throws InvalidPluginException {
-            return getPolicyDefinition(coordinates, null);
+    }
+
+    public static class NoSuchPolicyException extends ResolverException {
+
+        public NoSuchPolicyException(List<PolicyDefinitionBean> policyDefs, PluginCoordinates coordinates, String policyId) {
+            super("Does not contain indicated policy. Available: " + getPolicyIds(policyDefs), coordinates, policyId);
         }
+    }
 
-        public static class ResolverException extends InvalidPluginException {
+    public static class AmbiguousPluginException extends ResolverException {
 
-            public ResolverException(String message, PluginCoordinates coordinates, String policyId) {
-                super(String.format("[Plugin: %s, PolicyID: %s] %s", coordinates, policyId, message));
-            }
-
+        public AmbiguousPluginException(List<PolicyDefinitionBean> policyDefs, PluginCoordinates coordinates, String policyId) {
+            super("Multiple policies encapsulated. Disambiguate by explicitly providing policy name. Available: " +
+                    getPolicyIds(policyDefs), coordinates, policyId);
         }
-
-        public static class NoSuchPolicyException extends ResolverException {
-
-            public NoSuchPolicyException(List<PolicyDefinitionBean> policyDefs, PluginCoordinates coordinates, String policyId) {
-                super("Does not contain indicated policy. Available: " + getPolicyIds(policyDefs), coordinates, policyId);
-            }
-        }
-
-        public static class AmbiguousPluginException extends ResolverException {
-
-            public AmbiguousPluginException(List<PolicyDefinitionBean> policyDefs, PluginCoordinates coordinates, String policyId) {
-                super("Multiple policies encapsulated. Disambiguate by explicitly providing policy name. Available: " +
-                        getPolicyIds(policyDefs), coordinates, policyId);
-            }
-        }
+    }
 
     public static class NoSuchBuiltInPolicyException extends RuntimeException {
         public NoSuchBuiltInPolicyException(String message) {
@@ -146,10 +144,10 @@ public final class PolicyResolver extends AbstractPluginRegistry {
     }
 
     private static String getPolicyIds(Collection<PolicyDefinitionBean> policyDefs) {
-            return policyDefs.stream()
-                    .map(PolicyDefinitionBean::getId)
-                    .collect(Collectors.joining(", "));
-        }
+        return policyDefs.stream()
+                .map(PolicyDefinitionBean::getId)
+                .collect(Collectors.joining(", "));
+    }
 }
 
 
