@@ -16,6 +16,7 @@
 
 package io.apiman.cli.core.declarative.command;
 
+import static java.text.MessageFormat.format;
 import static java.util.Optional.ofNullable;
 
 import com.google.inject.Inject;
@@ -27,14 +28,17 @@ import io.apiman.cli.core.declarative.model.DeclarativeApi;
 import io.apiman.cli.core.declarative.model.DeclarativeApiConfig;
 import io.apiman.cli.core.declarative.model.DeclarativeGateway;
 import io.apiman.cli.core.declarative.model.DeclarativePolicy;
+import io.apiman.cli.core.gateway.model.Gateway;
 import io.apiman.cli.core.gateway.model.GatewayConfig;
 import io.apiman.cli.core.plugin.model.Plugin;
+import io.apiman.cli.exception.CommandException;
 import io.apiman.cli.exception.DeclarativeException;
 import io.apiman.cli.management.factory.GatewayApiFactory;
 import io.apiman.cli.util.MappingUtil;
 import io.apiman.cli.util.PolicyResolver;
 import io.apiman.gateway.engine.beans.Api;
 import io.apiman.gateway.engine.beans.Policy;
+import io.apiman.gateway.engine.beans.SystemStatus;
 import io.apiman.manager.api.beans.policies.PolicyDefinitionBean;
 import io.apiman.manager.api.core.exceptions.InvalidPluginException;
 
@@ -42,6 +46,7 @@ import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.function.Supplier;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +56,7 @@ import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import retrofit.RetrofitError;
 
 /**
  * Apply a gateway declaration.
@@ -60,7 +66,6 @@ import org.apache.logging.log4j.Logger;
 public class GatewayApplyCommand extends AbstractApplyCommand {
 
     private static final Logger LOGGER = LogManager.getLogger(GatewayApplyCommand.class);
-
     private String orgId;
     private Map<String, DeclarativeGateway> gatewaysMap;
     private Map<String, Plugin> pluginMap;
@@ -80,7 +85,9 @@ public class GatewayApplyCommand extends AbstractApplyCommand {
 
         gatewaysMap = declaration.getSystem().getGateways()
                 .stream()
-                .collect(Collectors.toMap(gw -> gw.getName(), gw -> gw));
+                .filter(this::isActive)
+                .collect(Collectors.toMap(Gateway::getName, gw -> gw));
+
         LOGGER.debug("Gateways map: {}", gatewaysMap);
 
         pluginMap = buildPluginMap(declaration);
@@ -90,6 +97,12 @@ public class GatewayApplyCommand extends AbstractApplyCommand {
         LOGGER.debug("APIs to publication map: {}", apisToPublish);
 
         publishAll();
+    }
+
+    private boolean isActive(DeclarativeGateway gateway) {
+        LOGGER.debug("Checking Gateway {} status", gateway.getName());
+        GatewayApi client = buildGatewayApiClient(gateway.getConfig(), getLogDebug());
+        return statusCheck(client, gateway);
     }
 
     private Map<String, Plugin> buildPluginMap(BaseDeclaration declaration) {
@@ -194,21 +207,48 @@ public class GatewayApplyCommand extends AbstractApplyCommand {
 
     private void publishApi(Api api, DeclarativeGateway gateway) {
         GatewayConfig config = gateway.getConfig();
-        GatewayApi client = buildGatewayApiClient(config.getEndpoint(),
-                config.getUsername(),
-                config.getPassword(),
-                getLogDebug());
-
+        GatewayApi client = buildGatewayApiClient(config, getLogDebug());
         LOGGER.info("Publishing {} to {}", api, gateway.getConfig().getEndpoint());
-        client.publishApi(api);
+        callAndCatch(gateway, () -> client.publishApi(api));
     }
 
-    private GatewayApi buildGatewayApiClient(String endpoint, String username, String password, boolean debugLogging) {
+    private GatewayApi buildGatewayApiClient(GatewayConfig config, boolean debugLogging) {
         return apiFactory.build(
-                endpoint,
-                username,
-                password,
+                config.getEndpoint(),
+                config.getUsername(),
+                config.getPassword(),
                 debugLogging);
+    }
+
+    private boolean statusCheck(GatewayApi client, DeclarativeGateway gateway) {
+        SystemStatus status = callAndCatch(gateway, () -> client.getSystemStatus());
+        LOGGER.debug("Gateway status: {}", status);
+        if (!status.isUp()) {
+            throw new StatusCheckException(gateway, "Status indicates gateway is currently down");
+        }
+        return status.isUp();
+    }
+
+    private <T> T callAndCatch(DeclarativeGateway gateway, Supplier<T> action) {
+        try {
+            return action.get();
+        } catch(RetrofitError e) {
+            LOGGER.debug("Endpoint: {}, RetrofitError: {}", gateway.getConfig().getEndpoint(), e);
+            switch (e.getKind()) {
+                case NETWORK:
+                    throw new StatusCheckException(gateway, "Network issue: " + e.getMessage());
+                case CONVERSION:
+                    throw e;
+                case HTTP:
+                    throw new StatusCheckException(gateway,
+                            format("Unsuccessful response code: {0} {1}",
+                                    e.getResponse().getStatus(),
+                                    e.getResponse().getReason()));
+                case UNEXPECTED:
+                    throw new StatusCheckException(gateway, format("Unexpected exception: {0}", e.getMessage()));
+            }
+            throw e;
+        }
     }
 
     @Inject
@@ -221,4 +261,13 @@ public class GatewayApplyCommand extends AbstractApplyCommand {
         this.policyResolver = policyResolver;
     }
 
+    private class StatusCheckException extends CommandException {
+
+        public StatusCheckException(DeclarativeGateway gateway, String message) {
+            super(format("Status check failed on Gateway {0} ({1}). {2}",
+                    gateway.getName(),
+                    gateway.getConfig().getEndpoint(),
+                    message));
+        }
+    }
 }
