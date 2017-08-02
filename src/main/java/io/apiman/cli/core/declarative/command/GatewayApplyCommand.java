@@ -72,6 +72,16 @@ public class GatewayApplyCommand extends AbstractApplyCommand {
     private Map<Api, List<DeclarativeGateway>> apisToPublish;
     private GatewayApiFactory apiFactory;
     private PolicyResolver policyResolver;
+    
+    @Inject
+    public void setGatewayApiFactory(GatewayApiFactory apiFactory) {
+        this.apiFactory = apiFactory;
+    }
+
+    @Inject
+    public void setPolicyResolver(PolicyResolver policyResolver) {
+        this.policyResolver = policyResolver;
+    }
 
     @Override
     protected String getCommandDescription() {
@@ -113,7 +123,8 @@ public class GatewayApplyCommand extends AbstractApplyCommand {
         pluginsList.stream()
                 .forEach(plugin -> {
                     if (plugin.getName() == null) {
-                        LOGGER.info("A plugin has been specified without a friendly name. References must be by its full coordinates: {}", plugin.getCoordinates());
+                        LOGGER.info("A plugin has been specified without a friendly name. " +
+                                "References must be by its full coordinates: {}", plugin.getCoordinates());
                     } else {
                         pluginMap.put(plugin.getName(), plugin);
                     }
@@ -249,16 +260,6 @@ public class GatewayApplyCommand extends AbstractApplyCommand {
             }
             throw e;
         }
-    }
-
-    @Inject
-    public void setGatewayApiFactory(GatewayApiFactory apiFactory) {
-        this.apiFactory = apiFactory;
-    }
-
-    @Inject
-    public void setPolicyResolver(PolicyResolver policyResolver) {
-        this.policyResolver = policyResolver;
     }
 
     private class StatusCheckException extends CommandException {
