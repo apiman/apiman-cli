@@ -24,6 +24,7 @@ import io.apiman.cli.management.factory.GatewayApiFactory;
 import io.apiman.cli.util.LogUtil;
 import io.apiman.cli.util.PolicyResolver;
 import io.apiman.gateway.engine.beans.Api;
+import io.apiman.gateway.engine.beans.SystemStatus;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.junit.Before;
 import org.junit.Test;
@@ -56,6 +57,10 @@ public class GatewayDeclarativeTest extends BaseTest {
         // Stub Gateway API Factory
         when(mGatewayApiFactory.build("http://localhost:8080/apiman-gateway-api", "apimanager", "apiman123!", true))
                 .thenReturn(mGatewayApi);
+        // Bake in OK status
+        SystemStatus okStatus = new SystemStatus();
+        okStatus.setUp(true);
+        when(mGatewayApi.getSystemStatus()).thenReturn(okStatus);
     }
 
     @Test

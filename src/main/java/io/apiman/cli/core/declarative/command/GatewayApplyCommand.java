@@ -72,7 +72,7 @@ public class GatewayApplyCommand extends AbstractApplyCommand {
     private Map<Api, List<DeclarativeGateway>> apisToPublish;
     private GatewayApiFactory apiFactory;
     private PolicyResolver policyResolver;
-    
+
     @Inject
     public void setGatewayApiFactory(GatewayApiFactory apiFactory) {
         this.apiFactory = apiFactory;
@@ -189,7 +189,7 @@ public class GatewayApplyCommand extends AbstractApplyCommand {
     }
 
     private String determinePolicyImpl(DeclarativePolicy declarativePolicy) {
-        PolicyDefinitionBean policyDef = null;
+        PolicyDefinitionBean policyDef;
 
         if (declarativePolicy.isPlugin()) {
             LOGGER.info("Resolving plugin: {}", declarativePolicy.getPlugin());
