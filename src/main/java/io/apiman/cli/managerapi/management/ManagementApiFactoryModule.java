@@ -66,5 +66,13 @@ public class ManagementApiFactoryModule extends AbstractModule {
         bind(ManagementApiFactory.class)
                 .annotatedWith(ManagementApiBindings.boundTo(VersionAgnosticApi.class, ManagementApiVersion.v12x))
                 .to(Version12XManagementApiFactoryImpl.class).in(Singleton.class);
+
+        bind(ManagementApiFactory.class)
+                .annotatedWith(ManagementApiBindings.boundTo(PlanApi.class))
+                .toInstance(new SimpleManagementApiFactoryImpl<>(PlanApi.class));
+        
+        bind(ManagementApiFactory.class)
+        		.annotatedWith(ManagementApiBindings.boundTo(ClientApi.class))
+        		.toInstance(new SimpleManagementApiFactoryImpl<>(ClientApi.class));
     }
 }

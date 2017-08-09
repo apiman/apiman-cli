@@ -27,7 +27,8 @@ public interface ManagementApiFactory<T> {
      * @param username     the management API username
      * @param password     the management API password
      * @param debugLogging whether debug logging should be enabled
+     * @param postConverter the PostConverter if needs
      * @return an API client for the given Class
      */
-    T build(String endpoint, String username, String password, boolean debugLogging);
+    T build(String endpoint, String username, String password, boolean debugLogging, PostConverter postConverter);
 }

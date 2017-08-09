@@ -62,7 +62,20 @@ public class Version12XManagementApiFactoryImpl extends AbstractManagementApiFac
 
             @Override
             public Api fetchVersion(String orgName, String apiName, String version) {
-                return delegate.fetchVersion(orgName, apiName, version);
+            	Api api = delegate.fetchVersion(orgName, apiName, version);
+            	api.setOrganizationName(orgName);
+            	api.setName(apiName);
+                return api;
+            }
+
+            @Override
+            public List<Api> fetchVersions(String orgName, String apiName) {
+                return delegate.fetchVersions(orgName, apiName);
+            }
+            
+            @Override
+            public ApiConfig fetchVersionConfig(String orgName, String apiName, String version) {
+                return delegate.fetchVersionConfig(orgName, apiName, version);
             }
 
             @Override
@@ -83,6 +96,11 @@ public class Version12XManagementApiFactoryImpl extends AbstractManagementApiFac
             @Override
             public List<ApiPolicy> fetchPolicies(String orgName, String serviceName, String version) {
                 return delegate.fetchPolicies(orgName, serviceName, version);
+            }
+
+            @Override
+            public ApiPolicy fetchPolicy(String orgName, String serviceName, String version, Long policyId) {
+                return delegate.fetchPolicy(orgName, serviceName, version, policyId);
             }
 
             @Override

@@ -32,4 +32,7 @@ public interface OrgApi {
 
     @GET("/organizations/{orgName}")
     Org fetch(@Path("orgName") String orgName);
+    
+    @POST("/search/organizations/")
+    OrgSearchOut search(@Body OrgSearchIn orgSearch);
 }

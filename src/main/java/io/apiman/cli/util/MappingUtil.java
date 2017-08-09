@@ -197,6 +197,14 @@ public final class MappingUtil {
             apiConfig.setPublicApi(declarativeApiConfig.isMakePublic());
             apiConfig.setGateways(Lists.newArrayList(new ApiGateway(declarativeApiConfig.getGateway())));
 
+            // Gateways management
+            final String strGateway = declarativeApiConfig.getGateway();
+            final StringTokenizer st = new StringTokenizer(strGateway);
+            final ArrayList<ApiGateway> gatewaysList = Lists.newArrayList();
+            while (st.hasMoreTokens()) gatewaysList.add(new ApiGateway(st.nextToken()));
+            apiConfig.setGateways(gatewaysList);
+
+
             return apiConfig;
         });
 

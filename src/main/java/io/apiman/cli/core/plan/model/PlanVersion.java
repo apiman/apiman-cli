@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Pete Cornish
+ * Copyright 2017 Jean-Charles Quantin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,50 +14,30 @@
  * limitations under the License.
  */
 
-package io.apiman.cli.command.org.model;
+package io.apiman.cli.core.plan.model;
 
-import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import io.apiman.cli.ManagerApi;
-import io.apiman.cli.core.api.model.Api;
-import io.apiman.cli.core.org.OrgApi;
-import io.apiman.cli.management.factory.ManagementApiFactory;
-
 /**
- * Models an organisation.
+ * Models an Plan version.
  *
- * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
+ * @author Jean-Charles Quantin {@literal <jeancharles.quantin@gmail.com>}
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Org {
+public class PlanVersion {
     @JsonProperty
-    private String name;
+    private String version;
 
+    /**
+     * Never clone a previous version when creating a new version.
+     */
     @JsonProperty
-    private String description;
+    final private boolean clone = false;
 
-    @JsonIgnore
-    public ManagerApi managerApi;
-
-    public Org() {
-    }
-
-    public Org(String name, String description) {
-        this.name = name;
-        this.description = description;
-    }
-
-    public String getName() {
-        return name;
-    }
-    
-    public List<Api> listApis() throws Exception {
-    	return managerApi.api().list(getName());
+    public PlanVersion(String version) {
+        this.version = version;
     }
 }

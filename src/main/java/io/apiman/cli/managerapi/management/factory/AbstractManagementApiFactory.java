@@ -18,10 +18,16 @@ package io.apiman.cli.managerapi.management.factory;
 
 import io.apiman.cli.util.AuthUtil;
 import retrofit.RestAdapter;
+import retrofit.converter.ConversionException;
+import retrofit.converter.Converter;
 import retrofit.converter.JacksonConverter;
+import retrofit.mime.TypedInput;
+import retrofit.mime.TypedOutput;
 
 import static io.apiman.cli.util.AuthUtil.HEADER_AUTHORIZATION;
 import static io.apiman.cli.util.MappingUtil.JSON_MAPPER;
+
+import java.lang.reflect.Type;
 
 /**
  * Builds a Management API client proxy for a given API interface.
@@ -38,9 +44,31 @@ public abstract class AbstractManagementApiFactory<T, A> implements ManagementAp
      * @param debugLogging whether debug logging should be enabled
      * @return an API client for the given Class
      */
-    protected A buildClient(Class<A> apiClass, String endpoint, String username, String password, boolean debugLogging) {
+    protected A buildClient(Class<A> apiClass, String endpoint, String username, String password, boolean debugLogging, PostConverter postConverter) {
+    	final JacksonConverter jacksonConverter = new JacksonConverter(JSON_MAPPER);
+    	final Converter converter;
+    	if (postConverter == null) {
+    		converter = jacksonConverter;
+    	} else {
+    		converter = new Converter() {
+
+				@Override
+				public Object fromBody(TypedInput body, Type type) throws ConversionException {
+					final Object o = jacksonConverter.fromBody(body, type);
+					postConverter.postConvert(o);
+					return o;
+				}
+
+				@Override
+				public TypedOutput toBody(Object object) {
+					return jacksonConverter.toBody(object);
+				}
+    			
+    		};
+    	}
+    	
         final RestAdapter.Builder builder = new RestAdapter.Builder() //
-                .setConverter(new JacksonConverter(JSON_MAPPER))
+                .setConverter(converter)
                 .setEndpoint(endpoint)
                 .setRequestInterceptor(request -> {
                     request.addHeader(HEADER_AUTHORIZATION, AuthUtil.buildAuthString(username, password));

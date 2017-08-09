@@ -56,6 +56,10 @@ public class ApiPolicy {
         this.configuration = configuration;
     }
 
+    public String getConfiguration() {
+        return configuration;
+    }
+
     public String getPolicyDefinitionId() {
         return policyDefinitionId;
     }

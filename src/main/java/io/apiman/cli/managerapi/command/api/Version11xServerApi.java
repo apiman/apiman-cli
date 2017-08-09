@@ -52,6 +52,12 @@ public interface Version11xServerApi {
     @GET("/organizations/{orgName}/services/{serviceName}/versions/{version}")
     Api fetchVersion(@Path("orgName") String orgName, @Path("serviceName") String serviceName, @Path("version") String version);
 
+    @GET("/organizations/{orgName}/services/{serviceName}/versions")
+    List<Api> fetchVersions(@Path("orgName") String orgName, @Path("serviceName") String serviceName);
+    
+    @GET("/organizations/{orgName}/services/{serviceName}/versions/{version}")
+    ApiConfig fetchVersionConfig(@Path("orgName") String orgName, @Path("serviceName") String serviceName, @Path("version") String version);
+
     @PUT("/organizations/{orgName}/services/{serviceName}/versions/{version}")
     Response configure(@Path("orgName") String orgName, @Path("serviceName") String serviceName,
                        @Path("version") String version, @Body ServiceConfig config);
@@ -67,6 +73,10 @@ public interface Version11xServerApi {
     @GET("/organizations/{orgName}/services/{serviceName}/versions/{version}/policies")
     List<ApiPolicy> fetchPolicies(@Path("orgName") String orgName, @Path("serviceName") String serviceName,
                                   @Path("version") String version);
+
+    @GET("/organizations/{orgName}/services/{serviceName}/versions/{version}/policies/{policyId}")
+    ApiPolicy fetchPolicy(@Path("orgName") String orgName, @Path("serviceName") String serviceName,
+                                  @Path("version") String version, @Path("policyId") Long policyId);
 
     @PUT("/organizations/{orgName}/services/{serviceName}/versions/{version}/policies/{policyId}")
     Response configurePolicy(@Path("orgName") String orgName, @Path("serviceName") String serviceName,

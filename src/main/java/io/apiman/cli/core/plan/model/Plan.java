@@ -1,11 +1,11 @@
 /*
- * Copyright 2017 Pete Cornish
+ * Copyright 2017 Jean-Charles Quantin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,22 +14,21 @@
  * limitations under the License.
  */
 
-package io.apiman.cli.command.api.model;
+package io.apiman.cli.core.plan.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Models an API.
+ * Models a Plan.
  *
- * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
+ * @author Jean-Charles Quantin {@literal <jeancharles.quantin@gmail.com>}
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Api {
-
-	@JsonProperty
+public class Plan {
+    @JsonProperty
     private String name;
 
     @JsonProperty
@@ -50,13 +49,25 @@ public class Api {
     @JsonProperty
     private String status;
 
-    public Api() {
+    public Plan() {
     }
 
-    public Api(String name, String description, String initialVersion) {
+    public Plan(String name, String description, String initialVersion) {
         this.name = name;
         this.description = description;
         this.initialVersion = initialVersion;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getName() {
@@ -79,28 +90,11 @@ public class Api {
         return version;
     }
 
+    public void setStatus(String status) {
+        this.status = status;
+    }
+    
     public String getStatus() {
         return status;
     }
-
-    public void clearStatus() {
-        this.status = null;
-    }
-
-    public String getOrganizationName() {
-		return organizationName;
-	}
-
-	public void setOrganizationName(String organizationName) {
-		this.organizationName = organizationName;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
 }

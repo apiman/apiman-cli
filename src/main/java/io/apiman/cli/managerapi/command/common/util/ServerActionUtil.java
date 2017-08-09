@@ -64,4 +64,50 @@ public class ServerActionUtil {
             return apiClient.doAction(action);
         });
     }
+    
+    /**
+     * Lock a Plan.
+     *
+     * @param orgName       the organisation name
+     * @param planName       the plan name
+     * @param planVersion    the plan version
+     * @param actionClient     the Server Action Plan client
+     */
+    public static void lockPlan(String orgName, String planName, String planVersion, ActionApi actionClient) {
+        String actionType = "lockPlan";
+
+        ManagementApiUtil.invokeAndCheckResponse(HttpURLConnection.HTTP_NO_CONTENT, () -> {
+            final ServerAction action = new ServerAction(
+                    actionType,
+                    orgName,
+                    planName,
+                    planVersion
+            );
+
+            return actionClient.doAction(action);
+        });
+    }
+    
+    /**
+     * Register a Client.
+     *
+     * @param orgName       the organisation name
+     * @param clientName       the client name
+     * @param clientVersion    the client version
+     * @param actionClient     the Server Action API client
+     */
+    public static void registerClient(String orgName, String clientName, String clientVersion, ActionApi actionClient) {
+        String actionType = "registerClient";
+
+        ManagementApiUtil.invokeAndCheckResponse(HttpURLConnection.HTTP_NO_CONTENT, () -> {
+            final ServerAction action = new ServerAction(
+                    actionType,
+                    orgName,
+                    clientName,
+                    clientVersion
+            );
+
+            return actionClient.doAction(action);
+        });
+    }
 }

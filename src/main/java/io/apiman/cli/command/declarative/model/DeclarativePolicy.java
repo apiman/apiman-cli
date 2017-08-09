@@ -16,13 +16,15 @@
 
 package io.apiman.cli.command.declarative.model;
 
-import java.util.Map;
+import java.io.IOException;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Declarative policy representation.
@@ -43,7 +45,7 @@ public class DeclarativePolicy {
     private String plugin;
 
     @JsonProperty
-    private Map<String, Object> config;
+    private JsonNode config;
 
     public String getId() {
         return id;
@@ -57,13 +59,20 @@ public class DeclarativePolicy {
         this.name = name;
     }
 
-    public Map<String, Object> getConfig() {
+    public JsonNode getConfig() {
         return config;
     }
-
-    public void setConfig(Map<String, Object> config) {
-        this.config = config;
-    }
+    
+	public void setConfig(String jsonConfig) {
+		ObjectMapper mapper = new ObjectMapper();
+		JsonNode actualObj = null;
+		try {
+			actualObj = mapper.readTree(jsonConfig);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		this.config = actualObj;
+	}
 
     public String getPlugin() {
         return plugin;
@@ -76,4 +85,9 @@ public class DeclarativePolicy {
     public boolean isPlugin() {
         return !(plugin == null || plugin.isEmpty());
     }
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
 }
