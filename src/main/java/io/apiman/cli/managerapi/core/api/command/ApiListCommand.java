@@ -18,15 +18,17 @@ package io.apiman.cli.managerapi.core.api.command;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameters;
+import io.apiman.cli.command.api.model.Api;
+import io.apiman.cli.exception.CommandException;
 import io.apiman.cli.managerapi.core.api.ApiMixin;
 import io.apiman.cli.managerapi.core.api.VersionAgnosticApi;
-import io.apiman.cli.core.api.model.Api;
-import io.apiman.cli.exception.CommandException;
+import io.apiman.cli.service.ManagementApiService;
 import io.apiman.cli.util.LogUtil;
 import io.apiman.cli.util.MappingUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.inject.Inject;
 import java.util.List;
 
 /**
@@ -37,6 +39,11 @@ import java.util.List;
 @Parameters(commandDescription = "List APIs")
 public class ApiListCommand extends AbstractApiCommand implements ApiMixin {
     private static final Logger LOGGER = LogManager.getLogger(ApiListCommand.class);
+
+    @Inject
+    public ApiListCommand(ManagementApiService managementApiService) {
+        super(managementApiService);
+    }
 
     @Override
     public void performAction(JCommander parser) throws CommandException {

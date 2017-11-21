@@ -18,12 +18,12 @@ package io.apiman.cli.gatewayapi.declarative.command;
 
 import com.beust.jcommander.Parameters;
 import com.google.inject.Inject;
+import io.apiman.cli.command.declarative.model.DeclarativeGateway;
 import io.apiman.cli.core.api.GatewayApi;
 import io.apiman.cli.core.declarative.command.AbstractApplyCommand;
-import io.apiman.cli.gatewayapi.model.GatewayApiDataModel;
 import io.apiman.cli.core.declarative.model.BaseDeclaration;
-import io.apiman.cli.core.declarative.model.DeclarativeGateway;
 import io.apiman.cli.gatewayapi.GatewayHelper;
+import io.apiman.cli.gatewayapi.model.GatewayApiDataModel;
 import io.apiman.cli.managerapi.core.gateway.model.GatewayConfig;
 import io.apiman.cli.managerapi.management.factory.GatewayApiFactory;
 import io.apiman.cli.util.PolicyResolver;

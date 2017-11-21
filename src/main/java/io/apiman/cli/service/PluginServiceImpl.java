@@ -16,9 +16,9 @@
 
 package io.apiman.cli.service;
 
-import io.apiman.cli.command.plugin.PluginApi;
-import io.apiman.cli.command.plugin.model.Plugin;
-import io.apiman.cli.management.ManagementApiUtil;
+import io.apiman.cli.managerapi.core.plugin.PluginApi;
+import io.apiman.cli.managerapi.core.plugin.model.Plugin;
+import io.apiman.cli.managerapi.management.ManagementApiUtil;
 import io.apiman.cli.util.BeanUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

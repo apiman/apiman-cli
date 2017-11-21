@@ -21,10 +21,10 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterDescription;
 import com.beust.jcommander.ParameterException;
 import com.google.common.collect.Maps;
-import com.google.inject.Guice;
 import com.google.inject.Injector;
 import io.apiman.cli.annotations.CommandAvailableSince;
 import io.apiman.cli.exception.CommandException;
+import io.apiman.cli.util.InjectionUtil;
 import io.apiman.cli.util.LogUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -62,11 +62,6 @@ public abstract class AbstractCommand implements Command {
     @Parameter(hidden=true)
     private List<String> mainParameter = new ArrayList<>();
 
-    @Option(name = "--waitTime", aliases = {"-w"}, usage = "Server startup wait time (seconds)")
-    private Integer waitTime = DEFAULT_WAIT_TIME;
-
-    private ManagementApiService managementApiService;
-
     /**
      * The parent Command (<code>null</code> if root).
      */
@@ -80,11 +75,7 @@ public abstract class AbstractCommand implements Command {
     /**
      * Guice injector.
      */
-    private static Injector injector;
-
-    static {
-        injector = Guice.createInjector();
-    }
+    private Injector injector = InjectionUtil.getInjector();
 
     public AbstractCommand() {
         // get child commands

@@ -19,11 +19,11 @@ package io.apiman.cli.core.declarative.command;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import io.apiman.cli.command.AbstractFinalCommand;
+import io.apiman.cli.command.core.AbstractFinalCommand;
+import io.apiman.cli.command.declarative.DeclarativeUtil;
 import io.apiman.cli.core.declarative.model.BaseDeclaration;
 import io.apiman.cli.exception.CommandException;
 import io.apiman.cli.util.BeanUtil;
-import io.apiman.cli.util.DeclarativeUtil;
 import io.apiman.cli.util.MappingUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -124,4 +124,5 @@ public abstract class AbstractApplyCommand extends AbstractFinalCommand {
     public void setPropertiesFiles(List<Path> propertiesFiles) {
         this.propertiesFiles = propertiesFiles;
     }
+
 }

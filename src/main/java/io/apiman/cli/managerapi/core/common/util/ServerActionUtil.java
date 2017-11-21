@@ -16,9 +16,9 @@
 
 package io.apiman.cli.managerapi.core.common.util;
 
-import io.apiman.cli.core.common.ActionApi;
-import io.apiman.cli.managerapi.core.common.model.ServerAction;
+import io.apiman.cli.command.common.ActionApi;
 import io.apiman.cli.managerapi.core.common.model.ManagementApiVersion;
+import io.apiman.cli.managerapi.core.common.model.ServerAction;
 import io.apiman.cli.managerapi.management.ManagementApiUtil;
 
 import java.net.HttpURLConnection;

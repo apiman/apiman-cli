@@ -16,7 +16,7 @@
 
 package io.apiman.cli.service;
 
-import io.apiman.cli.command.plugin.model.Plugin;
+import io.apiman.cli.managerapi.core.plugin.model.Plugin;
 
 import java.util.List;
 

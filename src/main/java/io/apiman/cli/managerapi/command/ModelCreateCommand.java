@@ -19,6 +19,7 @@ package io.apiman.cli.managerapi.command;
 import com.beust.jcommander.JCommander;
 import io.apiman.cli.exception.CommandException;
 import io.apiman.cli.managerapi.management.ManagementApiUtil;
+import io.apiman.cli.service.ManagementApiService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import retrofit.client.Response;
@@ -31,6 +32,10 @@ import java.lang.reflect.Method;
  */
 public abstract class ModelCreateCommand<M, A> extends AbstractManagerModelCommand<M, A> {
     private static final Logger LOGGER = LogManager.getLogger(ModelCreateCommand.class);
+
+    public ModelCreateCommand(ManagementApiService managementApiService) {
+        super(managementApiService);
+    }
 
     @Override
     public void performAction(JCommander parser) throws CommandException {

@@ -16,12 +16,12 @@
 
 package io.apiman.cli.managerapi.core.api.factory;
 
+import io.apiman.cli.command.api.model.Api;
+import io.apiman.cli.command.api.model.ApiConfig;
+import io.apiman.cli.command.api.model.ApiPolicy;
+import io.apiman.cli.command.api.model.ApiVersion;
 import io.apiman.cli.managerapi.core.api.Version12xServerApi;
 import io.apiman.cli.managerapi.core.api.VersionAgnosticApi;
-import io.apiman.cli.core.api.model.Api;
-import io.apiman.cli.core.api.model.ApiConfig;
-import io.apiman.cli.core.api.model.ApiPolicy;
-import io.apiman.cli.core.api.model.ApiVersion;
 import io.apiman.cli.managerapi.management.factory.AbstractManagementApiFactory;
 import io.apiman.cli.managerapi.management.factory.ManagementApiFactory;
 import retrofit.client.Response;

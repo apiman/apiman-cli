@@ -16,11 +16,11 @@
 
 package io.apiman.cli.service;
 
-import io.apiman.cli.command.api.VersionAgnosticApi;
 import io.apiman.cli.command.common.ActionApi;
-import io.apiman.cli.command.common.model.ManagementApiVersion;
-import io.apiman.cli.command.common.util.ServerActionUtil;
 import io.apiman.cli.exception.CommandException;
+import io.apiman.cli.managerapi.core.api.VersionAgnosticApi;
+import io.apiman.cli.managerapi.core.common.model.ManagementApiVersion;
+import io.apiman.cli.managerapi.core.common.util.ServerActionUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

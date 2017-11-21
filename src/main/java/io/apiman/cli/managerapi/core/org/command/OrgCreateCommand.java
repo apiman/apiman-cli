@@ -18,11 +18,14 @@ package io.apiman.cli.managerapi.core.org.command;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import io.apiman.cli.exception.CommandException;
 import io.apiman.cli.managerapi.command.ModelCreateCommand;
 import io.apiman.cli.managerapi.core.org.OrgApi;
 import io.apiman.cli.managerapi.core.org.OrgMixin;
 import io.apiman.cli.managerapi.core.org.model.Org;
-import io.apiman.cli.exception.CommandException;
+import io.apiman.cli.service.ManagementApiService;
+
+import javax.inject.Inject;
 
 /**
  * Create an organisation.
@@ -38,6 +41,11 @@ public class OrgCreateCommand extends ModelCreateCommand<Org, OrgApi>
 
     @Parameter(names = { "--description", "-d"}, description = "Description")
     private String description;
+
+    @Inject
+    public OrgCreateCommand(ManagementApiService managementApiService) {
+        super(managementApiService);
+    }
 
     @Override
     protected Org buildModelInstance() throws CommandException {

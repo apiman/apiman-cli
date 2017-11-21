@@ -18,11 +18,14 @@ package io.apiman.cli.managerapi.core.plugin.command;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import io.apiman.cli.exception.CommandException;
 import io.apiman.cli.managerapi.command.ModelShowCommand;
 import io.apiman.cli.managerapi.core.plugin.PluginApi;
 import io.apiman.cli.managerapi.core.plugin.PluginMixin;
 import io.apiman.cli.managerapi.core.plugin.model.Plugin;
-import io.apiman.cli.exception.CommandException;
+import io.apiman.cli.service.ManagementApiService;
+
+import javax.inject.Inject;
 
 /**
  * Show a plugin.
@@ -35,6 +38,11 @@ public class PluginShowCommand extends ModelShowCommand<Plugin, PluginApi>
 
     @Parameter(names = { "--id", "-i"}, description = "Plugin ID")
     private String id;
+
+    @Inject
+    public PluginShowCommand(ManagementApiService managementApiService) {
+        super(managementApiService);
+    }
 
     @Override
     protected String getModelId() throws CommandException {

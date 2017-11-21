@@ -21,6 +21,9 @@ import io.apiman.cli.managerapi.command.ModelListCommand;
 import io.apiman.cli.managerapi.core.gateway.GatewayApi;
 import io.apiman.cli.managerapi.core.gateway.GatewayMixin;
 import io.apiman.cli.managerapi.core.gateway.model.Gateway;
+import io.apiman.cli.service.ManagementApiService;
+
+import javax.inject.Inject;
 
 /**
  * List gateways.
@@ -30,4 +33,8 @@ import io.apiman.cli.managerapi.core.gateway.model.Gateway;
 @Parameters(commandDescription = "List gateways")
 public class GatewayListCommand extends ModelListCommand<Gateway, GatewayApi>
         implements GatewayMixin {
+    @Inject
+    public GatewayListCommand(ManagementApiService managementApiService) {
+        super(managementApiService);
+    }
 }

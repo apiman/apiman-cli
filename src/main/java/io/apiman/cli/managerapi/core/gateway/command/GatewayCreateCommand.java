@@ -18,6 +18,9 @@ package io.apiman.cli.managerapi.core.gateway.command;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import io.apiman.cli.service.ManagementApiService;
+
+import javax.inject.Inject;
 
 /**
  * Create a gateway.
@@ -29,6 +32,11 @@ public class GatewayCreateCommand extends AbstractGatewayCreateCommand {
 
     @Parameter(names = {"--name", "-n"}, description = "Name", required = true)
     private String name;
+
+    @Inject
+    public GatewayCreateCommand(ManagementApiService managementApiService) {
+        super(managementApiService);
+    }
 
     @Override
     protected String getGatewayName() {

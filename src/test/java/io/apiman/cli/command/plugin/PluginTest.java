@@ -22,7 +22,7 @@ import io.apiman.cli.Cli;
 import io.apiman.cli.util.AuthUtil;
 import io.apiman.cli.common.BaseTest;
 import io.apiman.cli.common.IntegrationTest;
-import io.apiman.cli.command.plugin.model.Plugin;
+import io.apiman.cli.managerapi.core.plugin.model.Plugin;
 import io.apiman.cli.util.MappingUtil;
 import org.jetbrains.annotations.NotNull;
 import org.junit.FixMethodOrder;

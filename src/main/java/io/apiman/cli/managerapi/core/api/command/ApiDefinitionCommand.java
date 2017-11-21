@@ -20,11 +20,13 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.google.common.io.CharStreams;
-import io.apiman.cli.managerapi.core.api.ApiMixin;
-import io.apiman.cli.managerapi.core.api.VersionAgnosticApi;
+import com.google.inject.Inject;
 import io.apiman.cli.exception.CommandException;
 import io.apiman.cli.exception.ExitWithCodeException;
+import io.apiman.cli.managerapi.core.api.ApiMixin;
+import io.apiman.cli.managerapi.core.api.VersionAgnosticApi;
 import io.apiman.cli.managerapi.management.ManagementApiUtil;
+import io.apiman.cli.service.ManagementApiService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import retrofit.mime.TypedString;
@@ -58,6 +60,11 @@ public class ApiDefinitionCommand extends AbstractApiCommand implements ApiMixin
 
     @Parameter(names = { "--definitionType", "-t"}, description = "Endpoint", required = true)
     private String definitionType = "application/json";
+
+    @Inject
+    ApiDefinitionCommand(ManagementApiService managementApiService) {
+        super(managementApiService);
+    }
 
     @Override
     public void performAction(JCommander parser) throws CommandException {

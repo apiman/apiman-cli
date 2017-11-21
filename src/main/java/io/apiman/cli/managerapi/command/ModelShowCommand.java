@@ -18,6 +18,7 @@ package io.apiman.cli.managerapi.command;
 
 import com.beust.jcommander.JCommander;
 import io.apiman.cli.exception.CommandException;
+import io.apiman.cli.service.ManagementApiService;
 import io.apiman.cli.util.LogUtil;
 import io.apiman.cli.util.MappingUtil;
 import org.apache.logging.log4j.LogManager;
@@ -30,6 +31,10 @@ import java.lang.reflect.Method;
  */
 public abstract class ModelShowCommand<M, A> extends AbstractManagerModelCommand<M, A> {
     private static final Logger LOGGER = LogManager.getLogger(ModelShowCommand.class);
+
+    public ModelShowCommand(ManagementApiService managementApiService) {
+        super(managementApiService);
+    }
 
     @Override
     public void performAction(JCommander parser) throws CommandException {

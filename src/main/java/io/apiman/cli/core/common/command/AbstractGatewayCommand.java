@@ -18,7 +18,7 @@ package io.apiman.cli.core.common.command;
 
 import com.beust.jcommander.ParametersDelegate;
 import com.google.inject.Inject;
-import io.apiman.cli.command.AbstractFinalCommand;
+import io.apiman.cli.command.core.AbstractFinalCommand;
 import io.apiman.cli.command.GatewayCommon;
 import io.apiman.cli.core.api.GatewayApi;
 import io.apiman.cli.exception.CommandException;

@@ -18,11 +18,14 @@ package io.apiman.cli.managerapi.core.gateway.command;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import io.apiman.cli.exception.CommandException;
 import io.apiman.cli.managerapi.command.ModelShowCommand;
 import io.apiman.cli.managerapi.core.gateway.GatewayApi;
 import io.apiman.cli.managerapi.core.gateway.GatewayMixin;
 import io.apiman.cli.managerapi.core.gateway.model.Gateway;
-import io.apiman.cli.exception.CommandException;
+import io.apiman.cli.service.ManagementApiService;
+
+import javax.inject.Inject;
 
 /**
  * Show a gateway.
@@ -35,6 +38,12 @@ public class GatewayShowCommand extends ModelShowCommand<Gateway, GatewayApi>
 
     @Parameter(names = { "--name", "-n"}, description = "Name")
     private String name;
+
+    @Inject
+    public GatewayShowCommand(ManagementApiService managementApiService) {
+        super(managementApiService);
+    }
+
 
     @Override
     protected String getModelId() throws CommandException {

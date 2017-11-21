@@ -18,11 +18,14 @@ package io.apiman.cli.managerapi.core.plugin.command;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import io.apiman.cli.exception.CommandException;
 import io.apiman.cli.managerapi.command.ModelCreateCommand;
 import io.apiman.cli.managerapi.core.plugin.PluginApi;
 import io.apiman.cli.managerapi.core.plugin.PluginMixin;
 import io.apiman.cli.managerapi.core.plugin.model.Plugin;
-import io.apiman.cli.exception.CommandException;
+import io.apiman.cli.service.ManagementApiService;
+
+import javax.inject.Inject;
 
 /**
  * Add a plugin.
@@ -44,6 +47,11 @@ public class PluginAddCommand extends ModelCreateCommand<Plugin, PluginApi>
 
     @Parameter(names = {"--classifier", "-c"}, description = "Classifier")
     private String classifier;
+
+    @Inject
+    public PluginAddCommand(ManagementApiService managementApiService) {
+        super(managementApiService);
+    }
 
     @Override
     protected Plugin buildModelInstance() throws CommandException {

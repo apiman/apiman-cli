@@ -18,7 +18,7 @@ package io.apiman.cli.managerapi.command;
 
 import com.beust.jcommander.Parameter;
 import io.apiman.cli.managerapi.core.common.model.ManagementApiVersion;
-import io.apiman.cli.managerapi.management.ManagementApiUtil;
+import io.apiman.cli.service.ManagementApiService;
 
 import static io.apiman.cli.util.AuthUtil.DEFAULT_SERVER_PASSWORD;
 import static io.apiman.cli.util.AuthUtil.DEFAULT_SERVER_USERNAME;
@@ -27,7 +27,8 @@ import static io.apiman.cli.util.AuthUtil.DEFAULT_SERVER_USERNAME;
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
 public class ManagerCommon {
-    private String DEFAULT_SERVER_ADDRESS = "http://localhost:8080/apiman";
+    private final String DEFAULT_SERVER_ADDRESS = "http://localhost:8080/apiman";
+    private final ManagementApiService managementApiService;
 
     @Parameter(names = { "--server", "-s" }, description = "Management API server address")
     private String serverAddress = DEFAULT_SERVER_ADDRESS;
@@ -37,6 +38,10 @@ public class ManagerCommon {
 
     @Parameter(names = { "--serverPassword", "-sp"}, description = "Management API server password")
     private String serverPassword = DEFAULT_SERVER_PASSWORD;
+
+    public ManagerCommon(ManagementApiService managementApiService) {
+        this.managementApiService = managementApiService;
+    }
 
     /**
      * @param clazz the Class for which to build a client
@@ -54,13 +59,13 @@ public class ManagerCommon {
      * @return an API client for the given Class
      */
     public <T> T buildServerApiClient(Class<T> clazz, ManagementApiVersion serverVersion) {
-        return ManagementApiUtil.buildServerApiClient(
+        return managementApiService.buildServerApiClient(
                 clazz,
+                serverVersion,
                 getManagementApiEndpoint(),
                 getManagementApiUsername(),
                 getManagementApiPassword(),
-                true,
-                serverVersion);
+                true);
     }
 
     public String getManagementApiEndpoint() {

@@ -18,15 +18,17 @@ package io.apiman.cli.managerapi.core.gateway.command;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameters;
-import io.apiman.cli.managerapi.core.gateway.GatewayApi;
-import io.apiman.cli.managerapi.core.gateway.model.GatewayTestResponse;
 import io.apiman.cli.exception.CommandException;
 import io.apiman.cli.exception.ExitWithCodeException;
+import io.apiman.cli.managerapi.core.gateway.GatewayApi;
+import io.apiman.cli.managerapi.core.gateway.model.GatewayTestResponse;
+import io.apiman.cli.service.ManagementApiService;
 import io.apiman.cli.util.LogUtil;
 import io.apiman.cli.util.MappingUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.inject.Inject;
 import java.text.MessageFormat;
 
 /**
@@ -37,6 +39,11 @@ import java.text.MessageFormat;
 @Parameters(commandDescription = "Test a gateway")
 public class GatewayTestCommand extends AbstractGatewayCreateCommand {
     private static final Logger LOGGER = LogManager.getLogger(GatewayTestCommand.class);
+
+    @Inject
+    public GatewayTestCommand(ManagementApiService managementApiService) {
+        super(managementApiService);
+    }
 
     @Override
     public void performAction(JCommander parser) throws CommandException {

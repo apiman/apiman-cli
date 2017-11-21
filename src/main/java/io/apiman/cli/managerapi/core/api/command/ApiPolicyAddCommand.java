@@ -20,15 +20,17 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.google.common.io.CharStreams;
-import io.apiman.cli.managerapi.core.api.ApiMixin;
-import io.apiman.cli.managerapi.core.api.VersionAgnosticApi;
-import io.apiman.cli.core.api.model.ApiPolicy;
+import io.apiman.cli.command.api.model.ApiPolicy;
 import io.apiman.cli.exception.CommandException;
 import io.apiman.cli.exception.ExitWithCodeException;
+import io.apiman.cli.managerapi.core.api.ApiMixin;
+import io.apiman.cli.managerapi.core.api.VersionAgnosticApi;
 import io.apiman.cli.managerapi.management.ManagementApiUtil;
+import io.apiman.cli.service.ManagementApiService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -58,6 +60,11 @@ public class ApiPolicyAddCommand extends AbstractApiCommand implements ApiMixin 
 
     @Parameter(names = { "--configFile", "-f" }, description = "Policy configuration file") // TODO forbids i
     private Path configFile;
+
+    @Inject
+    public ApiPolicyAddCommand(ManagementApiService managementApiService) {
+        super(managementApiService);
+    }
 
     @Override
     public void performAction(JCommander parser) throws CommandException {

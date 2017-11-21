@@ -17,11 +17,11 @@
 package io.apiman.cli.service;
 
 import com.google.inject.Key;
-import io.apiman.cli.command.common.model.ManagementApiVersion;
 import io.apiman.cli.exception.CommandException;
 import io.apiman.cli.management.api.StatusApi;
-import io.apiman.cli.management.binding.ManagementApiBindings;
-import io.apiman.cli.management.factory.ManagementApiFactory;
+import io.apiman.cli.managerapi.core.common.model.ManagementApiVersion;
+import io.apiman.cli.managerapi.management.binding.ManagementApiBindings;
+import io.apiman.cli.managerapi.management.factory.ManagementApiFactory;
 import io.apiman.cli.util.InjectionUtil;
 import io.apiman.cli.util.LogUtil;
 import org.apache.logging.log4j.LogManager;

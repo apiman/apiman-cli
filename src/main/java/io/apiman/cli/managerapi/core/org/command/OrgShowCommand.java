@@ -18,13 +18,16 @@ package io.apiman.cli.managerapi.core.org.command;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import io.apiman.cli.exception.CommandException;
 import io.apiman.cli.managerapi.command.ModelShowCommand;
 import io.apiman.cli.managerapi.core.org.OrgApi;
 import io.apiman.cli.managerapi.core.org.OrgMixin;
 import io.apiman.cli.managerapi.core.org.model.Org;
-import io.apiman.cli.exception.CommandException;
+import io.apiman.cli.service.ManagementApiService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import javax.inject.Inject;
 
 /**
  * Show an organisation.
@@ -37,6 +40,11 @@ public class OrgShowCommand extends ModelShowCommand<Org, OrgApi> implements Org
 
     @Parameter(names = { "--name", "-n"}, description = "Name")
     private String name;
+
+    @Inject
+    public OrgShowCommand(ManagementApiService managementApiService) {
+        super(managementApiService);
+    }
 
     @Override
     protected String getModelId() throws CommandException {

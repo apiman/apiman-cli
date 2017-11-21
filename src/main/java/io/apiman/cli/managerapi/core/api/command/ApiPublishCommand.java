@@ -19,12 +19,15 @@ package io.apiman.cli.managerapi.core.api.command;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import io.apiman.cli.managerapi.core.api.ApiMixin;
-import io.apiman.cli.core.common.ActionApi;
-import io.apiman.cli.managerapi.core.common.util.ServerActionUtil;
+import io.apiman.cli.command.common.ActionApi;
 import io.apiman.cli.exception.CommandException;
+import io.apiman.cli.managerapi.core.api.ApiMixin;
+import io.apiman.cli.managerapi.core.common.util.ServerActionUtil;
+import io.apiman.cli.service.ManagementApiService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import javax.inject.Inject;
 
 /**
  * Publish an API.
@@ -40,6 +43,11 @@ public class ApiPublishCommand extends AbstractApiCommand implements ApiMixin {
 
     @Parameter(names = { "--version", "-v"}, description = "API version", required = true)
     private String version;
+
+    @Inject
+    public ApiPublishCommand(ManagementApiService managementApiService) {
+        super(managementApiService);
+    }
 
     @Override
     public void performAction(JCommander parser) throws CommandException {

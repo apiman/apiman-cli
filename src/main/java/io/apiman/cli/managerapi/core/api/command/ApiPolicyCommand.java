@@ -17,9 +17,10 @@
 package io.apiman.cli.managerapi.core.api.command;
 
 import com.beust.jcommander.Parameters;
-import io.apiman.cli.command.AbstractCommand;
-import io.apiman.cli.command.Command;
+import io.apiman.cli.command.core.Command;
+import io.apiman.cli.service.ManagementApiService;
 
+import javax.inject.Inject;
 import java.util.Map;
 
 /**
@@ -29,7 +30,12 @@ import java.util.Map;
  */
 
 @Parameters(commandDescription = "Manage API policies")
-public class ApiPolicyCommand extends AbstractCommand {
+public class ApiPolicyCommand extends AbstractManagerCommand {
+    @Inject
+    public ApiPolicyCommand(ManagementApiService managementApiService) {
+        super(managementApiService);
+    }
+
     @Override
     protected void populateCommands(Map<String, Class<? extends Command>> commandMap) {
         commandMap.put("add", ApiPolicyAddCommand.class);

@@ -16,7 +16,7 @@
 
 package io.apiman.cli.managerapi.core.gateway;
 
-import io.apiman.cli.core.common.command.ModelAction;
+import io.apiman.cli.command.common.command.ModelAction;
 import io.apiman.cli.managerapi.core.gateway.model.Gateway;
 
 /**

@@ -17,11 +17,12 @@
 package io.apiman.cli.managerapi.core.api.command;
 
 import com.beust.jcommander.Parameter;
+import io.apiman.cli.command.api.model.Api;
+import io.apiman.cli.managerapi.command.AbstractManagerModelCommand;
 import io.apiman.cli.managerapi.core.api.ApiMixin;
 import io.apiman.cli.managerapi.core.api.Version12xServerApi;
-import io.apiman.cli.core.api.model.Api;
-import io.apiman.cli.managerapi.command.AbstractManagerModelCommand;
 import io.apiman.cli.managerapi.core.common.model.ManagementApiVersion;
+import io.apiman.cli.service.ManagementApiService;
 
 /**
  * Common API functionality.
@@ -35,4 +36,8 @@ public abstract class AbstractApiCommand extends AbstractManagerModelCommand<Api
 
     @Parameter(names = { "--serverVersion", "-sv"}, description = "Management API server version")
     protected ManagementApiVersion serverVersion = ManagementApiVersion.DEFAULT_VERSION;
+
+    AbstractApiCommand(ManagementApiService managementApiService) {
+        super(managementApiService);
+    }
 }

@@ -16,8 +16,8 @@
 package io.apiman.cli.gatewayapi.command.client;
 
 import com.beust.jcommander.Parameters;
-import io.apiman.cli.command.AbstractCommand;
-import io.apiman.cli.command.Command;
+import io.apiman.cli.command.core.AbstractCommand;
+import io.apiman.cli.command.core.Command;
 
 import java.util.Map;
 

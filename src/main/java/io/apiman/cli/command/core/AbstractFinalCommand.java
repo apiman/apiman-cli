@@ -17,8 +17,8 @@
 package io.apiman.cli.command.core;
 
 import com.beust.jcommander.JCommander;
+import com.beust.jcommander.Parameter;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,6 +27,10 @@ import java.util.Map;
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
 public abstract class AbstractFinalCommand extends AbstractCommand {
+    private static final Integer DEFAULT_WAIT_TIME = 0;
+
+    @Parameter(names = {"--waitTime", "-w"}, description = "Server startup wait time (seconds)")
+    private Integer waitTime = DEFAULT_WAIT_TIME;
 
     /**
      * Indicates that there is no child command and that this instance should handle the request.

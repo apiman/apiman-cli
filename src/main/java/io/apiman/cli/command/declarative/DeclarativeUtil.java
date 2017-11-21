@@ -19,8 +19,8 @@ package io.apiman.cli.command.declarative;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
 import com.google.common.io.CharStreams;
-import io.apiman.cli.command.declarative.model.Declaration;
 import io.apiman.cli.command.declarative.model.SharedItems;
+import io.apiman.cli.core.declarative.model.BaseDeclaration;
 import io.apiman.cli.exception.DeclarativeException;
 import io.apiman.cli.util.BeanUtil;
 import org.apache.logging.log4j.LogManager;
@@ -95,30 +95,5 @@ public class DeclarativeUtil {
         final String resolved = BeanUtil.resolvePlaceholders(unresolved, properties);
         LOGGER.trace("Declaration file after resolving {} placeholders: {}", properties.size(), resolved);
         return mapper.readValue(resolved, BaseDeclaration.class);
-    }
-
-    /**
-     * Check for the presence of an item using the given Supplier.
-     *
-     * @param supplier the Supplier of the item
-     * @param <T>
-     * @return the item or {@link Optional#empty()}
-     */
-    public static <T> Optional<T> checkExists(Supplier<T> supplier) {
-        try {
-            // attempt to return the item
-            return ofNullable(supplier.get());
-
-        } catch (RetrofitError re) {
-            // 404 indicates the item does not exist - anything else is an error
-            if (ofNullable(re.getResponse())
-                    .filter(response -> HttpURLConnection.HTTP_NOT_FOUND == response.getStatus())
-                    .isPresent()) {
-
-                return empty();
-            }
-
-            throw new DeclarativeException("Error checking for existence of existing item", re);
-        }
     }
 }

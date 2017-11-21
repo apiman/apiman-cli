@@ -21,6 +21,9 @@ import io.apiman.cli.managerapi.command.ModelListCommand;
 import io.apiman.cli.managerapi.core.plugin.PluginApi;
 import io.apiman.cli.managerapi.core.plugin.PluginMixin;
 import io.apiman.cli.managerapi.core.plugin.model.Plugin;
+import io.apiman.cli.service.ManagementApiService;
+
+import javax.inject.Inject;
 
 /**
  * List plugins.
@@ -30,4 +33,8 @@ import io.apiman.cli.managerapi.core.plugin.model.Plugin;
 @Parameters(commandDescription = "List plugins")
 public class PluginListCommand extends ModelListCommand<Plugin, PluginApi>
         implements PluginMixin {
+    @Inject
+    public PluginListCommand(ManagementApiService managementApiService) {
+        super(managementApiService);
+    }
 }

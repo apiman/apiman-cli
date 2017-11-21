@@ -16,9 +16,9 @@
 
 package io.apiman.cli.service;
 
-import io.apiman.cli.command.api.VersionAgnosticApi;
 import io.apiman.cli.command.api.model.ApiPolicy;
-import io.apiman.cli.command.common.model.ManagementApiVersion;
+import io.apiman.cli.managerapi.core.api.VersionAgnosticApi;
+import io.apiman.cli.managerapi.core.common.model.ManagementApiVersion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -26,7 +26,7 @@ import javax.inject.Inject;
 import java.util.List;
 import java.util.Optional;
 
-import static io.apiman.cli.command.common.model.ManagementApiVersion.v12x;
+import static io.apiman.cli.managerapi.core.common.model.ManagementApiVersion.v12x;
 
 /**
  * Manages policies.

@@ -16,7 +16,10 @@
 
 package io.apiman.cli.managerapi.core.api;
 
-import io.apiman.cli.core.api.model.*;
+import io.apiman.cli.command.api.model.Api;
+import io.apiman.cli.command.api.model.ApiConfig;
+import io.apiman.cli.command.api.model.ApiPolicy;
+import io.apiman.cli.command.api.model.ApiVersion;
 import retrofit.client.Response;
 import retrofit.mime.TypedString;
 
@@ -43,7 +46,7 @@ public interface VersionAgnosticApi {
                        String version, ApiPolicy policyConfig);
 
     Response setDefinition(String orgName, String apiName,
-                       String version, String definitionType,  TypedString definition);
+                           String version, String definitionType,  TypedString definition);
 
     List<ApiPolicy> fetchPolicies(String orgName, String serviceName,
                                   String version);

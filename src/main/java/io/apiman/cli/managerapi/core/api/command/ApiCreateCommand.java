@@ -20,15 +20,18 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.google.common.collect.Lists;
+import io.apiman.cli.command.api.model.Api;
+import io.apiman.cli.command.api.model.ApiConfig;
+import io.apiman.cli.command.api.model.ApiGateway;
+import io.apiman.cli.exception.CommandException;
 import io.apiman.cli.managerapi.core.api.ApiMixin;
 import io.apiman.cli.managerapi.core.api.VersionAgnosticApi;
-import io.apiman.cli.core.api.model.Api;
-import io.apiman.cli.core.api.model.ApiConfig;
-import io.apiman.cli.core.api.model.ApiGateway;
-import io.apiman.cli.exception.CommandException;
 import io.apiman.cli.managerapi.management.ManagementApiUtil;
+import io.apiman.cli.service.ManagementApiService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import javax.inject.Inject;
 
 /**
  * Create an API.
@@ -59,6 +62,11 @@ public class ApiCreateCommand extends AbstractApiCommand implements ApiMixin {
 
     @Parameter(names = {"--gateway", "-g"}, description = "Gateway")
     private String gateway = "TheGateway";
+
+    @Inject
+    public ApiCreateCommand(ManagementApiService managementApiService) {
+        super(managementApiService);
+    }
 
     @Override
     public void performAction(JCommander parser) throws CommandException {

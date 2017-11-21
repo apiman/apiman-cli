@@ -18,13 +18,14 @@ package io.apiman.cli.managerapi.core.gateway.command;
 
 import com.beust.jcommander.Parameter;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import io.apiman.cli.exception.CommandException;
 import io.apiman.cli.managerapi.command.ModelCreateCommand;
 import io.apiman.cli.managerapi.core.gateway.GatewayApi;
 import io.apiman.cli.managerapi.core.gateway.GatewayMixin;
 import io.apiman.cli.managerapi.core.gateway.model.Gateway;
 import io.apiman.cli.managerapi.core.gateway.model.GatewayConfig;
 import io.apiman.cli.managerapi.core.gateway.model.GatewayType;
-import io.apiman.cli.exception.CommandException;
+import io.apiman.cli.service.ManagementApiService;
 import io.apiman.cli.util.MappingUtil;
 
 /**
@@ -49,6 +50,10 @@ public abstract class AbstractGatewayCreateCommand extends ModelCreateCommand<Ga
 
     @Parameter(names = { "--type", "-t"}, description = "type")
     private GatewayType type = GatewayType.REST;
+
+    public AbstractGatewayCreateCommand(ManagementApiService managementApiService) {
+        super(managementApiService);
+    }
 
     @Override
     protected Gateway buildModelInstance() throws CommandException {

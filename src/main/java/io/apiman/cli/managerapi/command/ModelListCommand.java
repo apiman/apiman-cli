@@ -18,6 +18,7 @@ package io.apiman.cli.managerapi.command;
 
 import com.beust.jcommander.JCommander;
 import io.apiman.cli.exception.CommandException;
+import io.apiman.cli.service.ManagementApiService;
 import io.apiman.cli.util.LogUtil;
 import io.apiman.cli.util.MappingUtil;
 import org.apache.logging.log4j.LogManager;
@@ -32,6 +33,10 @@ import java.util.List;
  */
 public abstract class ModelListCommand<M, A> extends AbstractManagerModelCommand<M, A> {
     private static final Logger LOGGER = LogManager.getLogger(ModelListCommand.class);
+
+    public ModelListCommand(ManagementApiService managementApiService) {
+        super(managementApiService);
+    }
 
     @Override
     protected boolean permitNoArgs() {

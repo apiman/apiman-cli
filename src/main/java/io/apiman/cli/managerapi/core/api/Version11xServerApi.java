@@ -16,9 +16,17 @@
 
 package io.apiman.cli.managerapi.core.api;
 
-import io.apiman.cli.core.api.model.*;
+import io.apiman.cli.command.api.model.Api;
+import io.apiman.cli.command.api.model.ApiPolicy;
+import io.apiman.cli.command.api.model.ApiVersion;
+import io.apiman.cli.command.api.model.ServiceConfig;
 import retrofit.client.Response;
-import retrofit.http.*;
+import retrofit.http.Body;
+import retrofit.http.GET;
+import retrofit.http.Header;
+import retrofit.http.POST;
+import retrofit.http.PUT;
+import retrofit.http.Path;
 import retrofit.mime.TypedString;
 
 import java.util.List;

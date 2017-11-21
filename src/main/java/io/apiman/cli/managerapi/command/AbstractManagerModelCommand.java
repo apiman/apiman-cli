@@ -17,8 +17,9 @@
 package io.apiman.cli.managerapi.command;
 
 import com.beust.jcommander.ParametersDelegate;
-import io.apiman.cli.command.AbstractFinalCommand;
-import io.apiman.cli.core.common.command.ModelAction;
+import io.apiman.cli.command.common.command.ModelAction;
+import io.apiman.cli.command.core.AbstractFinalCommand;
+import io.apiman.cli.service.ManagementApiService;
 
 /**
  * Common model CRUD functionality.
@@ -27,10 +28,19 @@ import io.apiman.cli.core.common.command.ModelAction;
  */
 public abstract class AbstractManagerModelCommand<M, A> extends AbstractFinalCommand
         implements ModelAction<M, A> {
+
+    protected final ManagementApiService managementApiService;
+
     @ParametersDelegate
-    private ManagerCommon managerConfig = new ManagerCommon();
+    private ManagerCommon managerConfig;
 
     public ManagerCommon getManagerConfig() {
         return managerConfig;
     }
+
+    public AbstractManagerModelCommand(ManagementApiService managementApiService) {
+        this.managementApiService = managementApiService;
+        managerConfig = new ManagerCommon(managementApiService);
+    }
+
 }

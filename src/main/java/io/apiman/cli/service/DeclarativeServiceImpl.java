@@ -16,17 +16,21 @@
 
 package io.apiman.cli.service;
 
-import io.apiman.cli.command.api.VersionAgnosticApi;
-import io.apiman.cli.command.api.model.*;
-import io.apiman.cli.command.common.model.ManagementApiVersion;
+import io.apiman.cli.command.api.model.Api;
+import io.apiman.cli.command.api.model.ApiConfig;
+import io.apiman.cli.command.api.model.ApiPolicy;
+import io.apiman.cli.command.api.model.ApiVersion;
+import io.apiman.cli.command.api.model.EndpointProperties;
 import io.apiman.cli.command.declarative.model.DeclarativeApi;
 import io.apiman.cli.command.declarative.model.DeclarativeGateway;
 import io.apiman.cli.command.declarative.model.DeclarativeOrg;
-import io.apiman.cli.command.gateway.GatewayApi;
-import io.apiman.cli.command.gateway.model.Gateway;
-import io.apiman.cli.command.org.OrgApi;
-import io.apiman.cli.command.org.model.Org;
-import io.apiman.cli.management.ManagementApiUtil;
+import io.apiman.cli.managerapi.core.api.VersionAgnosticApi;
+import io.apiman.cli.managerapi.core.common.model.ManagementApiVersion;
+import io.apiman.cli.managerapi.core.gateway.GatewayApi;
+import io.apiman.cli.managerapi.core.gateway.model.Gateway;
+import io.apiman.cli.managerapi.core.org.OrgApi;
+import io.apiman.cli.managerapi.core.org.model.Org;
+import io.apiman.cli.managerapi.management.ManagementApiUtil;
 import io.apiman.cli.util.MappingUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,8 +38,8 @@ import org.apache.logging.log4j.Logger;
 import javax.inject.Inject;
 import java.util.List;
 
-import static io.apiman.cli.command.common.model.ManagementApiVersion.v11x;
-import static io.apiman.cli.command.common.model.ManagementApiVersion.v12x;
+import static io.apiman.cli.managerapi.core.common.model.ManagementApiVersion.v11x;
+import static io.apiman.cli.managerapi.core.common.model.ManagementApiVersion.v12x;
 import static io.apiman.cli.util.Functions.of;
 import static java.util.Optional.ofNullable;
 

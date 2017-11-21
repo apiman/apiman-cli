@@ -17,9 +17,10 @@
 package io.apiman.cli.managerapi.core.api.command;
 
 import com.beust.jcommander.Parameters;
-import io.apiman.cli.command.AbstractCommand;
-import io.apiman.cli.command.Command;
+import io.apiman.cli.command.core.Command;
+import io.apiman.cli.service.ManagementApiService;
 
+import javax.inject.Inject;
 import java.util.Map;
 
 /**
@@ -28,7 +29,13 @@ import java.util.Map;
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
 @Parameters(commandDescription = "Manage APIs")
-public class ApiCommand extends AbstractCommand {
+public class ApiCommand extends AbstractManagerCommand {
+
+    @Inject
+    public ApiCommand(ManagementApiService managementApiService) {
+        super(managementApiService);
+    }
+
     @Override
     protected void populateCommands(Map<String, Class<? extends Command>> commandMap) {
         commandMap.put("create", ApiCreateCommand.class);
