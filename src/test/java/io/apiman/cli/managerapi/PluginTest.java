@@ -1,11 +1,11 @@
 /*
- * Copyright 2016 Pete Cornish
+ * Copyright 2017 Pete Cornish
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,30 +16,26 @@
 
 package io.apiman.cli.managerapi;
 
-import static com.jayway.restassured.RestAssured.given;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.jayway.restassured.response.Response;
 import io.apiman.cli.Cli;
+import io.apiman.cli.util.AuthUtil;
 import io.apiman.cli.common.BaseTest;
 import io.apiman.cli.common.IntegrationTest;
 import io.apiman.cli.managerapi.core.plugin.model.Plugin;
-import io.apiman.cli.util.AuthUtil;
 import io.apiman.cli.util.MappingUtil;
-
-import java.net.HttpURLConnection;
-import java.util.List;
-import java.util.Optional;
-
 import org.jetbrains.annotations.NotNull;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runners.MethodSorters;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.jayway.restassured.response.Response;
+import java.net.HttpURLConnection;
+import java.util.List;
+import java.util.Optional;
+
+import static com.jayway.restassured.RestAssured.given;
+import static org.junit.Assert.*;
 
 /**
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
@@ -102,8 +98,7 @@ public class PluginTest extends BaseTest {
      */
     @Test
     public void test1_create() {
-        Cli.main("manager",
-                "plugin", "add",
+        Cli.main("manager", "plugin", "add",
                 "--debug",
                 "--server", getApimanUrl(),
                 "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,
@@ -120,8 +115,7 @@ public class PluginTest extends BaseTest {
         // look up plugin by its generated ID
         final Long pluginId = addedPlugin.getId();
 
-        Cli.main("manager",
-                "plugin", "show",
+        Cli.main("manager", "plugin", "show",
                 "--debug",
                 "--server", getApimanUrl(),
                 "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,
@@ -131,8 +125,7 @@ public class PluginTest extends BaseTest {
 
     @Test
     public void test3_list() {
-        Cli.main("manager",
-                "plugin", "list",
+        Cli.main("manager", "plugin", "list",
                 "--debug",
                 "--server", getApimanUrl(),
                 "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,

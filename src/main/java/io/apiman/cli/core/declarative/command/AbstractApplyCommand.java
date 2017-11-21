@@ -124,5 +124,4 @@ public abstract class AbstractApplyCommand extends AbstractFinalCommand {
     public void setPropertiesFiles(List<Path> propertiesFiles) {
         this.propertiesFiles = propertiesFiles;
     }
-
 }

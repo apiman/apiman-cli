@@ -16,8 +16,8 @@
 
 package io.apiman.cli.service;
 
-import io.apiman.cli.command.common.model.ManagementApiVersion;
-import io.apiman.cli.command.org.OrgApi;
+import io.apiman.cli.managerapi.core.common.model.ManagementApiVersion;
+import io.apiman.cli.managerapi.core.org.OrgApi;
 import org.junit.Before;
 import org.junit.Test;
 
