@@ -41,6 +41,7 @@ public class ManagerCommon {
 
     public ManagerCommon(ManagementApiService managementApiService) {
         this.managementApiService = managementApiService;
+        managementApiService.configureEndpoint(serverAddress, serverUsername, serverPassword);
     }
 
     /**
@@ -83,4 +84,7 @@ public class ManagerCommon {
         return serverPassword;
     }
 
+    public void setServerAddress(String serverAddress) {
+        this.serverAddress = serverAddress;
+    }
 }

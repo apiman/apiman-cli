@@ -47,6 +47,8 @@ public class ManagerDeclarativeTest extends BaseTest {
     public void setUp() {
         InjectionUtil.getInjector().injectMembers(this);
 
+        command.setServerAddress(getApimanUrl());
+
         // version specific test
         command.setServerVersion(ManagementApiVersion.v12x);
 

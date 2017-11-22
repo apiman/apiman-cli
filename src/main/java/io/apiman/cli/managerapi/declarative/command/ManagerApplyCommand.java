@@ -18,8 +18,10 @@ package io.apiman.cli.managerapi.declarative.command;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import com.beust.jcommander.ParametersDelegate;
 import io.apiman.cli.core.declarative.command.AbstractApplyCommand;
 import io.apiman.cli.core.declarative.model.BaseDeclaration;
+import io.apiman.cli.managerapi.command.ManagerCommon;
 import io.apiman.cli.managerapi.core.common.model.ManagementApiVersion;
 import io.apiman.cli.service.DeclarativeService;
 import io.apiman.cli.service.ManagementApiService;
@@ -38,16 +40,18 @@ public class ManagerApplyCommand extends AbstractApplyCommand {
     @Parameter(names = {"--serverVersion", "-sv"}, description = "Management API server version")
     private ManagementApiVersion serverVersion = ManagementApiVersion.DEFAULT_VERSION;
 
-    private final ManagementApiService managementApiService;
+    @ParametersDelegate
+    private final ManagerCommon managerCommon;
     private final DeclarativeService declarativeService;
     private final PluginService pluginService;
 
     @Inject
     public ManagerApplyCommand(ManagementApiService managementApiService,
                         DeclarativeService declarativeService, PluginService pluginService) {
-        this.managementApiService = managementApiService;
+        //this.managementApiService = managementApiService;
         this.declarativeService = declarativeService;
         this.pluginService = pluginService;
+        this.managerCommon = new ManagerCommon(managementApiService);
     }
 
     /**
@@ -74,6 +78,10 @@ public class ManagerApplyCommand extends AbstractApplyCommand {
         });
 
         LOGGER.info("Applied declaration");
+    }
+
+    public void setServerAddress(String serverAddress) {
+        managerCommon.setServerAddress(serverAddress);
     }
 
     public void setServerVersion(ManagementApiVersion serverVersion) {
