@@ -18,7 +18,7 @@ package io.apiman.cli.command;
 
 import io.apiman.cli.common.BaseTest;
 import io.apiman.cli.common.IntegrationTest;
-import io.apiman.cli.core.api.GatewayApi;
+import io.apiman.cli.gatewayapi.GatewayApi;
 import io.apiman.cli.gatewayapi.declarative.command.GatewayApplyCommand;
 import io.apiman.cli.managerapi.management.factory.GatewayApiFactory;
 import io.apiman.cli.util.LogUtil;

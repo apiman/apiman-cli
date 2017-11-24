@@ -15,7 +15,7 @@
  */
 package io.apiman.cli.gatewayapi.command;
 
-import io.apiman.cli.core.common.command.AbstractGatewayCommand;
+import io.apiman.cli.gatewayapi.command.common.AbstractGatewayCommand;
 
 /**
  * Base for gateway delete operations (currently unused).

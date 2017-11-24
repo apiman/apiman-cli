@@ -29,7 +29,7 @@ import io.apiman.cli.command.api.model.ServiceConfig;
 import io.apiman.cli.command.declarative.model.DeclarativeApiConfig;
 import io.apiman.cli.command.declarative.model.DeclarativeEndpointSecurity;
 import io.apiman.cli.command.declarative.model.DeclarativeGateway;
-import io.apiman.cli.managerapi.core.gateway.model.Gateway;
+import io.apiman.cli.command.gateway.model.Gateway;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;

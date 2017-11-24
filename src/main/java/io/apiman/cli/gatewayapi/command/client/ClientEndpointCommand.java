@@ -18,10 +18,10 @@ package io.apiman.cli.gatewayapi.command.client;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import io.apiman.cli.core.api.GatewayApi;
-import io.apiman.cli.core.common.command.AbstractGatewayCommand;
 import io.apiman.cli.exception.CommandException;
+import io.apiman.cli.gatewayapi.GatewayApi;
 import io.apiman.cli.gatewayapi.GatewayHelper;
+import io.apiman.cli.gatewayapi.command.common.AbstractGatewayCommand;
 import io.apiman.gateway.engine.beans.ApiEndpoint;
 
 /**

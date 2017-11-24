@@ -17,7 +17,7 @@
 package io.apiman.cli.managerapi.management.binding;
 
 import com.google.inject.BindingAnnotation;
-import io.apiman.cli.managerapi.core.common.model.ManagementApiVersion;
+import io.apiman.cli.managerapi.command.common.model.ManagementApiVersion;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -16,7 +16,7 @@
 
 package io.apiman.cli.managerapi.management.binding;
 
-import io.apiman.cli.managerapi.core.common.model.ManagementApiVersion;
+import io.apiman.cli.managerapi.command.common.model.ManagementApiVersion;
 
 /**
  * Convenience methods for instantiating {@link ManagementApiBinding}s.

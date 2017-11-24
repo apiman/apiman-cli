@@ -25,11 +25,20 @@ import java.util.List;
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
 public interface Command {
+
+    /**
+     * If the command is a child, the parent.
+     *
+     * @param command the parent command.
+     */
     void setParent(Command command);
 
+    /**
+     * Name of the command
+     *
+     * @param command the command name
+     */
     void setCommandName(String command);
-
-    void build(JCommander jcommander);
 
     /**
      * Parse the given arguments and perform a command.
@@ -45,4 +54,12 @@ public interface Command {
      * @param parser the command line parser
      */
     void performAction(JCommander parser) throws CommandException;
+
+    /**
+     * Build subcommands and instantiate any children.
+     *
+     * @param jcommander the jcommander instance
+     */
+    void build(JCommander jcommander);
+
 }

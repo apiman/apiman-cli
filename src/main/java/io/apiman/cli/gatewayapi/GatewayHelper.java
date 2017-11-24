@@ -16,10 +16,8 @@
 
 package io.apiman.cli.gatewayapi;
 
-import io.apiman.cli.command.GatewayCommon;
-import io.apiman.cli.core.api.GatewayApi;
 import io.apiman.cli.exception.CommandException;
-import io.apiman.cli.managerapi.management.factory.GatewayApiFactory;
+import io.apiman.cli.gatewayapi.command.factory.GatewayApiFactory;
 import io.apiman.gateway.api.rest.contract.exceptions.GatewayApiErrorBean;
 import io.apiman.gateway.engine.beans.SystemStatus;
 import org.apache.logging.log4j.LogManager;
@@ -47,7 +45,7 @@ public interface GatewayHelper {
     }
 
     default boolean statusCheck(GatewayApi client, String endpoint) {
-        SystemStatus status = callAndCatch(endpoint, () -> client.getSystemStatus());
+        SystemStatus status = callAndCatch(endpoint, client::getSystemStatus);
         LOGGER.debug("Gateway status: {}", status);
         if (!status.isUp()) {
             throw new StatusCheckException(endpoint, "Status indicates gateway is currently down");
@@ -96,7 +94,7 @@ public interface GatewayHelper {
 
     class StatusCheckException extends CommandException {
 
-        public StatusCheckException(String endpoint, String message) {
+        StatusCheckException(String endpoint, String message) {
             super(format("Status check failed on gateway {0}. {1}",
                     endpoint,
                     message));

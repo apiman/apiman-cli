@@ -17,14 +17,14 @@ package io.apiman.cli.gatewayapi.model;
 
 import io.apiman.cli.command.api.model.ApiGateway;
 import io.apiman.cli.command.api.model.EndpointProperties;
+import io.apiman.cli.command.declarative.model.BaseDeclaration;
 import io.apiman.cli.command.declarative.model.DeclarativeApi;
 import io.apiman.cli.command.declarative.model.DeclarativeApiConfig;
 import io.apiman.cli.command.declarative.model.DeclarativeGateway;
 import io.apiman.cli.command.declarative.model.DeclarativePolicy;
-import io.apiman.cli.core.declarative.model.BaseDeclaration;
+import io.apiman.cli.command.gateway.model.Gateway;
+import io.apiman.cli.command.plugin.model.Plugin;
 import io.apiman.cli.exception.DeclarativeException;
-import io.apiman.cli.managerapi.core.gateway.model.Gateway;
-import io.apiman.cli.managerapi.core.plugin.model.Plugin;
 import io.apiman.cli.util.MappingUtil;
 import io.apiman.cli.util.PolicyResolver;
 import io.apiman.gateway.engine.beans.Api;

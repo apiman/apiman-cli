@@ -17,13 +17,7 @@
 package io.apiman.cli.managerapi.management;
 
 import com.google.common.io.CharStreams;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Key;
 import io.apiman.cli.exception.CommandException;
-import io.apiman.cli.managerapi.management.binding.ManagementApiBindings;
-import io.apiman.cli.managerapi.management.factory.ManagementApiFactory;
-import io.apiman.cli.managerapi.core.common.model.ManagementApiVersion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import retrofit.RetrofitError;

@@ -18,7 +18,7 @@ package io.apiman.cli.managerapi.management.binding;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
-import io.apiman.cli.managerapi.core.common.model.ManagementApiVersion;
+import io.apiman.cli.managerapi.command.common.model.ManagementApiVersion;
 
 import java.lang.annotation.Annotation;
 
