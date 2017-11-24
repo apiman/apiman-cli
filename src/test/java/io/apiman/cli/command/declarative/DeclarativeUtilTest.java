@@ -17,9 +17,9 @@
 package io.apiman.cli.command.declarative;
 
 import com.google.common.collect.ImmutableMap;
-import io.apiman.cli.command.declarative.command.ManagerDeclarativeTest;
+import io.apiman.cli.command.declarative.model.BaseDeclaration;
 import io.apiman.cli.command.declarative.model.DeclarativeGateway;
-import io.apiman.cli.core.declarative.model.BaseDeclaration;
+import io.apiman.cli.managerapi.command.declarative.command.ManagerDeclarativeTest;
 import io.apiman.cli.util.MappingUtil;
 import org.junit.Test;
 

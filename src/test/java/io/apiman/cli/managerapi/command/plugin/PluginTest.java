@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package io.apiman.cli.managerapi;
+package io.apiman.cli.managerapi.command.plugin;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.jayway.restassured.response.Response;
 import io.apiman.cli.Cli;
-import io.apiman.cli.util.AuthUtil;
+import io.apiman.cli.command.plugin.model.Plugin;
 import io.apiman.cli.common.BaseTest;
 import io.apiman.cli.common.IntegrationTest;
-import io.apiman.cli.managerapi.core.plugin.model.Plugin;
+import io.apiman.cli.util.AuthUtil;
 import io.apiman.cli.util.MappingUtil;
 import org.jetbrains.annotations.NotNull;
 import org.junit.FixMethodOrder;
@@ -35,7 +35,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.jayway.restassured.RestAssured.given;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}

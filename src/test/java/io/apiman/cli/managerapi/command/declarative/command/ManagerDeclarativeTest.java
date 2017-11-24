@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package io.apiman.cli.command.declarative.command;
+package io.apiman.cli.managerapi.command.declarative.command;
 
 import com.google.common.collect.Lists;
 import io.apiman.cli.common.BaseTest;
 import io.apiman.cli.common.IntegrationTest;
-import io.apiman.cli.managerapi.core.common.model.ManagementApiVersion;
+import io.apiman.cli.managerapi.command.common.model.ManagementApiVersion;
 import io.apiman.cli.managerapi.declarative.command.ManagerApplyCommand;
 import io.apiman.cli.util.InjectionUtil;
 import io.apiman.cli.util.LogUtil;

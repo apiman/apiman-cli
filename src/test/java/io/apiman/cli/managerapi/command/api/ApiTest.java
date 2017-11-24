@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package io.apiman.cli.managerapi;
+package io.apiman.cli.managerapi.command.api;
 
 import io.apiman.cli.Cli;
 import io.apiman.cli.common.BaseTest;
 import io.apiman.cli.common.IntegrationTest;
 import io.apiman.cli.util.AuthUtil;
-
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -31,56 +30,67 @@ import org.junit.runners.MethodSorters;
  */
 @Category(IntegrationTest.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class GatewayTest extends BaseTest {
+public class ApiTest extends BaseTest {
+    private static final String ORG_NAME = "apitest";
 
     @Test
-    public void test1_test() {
+    public void test1_create() {
+        //set up
+        createOrg(ORG_NAME);
+
+        // test
         Cli.main("manager",
-                "gateway", "test",
+                "api", "create",
                 "--debug",
                 "--server", getApimanUrl(),
                 "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,
                 "--serverPassword", AuthUtil.DEFAULT_SERVER_PASSWORD,
-                "--endpoint", "http://localhost:8080/apiman-gateway-api",
-                "--username", "apimanager",
-                "--password", "apiman123!",
-                "--type", "REST");
+                "--name", "example",
+                "--endpoint", "http://example.com",
+                "--initialVersion", "1.0",
+                "--public",
+                "--orgName", ORG_NAME);
+    }
+
+    /**
+     * Adds a policy, using a built-in plugin, to the API.
+     */
+    @Test
+    public void test2_addPolicy() {
+        Cli.main("manager",
+                "api", "policy", "add",
+                "--debug",
+                "--server", getApimanUrl(),
+                "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,
+                "--serverPassword", AuthUtil.DEFAULT_SERVER_PASSWORD,
+                "--name", "example",
+                "--version", "1.0",
+                "--policyName", "CachingPolicy",
+                "--configFile", "examples/policies/caching-policy-config.json",
+                "--orgName", ORG_NAME);
     }
 
     @Test
-    public void test2_create() {
+    public void test3_publish() {
         Cli.main("manager",
-                "gateway", "create",
+                "api", "publish",
                 "--debug",
                 "--server", getApimanUrl(),
                 "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,
                 "--serverPassword", AuthUtil.DEFAULT_SERVER_PASSWORD,
-                "--name", "test",
-                "--description", "example",
-                "--endpoint", "http://localhost:1234",
-                "--username", "apimanager",
-                "--password", "apiman123!",
-                "--type", "REST");
-    }
-
-    @Test
-    public void test3_fetch() {
-        Cli.main("manager",
-                "gateway", "show",
-                "--debug",
-                "--server", getApimanUrl(),
-                "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,
-                "--serverPassword", AuthUtil.DEFAULT_SERVER_PASSWORD,
-                "--name", "test");
+                "--name", "example",
+                "--version", "1.0",
+                "--orgName", ORG_NAME);
     }
 
     @Test
     public void test4_list() {
         Cli.main("manager",
-                "gateway", "list",
+                "api", "list",
                 "--debug",
                 "--server", getApimanUrl(),
                 "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,
-                "--serverPassword", AuthUtil.DEFAULT_SERVER_PASSWORD);
+                "--serverPassword", AuthUtil.DEFAULT_SERVER_PASSWORD,
+                "--orgName", ORG_NAME);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Pete Cornish
+ * Copyright 2016 Andrew Haines
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,38 +14,34 @@
  * limitations under the License.
  */
 
-package io.apiman.cli.managerapi;
+package io.apiman.cli;
 
-import io.apiman.cli.Cli;
-import io.apiman.cli.common.BaseTest;
 import io.apiman.cli.common.IntegrationTest;
 import io.apiman.cli.util.AuthUtil;
-
-import org.junit.FixMethodOrder;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.contrib.java.lang.system.ExpectedSystemExit;
 import org.junit.experimental.categories.Category;
-import org.junit.runners.MethodSorters;
 
 /**
- * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
+ * @author Andrew Haines {@literal <andrew@haines.org.nz>}
  */
 @Category(IntegrationTest.class)
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class OrgTest extends BaseTest {
+public class ExceptionTest {
+    private static final String INVALID_URL = "this is not a valid url";
+
+    @Rule
+    public final ExpectedSystemExit exit = ExpectedSystemExit.none();
 
     @Test
-    public void test1_create() {
-        createOrg("test-org");
-    }
+    public void testExitWithCode255OnException() {
+        exit.expectSystemExitWithStatus(255);
 
-    @Test
-    public void test2_fetch() {
         Cli.main("manager",
-                "org", "show",
+                "gateway", "list",
                 "--debug",
-                "--server", getApimanUrl(),
+                "--server", INVALID_URL,
                 "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,
-                "--serverPassword", AuthUtil.DEFAULT_SERVER_PASSWORD,
-                "--name", "test-org");
+                "--serverPassword", AuthUtil.DEFAULT_SERVER_PASSWORD);
     }
 }
