@@ -17,10 +17,12 @@ package io.apiman.cli.gatewayapi.command;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameters;
+import com.google.inject.Inject;
 import io.apiman.cli.exception.CommandException;
 import io.apiman.cli.gatewayapi.GatewayApi;
 import io.apiman.cli.gatewayapi.GatewayHelper;
 import io.apiman.cli.gatewayapi.command.common.AbstractGatewayCommand;
+import io.apiman.cli.gatewayapi.command.factory.GatewayApiService;
 import io.apiman.cli.util.MappingUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,9 +37,14 @@ public class GatewayStatusCommand extends AbstractGatewayCommand implements Gate
 
     private Logger LOGGER = LogManager.getLogger(GatewayStatusCommand.class);
 
+    @Inject
+    protected GatewayStatusCommand(GatewayApiService apiFactory) {
+        super(apiFactory);
+    }
+
     @Override
-    public void performAction(JCommander parser) throws CommandException {
-        GatewayApi gatewayApi = buildGatewayApiClient(getApiFactory(), getGatewayConfig());
+    public void performFinalAction(JCommander parser) throws CommandException {
+        GatewayApi gatewayApi = getGatewayApiService().buildGatewayApiClient();
         // Do status check
         statusCheck(gatewayApi, getGatewayConfig().getGatewayApiEndpoint());
         // Print status info

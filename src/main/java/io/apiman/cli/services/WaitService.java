@@ -13,14 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.apiman.cli.gatewayapi.command;
 
-import io.apiman.cli.gatewayapi.command.common.AbstractGatewayCommand;
+package io.apiman.cli.services;
 
 /**
- * Base for gateway delete operations (currently unused).
- *
  * @author Marc Savy {@literal <marc@rhymewithgravy.com>}
  */
-public abstract class GatewayDeleteCommand extends AbstractGatewayCommand {
+public interface WaitService {
+
+    /**
+     * Wait for the server to be ready.
+     *
+     * @param waitTime the time, in seconds, to wait
+     */
+    void waitForServer(int waitTime);
 }

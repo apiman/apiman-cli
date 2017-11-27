@@ -18,11 +18,13 @@ package io.apiman.cli.gatewayapi.command.client;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import com.google.inject.Inject;
 import io.apiman.cli.annotations.CommandAvailableSince;
 import io.apiman.cli.exception.CommandException;
 import io.apiman.cli.gatewayapi.GatewayApi;
 import io.apiman.cli.gatewayapi.GatewayHelper;
 import io.apiman.cli.gatewayapi.command.common.AbstractGatewayCommand;
+import io.apiman.cli.gatewayapi.command.factory.GatewayApiService;
 import io.apiman.cli.util.MappingUtil;
 import io.apiman.gateway.engine.beans.Client;
 import org.apache.logging.log4j.LogManager;
@@ -58,9 +60,14 @@ public class ListClientCommand extends AbstractGatewayCommand implements Gateway
 
     private Logger LOGGER = LogManager.getLogger(ListClientCommand.class);
 
+    @Inject
+    protected ListClientCommand(GatewayApiService apiFactory) {
+        super(apiFactory);
+    }
+
     @Override
-    public void performAction(JCommander parser) throws CommandException {
-        GatewayApi gatewayApi = buildGatewayApiClient(getApiFactory(), getGatewayConfig());
+    public void performFinalAction(JCommander parser) throws CommandException {
+        GatewayApi gatewayApi = getGatewayApiService().buildGatewayApiClient();
         // Do status check
         statusCheck(gatewayApi, getGatewayConfig().getGatewayApiEndpoint());
 
@@ -70,8 +77,7 @@ public class ListClientCommand extends AbstractGatewayCommand implements Gateway
         } else if (version == null) { // If version not provided, list all versions of Client
             sortAndPrint("Client Versions", () -> gatewayApi.listClientVersions(orgId, clientId));
         } else { // Otherwise retrieve the Client explicitly.
-            Client client = callAndCatch(getGatewayConfig().getGatewayApiEndpoint(),
-                    () -> gatewayApi.getClientVersion(orgId, clientId, version));
+            Client client = callAndCatch(() -> gatewayApi.getClientVersion(orgId, clientId, version));
            if (client == null) {
                LOGGER.debug("No Client returned for provided parameters");
            } else {
@@ -81,7 +87,7 @@ public class ListClientCommand extends AbstractGatewayCommand implements Gateway
     }
 
     private void sortAndPrint(String entityName, Supplier<List<String>> action) {
-        List<String> ids = callAndCatch(getGatewayConfig().getGatewayApiEndpoint(), action);
+        List<String> ids = callAndCatch(action);
         LOGGER.debug("{} returned: {}", entityName, ids.size());
         // Sort case insensitively
         ids.sort(String::compareToIgnoreCase);

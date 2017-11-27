@@ -22,7 +22,6 @@ import com.beust.jcommander.ParameterDescription;
 import com.beust.jcommander.ParameterException;
 import com.google.common.collect.Maps;
 import com.google.inject.Injector;
-import io.apiman.cli.annotations.CommandAvailableSince;
 import io.apiman.cli.exception.CommandException;
 import io.apiman.cli.util.InjectionUtil;
 import io.apiman.cli.util.LogUtil;
@@ -142,7 +141,6 @@ public abstract class AbstractCommand implements Command {
             if (!permitNoArgs() && noArgsSet(jc)) {
                 printUsage(jc, false);
             }
-            doVersionCheck();
             performAction(jc);
         } else {
             JCommander subCommand = jc.getCommands().get(jc.getParsedCommand());
@@ -150,22 +148,8 @@ public abstract class AbstractCommand implements Command {
         }
     }
 
-    private void doVersionCheck() {
-        CommandAvailableSince since = this.getClass().getAnnotation(CommandAvailableSince.class);
-        if (since != null) {
-            versionCheck(since.value());
-        }
-    }
-
-    /**
-     * Allows subclass to perform a remote version check to determine whether command will work
-     *
-     * @param availableSince version number indicating availability of functionality
-     */
-    protected void versionCheck(String availableSince) {} // Do nothing by default
-
     private boolean noArgsSet(JCommander jc) {
-        return jc.getParameters().stream().allMatch(p -> !p.isAssigned());
+        return jc.getParameters().stream().noneMatch(ParameterDescription::isAssigned);
     }
 
     /**

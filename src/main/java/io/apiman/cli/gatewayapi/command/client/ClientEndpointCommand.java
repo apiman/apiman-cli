@@ -18,10 +18,12 @@ package io.apiman.cli.gatewayapi.command.client;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import com.google.inject.Inject;
 import io.apiman.cli.exception.CommandException;
 import io.apiman.cli.gatewayapi.GatewayApi;
 import io.apiman.cli.gatewayapi.GatewayHelper;
 import io.apiman.cli.gatewayapi.command.common.AbstractGatewayCommand;
+import io.apiman.cli.gatewayapi.command.factory.GatewayApiService;
 import io.apiman.gateway.engine.beans.ApiEndpoint;
 
 /**
@@ -41,14 +43,18 @@ public class ClientEndpointCommand extends AbstractGatewayCommand implements Gat
     @Parameter(names = "--version", description = "API Version", required = true)
     private String version;
 
+    @Inject
+    protected ClientEndpointCommand(GatewayApiService apiFactory) {
+        super(apiFactory);
+    }
+
     @Override
-    public void performAction(JCommander parser) throws CommandException {
-        GatewayApi gatewayApi = buildGatewayApiClient(getApiFactory(), getGatewayConfig());
+    public void performFinalAction(JCommander parser) throws CommandException {
+        GatewayApi gatewayApi = getGatewayApiService().buildGatewayApiClient();
         // Do status check
         statusCheck(gatewayApi, getGatewayConfig().getGatewayApiEndpoint());
         // Get endpoint (if any)
-        ApiEndpoint endpoint = callAndCatch(getGatewayConfig().getGatewayApiEndpoint(),
-                () -> gatewayApi.getApiEndpoint(orgId, clientId, version));
+        ApiEndpoint endpoint = callAndCatch(() -> gatewayApi.getApiEndpoint(orgId, clientId, version));
         // Print to syso
         System.out.println(endpoint.getEndpoint());
     }

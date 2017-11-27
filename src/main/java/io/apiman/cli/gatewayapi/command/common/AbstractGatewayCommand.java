@@ -17,14 +17,14 @@
 package io.apiman.cli.gatewayapi.command.common;
 
 import com.beust.jcommander.ParametersDelegate;
-import com.google.inject.Inject;
 import io.apiman.cli.command.core.AbstractFinalCommand;
 import io.apiman.cli.exception.CommandException;
 import io.apiman.cli.gatewayapi.GatewayApi;
 import io.apiman.cli.gatewayapi.GatewayCommon;
-import io.apiman.cli.gatewayapi.GatewayHelper;
-import io.apiman.cli.gatewayapi.command.factory.GatewayApiFactory;
+import io.apiman.cli.gatewayapi.command.factory.GatewayApiService;
 import io.apiman.gateway.engine.beans.SystemStatus;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.text.MessageFormat;
 
@@ -33,27 +33,30 @@ import java.text.MessageFormat;
  *
  * @author Marc Savy {@literal <marc@rhymewithgravy.com>}
  */
-public abstract class AbstractGatewayCommand extends AbstractFinalCommand implements GatewayHelper {
+public abstract class AbstractGatewayCommand extends AbstractFinalCommand {
+    private static final Logger LOGGER = LogManager.getLogger(AbstractGatewayCommand.class);
+
     @ParametersDelegate
-    private GatewayCommon gatewayCommonConfig = new GatewayCommon();
-    private GatewayApiFactory apiFactory;
+    private GatewayCommon gatewayCommon = new GatewayCommon();
+    private final GatewayApiService gatewayApiService;
 
-    public GatewayCommon getGatewayConfig() {
-        return gatewayCommonConfig;
+    protected AbstractGatewayCommand(GatewayApiService gatewayApiService) {
+        super(gatewayApiService);
+        this.gatewayApiService = gatewayApiService;
+        System.out.println(gatewayCommon.getGatewayApiEndpoint());
+        gatewayApiService.configureEndpoint(gatewayCommon);
     }
 
-    @Inject
-    public void setGatewayApiFactory(GatewayApiFactory apiFactory) {
-        this.apiFactory = apiFactory;
+    protected GatewayCommon getGatewayConfig() {
+        return gatewayCommon;
     }
 
-    protected GatewayApiFactory getApiFactory() {
-        return apiFactory;
+    protected GatewayApiService getGatewayApiService() {
+        return gatewayApiService;
     }
 
     protected void versionCheck(String availableSince) {
-        GatewayApi gatewayApi = buildGatewayApiClient(apiFactory, getGatewayConfig());
-        statusCheck(gatewayApi, getGatewayConfig().getGatewayApiEndpoint());
+        GatewayApi gatewayApi = gatewayApiService.buildGatewayApiClient();
         SystemStatus systemStatus = gatewayApi.getSystemStatus();
 
         VersionHolder local = new VersionHolder(availableSince);

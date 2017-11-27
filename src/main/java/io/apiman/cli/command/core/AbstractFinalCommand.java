@@ -18,6 +18,9 @@ package io.apiman.cli.command.core;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
+import io.apiman.cli.annotations.CommandAvailableSince;
+import io.apiman.cli.exception.CommandException;
+import io.apiman.cli.services.WaitService;
 
 import java.util.Map;
 
@@ -28,9 +31,30 @@ import java.util.Map;
  */
 public abstract class AbstractFinalCommand extends AbstractCommand {
     private static final Integer DEFAULT_WAIT_TIME = 0;
+    private final WaitService waitService;
 
     @Parameter(names = {"--waitTime", "-w"}, description = "Server startup wait time (seconds)")
     private Integer waitTime = DEFAULT_WAIT_TIME;
+
+    protected AbstractFinalCommand(WaitService waitService) {
+        this.waitService = waitService;
+    }
+
+    /**
+     * If you don't need to wait for a remote server or if more flexibility is required
+     * (e.g. multiple servers), this constructor provides a no-op wait service
+     */
+    protected AbstractFinalCommand() {
+        waitService = (int ignored) -> {};
+    }
+
+    public final void performAction(JCommander parser) throws CommandException {
+        waitService.waitForServer(waitTime);
+        doVersionCheck();
+        performFinalAction(parser);
+    }
+
+    public abstract void performFinalAction(JCommander parser) throws CommandException;
 
     /**
      * Indicates that there is no child command and that this instance should handle the request.
@@ -47,4 +71,21 @@ public abstract class AbstractFinalCommand extends AbstractCommand {
     protected void populateCommands(Map<String, Class<? extends Command>> commandMap) {
         // no child commands
     }
+
+    /**
+     * Allows subclass to perform a remote version check to determine whether command will work
+     *
+     * @param availableSince version number indicating availability of functionality
+     */
+    protected void versionCheck(String availableSince) {
+        // No version check unless overridden.
+    }
+
+    private void doVersionCheck() {
+        CommandAvailableSince since = this.getClass().getAnnotation(CommandAvailableSince.class);
+        if (since != null) {
+            versionCheck(since.value());
+        }
+    }
+
 }

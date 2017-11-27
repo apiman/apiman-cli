@@ -39,6 +39,7 @@ public abstract class AbstractManagerModelCommand<M, A> extends AbstractFinalCom
     }
 
     public AbstractManagerModelCommand(ManagementApiService managementApiService) {
+        super(managementApiService);
         this.managementApiService = managementApiService;
         managerConfig = new ManagerCommon(managementApiService);
     }

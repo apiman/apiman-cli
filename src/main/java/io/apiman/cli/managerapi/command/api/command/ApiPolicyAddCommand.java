@@ -67,7 +67,7 @@ public class ApiPolicyAddCommand extends AbstractApiCommand implements ApiMixin 
     }
 
     @Override
-    public void performAction(JCommander parser) throws CommandException {
+    public void performFinalAction(JCommander parser) throws CommandException {
         if (!configStdIn && null == configFile) {
             throw new ExitWithCodeException(1, "Policy configuration must be provided", true);
         }

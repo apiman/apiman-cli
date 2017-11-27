@@ -38,7 +38,7 @@ public abstract class ModelCreateCommand<M, A> extends AbstractManagerModelComma
     }
 
     @Override
-    public void performAction(JCommander parser) throws CommandException {
+    public void performFinalAction(JCommander parser) throws CommandException {
         LOGGER.debug("Creating {}", this::getModelName);
 
         ManagementApiUtil.invokeAndCheckResponse(() -> {

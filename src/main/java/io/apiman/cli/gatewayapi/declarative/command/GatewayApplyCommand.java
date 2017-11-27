@@ -26,6 +26,7 @@ import io.apiman.cli.gatewayapi.GatewayApi;
 import io.apiman.cli.gatewayapi.GatewayHelper;
 import io.apiman.cli.gatewayapi.command.factory.GatewayApiFactory;
 import io.apiman.cli.gatewayapi.model.GatewayApiDataModel;
+import io.apiman.cli.util.LogUtil;
 import io.apiman.cli.util.PolicyResolver;
 import io.apiman.gateway.engine.beans.Api;
 import org.apache.logging.log4j.LogManager;
@@ -40,18 +41,18 @@ import java.util.Map;
  * @author Marc Savy {@literal <marc@rhymewithgravy.com>}
  */
 @Parameters(commandDescription = "Apply Apiman Gateway declaration")
-public class GatewayApplyCommand extends AbstractApplyCommand implements GatewayHelper {
+public class GatewayApplyCommand extends AbstractApplyCommand
+        implements GatewayHelper {
+
     private static final Logger LOGGER = LogManager.getLogger(GatewayApplyCommand.class);
-    private GatewayApiFactory apiFactory;
-    private PolicyResolver policyResolver;
+    private final GatewayApiFactory apiFactory;
+    private final PolicyResolver policyResolver;
 
     @Inject
-    public void setGatewayApiFactory(GatewayApiFactory apiFactory) {
+    public GatewayApplyCommand(GatewayApiFactory apiFactory,
+                               PolicyResolver policyResolver) {
+        super();
         this.apiFactory = apiFactory;
-    }
-
-    @Inject
-    public void setPolicyResolver(PolicyResolver policyResolver) {
         this.policyResolver = policyResolver;
     }
 
@@ -65,12 +66,12 @@ public class GatewayApplyCommand extends AbstractApplyCommand implements Gateway
     }
 
     private void doGatewayStatusChecks(GatewayApiDataModel dataModel) {
-        dataModel.getGatewaysMap().values().stream().forEach(this::isGatewayActive);
+        dataModel.getGatewaysMap().values().forEach(this::isGatewayActive);
     }
 
     private boolean isGatewayActive(DeclarativeGateway gateway) {
         LOGGER.debug("Checking Gateway {} status", gateway.getName());
-        GatewayApi client = buildGatewayApiClient(gateway.getConfig(), getLogDebug());
+        GatewayApi client = buildGatewayApiClient(gateway.getConfig());
         return statusCheck(client, gateway.getConfig().getEndpoint());
     }
 
@@ -84,16 +85,17 @@ public class GatewayApplyCommand extends AbstractApplyCommand implements Gateway
 
     private void publishApi(Api api, DeclarativeGateway gateway) {
         GatewayConfig config = gateway.getConfig();
-        GatewayApi client = buildGatewayApiClient(config, getLogDebug());
+        // Remember, we're publishing to the gateways listed in the declaration, NOT from config.
+        GatewayApi client = buildGatewayApiClient(config);
         LOGGER.info("Publishing {} to {}", api, gateway.getConfig().getEndpoint());
-        callAndCatch(gateway.getConfig().getEndpoint(), () -> client.publishApi(api));
+        // I don't like the way this conflates stateful and non-stateful
+        callAndCatch(() -> client.publishApi(api));
     }
 
-    private GatewayApi buildGatewayApiClient(GatewayConfig config, boolean debugLogging) {
-        return apiFactory.build(
-                config.getEndpoint(),
+    private GatewayApi buildGatewayApiClient(GatewayConfig config) {
+        return apiFactory.build(config.getEndpoint(),
                 config.getUsername(),
                 config.getPassword(),
-                debugLogging);
+                LogUtil.isLogDebug());
     }
 }

@@ -48,9 +48,7 @@ public class GatewayDeclarativeTest extends BaseTest {
 
     @Before
     public void setUp() {
-        command = new GatewayApplyCommand();
-        command.setGatewayApiFactory(mGatewayApiFactory);
-        command.setPolicyResolver(new PolicyResolver());
+        command = new GatewayApplyCommand(mGatewayApiFactory, new PolicyResolver());
         // Configure logging level
         command.setLogDebug(LOG_DEBUG);
         LogUtil.configureLogging(LOG_DEBUG);

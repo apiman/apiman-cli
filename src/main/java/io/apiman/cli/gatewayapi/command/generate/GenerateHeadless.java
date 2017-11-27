@@ -68,6 +68,10 @@ public class GenerateHeadless extends AbstractApplyCommand implements GatewayHel
     @Parameter(names = {"--stdout"}, description = "Output definition to STDOUT (implied if no outputFile is specified)")
     protected boolean useStdout = false;
 
+    public GenerateHeadless() {
+        super();
+    }
+
     @Inject
     public void setPolicyResolver(PolicyResolver policyResolver) {
         this.policyResolver = policyResolver;

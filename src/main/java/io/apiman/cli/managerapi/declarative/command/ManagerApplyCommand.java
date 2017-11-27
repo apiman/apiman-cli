@@ -47,8 +47,9 @@ public class ManagerApplyCommand extends AbstractApplyCommand {
 
     @Inject
     public ManagerApplyCommand(ManagementApiService managementApiService,
-                        DeclarativeService declarativeService, PluginService pluginService) {
-        //this.managementApiService = managementApiService;
+                        DeclarativeService declarativeService,
+                               PluginService pluginService) {
+        super(managementApiService);
         this.declarativeService = declarativeService;
         this.pluginService = pluginService;
         this.managerCommon = new ManagerCommon(managementApiService);

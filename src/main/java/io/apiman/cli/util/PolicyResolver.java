@@ -38,6 +38,9 @@ import java.util.stream.Collectors;
 import static java.util.Optional.ofNullable;
 
 
+/**
+ * @author Marc Savy {@literal <marc@rhymewithgravy.com>}
+ */
 public final class PolicyResolver extends AbstractPluginRegistry {
 
     private static final Logger LOGGER = LogManager.getLogger(PolicyResolver.class);
@@ -51,15 +54,17 @@ public final class PolicyResolver extends AbstractPluginRegistry {
 
     private void buildInbuiltPolicyMap() {
         URL policyDefResource = Resources.getResource("data/all-policyDefs.json");
+        @SuppressWarnings("unchecked")
         List<PolicyDefinitionBean> inbuilts = new ArrayList<>(MappingUtil.readJsonValue(policyDefResource, List.class, PolicyDefinitionBean.class));
-        inbuilts.stream().forEach(policyDef -> {
-            inbuiltPolicyMap.put(policyDef.getId().toLowerCase(), policyDef);
+
+        for (PolicyDefinitionBean policyDef : inbuilts) {
+            inbuiltPolicyMap.put(policyDef.getId().toLowerCase(), policyDef); // TODO
             inbuiltPolicyMap.put(policyDef.getName().toLowerCase(), policyDef);
-            ofNullable(policyDef.getPolicyImpl().split("class:", 2))
+            String[] split = ofNullable(policyDef.getPolicyImpl().split("class:", 2))
                     .orElseThrow(() -> new CommandException("Unexpected format in built-in policyImpl field: " + policyDef.getPolicyImpl()));
-            String policyFqdn = policyDef.getPolicyImpl().split("class:", 2)[1];
+            String policyFqdn = split[1];
             inbuiltPolicyMap.put(policyFqdn.toLowerCase(), policyDef);
-        });
+        }
     }
 
     /**

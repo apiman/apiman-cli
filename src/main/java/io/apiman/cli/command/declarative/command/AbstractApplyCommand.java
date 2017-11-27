@@ -23,6 +23,7 @@ import io.apiman.cli.command.core.AbstractFinalCommand;
 import io.apiman.cli.command.declarative.DeclarativeUtil;
 import io.apiman.cli.command.declarative.model.BaseDeclaration;
 import io.apiman.cli.exception.CommandException;
+import io.apiman.cli.services.WaitService;
 import io.apiman.cli.util.BeanUtil;
 import io.apiman.cli.util.MappingUtil;
 import org.apache.logging.log4j.LogManager;
@@ -58,8 +59,16 @@ public abstract class AbstractApplyCommand extends AbstractFinalCommand {
     @Parameter(names = "--propertiesFile", description = "Properties file")
     protected List<Path> propertiesFiles;
 
+    public AbstractApplyCommand(WaitService waitService) {
+        super(waitService);
+    }
+
+    public AbstractApplyCommand() {
+        super();
+    }
+
     @Override
-    public void performAction(JCommander parser) throws CommandException {
+    public void performFinalAction(JCommander parser) throws CommandException {
         try {
             applyDeclaration(loadDeclaration());
         } catch (Exception e) {

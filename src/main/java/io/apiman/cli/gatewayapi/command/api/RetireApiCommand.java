@@ -18,10 +18,12 @@ package io.apiman.cli.gatewayapi.command.api;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import io.apiman.cli.gatewayapi.GatewayApi;
+import com.google.inject.Inject;
 import io.apiman.cli.exception.CommandException;
+import io.apiman.cli.gatewayapi.GatewayApi;
 import io.apiman.cli.gatewayapi.GatewayHelper;
-import io.apiman.cli.gatewayapi.command.GatewayDeleteCommand;
+import io.apiman.cli.gatewayapi.command.common.AbstractGatewayCommand;
+import io.apiman.cli.gatewayapi.command.factory.GatewayApiService;
 
 /**
  * Retire an API entity.
@@ -29,7 +31,7 @@ import io.apiman.cli.gatewayapi.command.GatewayDeleteCommand;
  * @author Marc Savy {@literal <marc@rhymewithgravy.com>}
  */
 @Parameters(commandDescription = "Retire an API")
-public class RetireApiCommand extends GatewayDeleteCommand implements GatewayHelper {
+public class RetireApiCommand extends AbstractGatewayCommand implements GatewayHelper {
 
     @Parameter(names = "--org", description = "Organization ID", required = true)
     private String orgId;
@@ -40,14 +42,18 @@ public class RetireApiCommand extends GatewayDeleteCommand implements GatewayHel
     @Parameter(names = "--version", description = "API Version", required = true)
     private String version;
 
+    @Inject
+    protected RetireApiCommand(GatewayApiService apiFactory) {
+        super(apiFactory);
+    }
+
     @Override
-    public void performAction(JCommander parser) throws CommandException {
-        GatewayApi gatewayApi = buildGatewayApiClient(getApiFactory(), getGatewayConfig());
+    public void performFinalAction(JCommander parser) throws CommandException {
+        GatewayApi gatewayApi = getGatewayApiService().buildGatewayApiClient();
         // Do status check
         statusCheck(gatewayApi, getGatewayConfig().getGatewayApiEndpoint());
         // Attempt retire
-        callAndCatch(getGatewayConfig().getGatewayApiEndpoint(),
-                () -> gatewayApi.retireApi(orgId, apiId, version));
+        callAndCatch(() -> gatewayApi.retireApi(orgId, apiId, version));
     }
 
 }

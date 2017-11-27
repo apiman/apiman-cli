@@ -18,13 +18,14 @@ package io.apiman.cli.managerapi.service;
 
 
 import io.apiman.cli.managerapi.command.common.model.ManagementApiVersion;
+import io.apiman.cli.services.WaitService;
 
 /**
  * Constructs management API clients.
  *
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
-public interface ManagementApiService {
+public interface ManagementApiService extends WaitService {
     /**
      * Configures the server's management API endpoint.
      *
@@ -60,11 +61,4 @@ public interface ManagementApiService {
      */
     <T> T buildServerApiClient(Class<T> clazz, ManagementApiVersion serverVersion, String endpoint, String username,
                                String password, boolean debugLogging);
-
-    /**
-     * Wait for the server to be ready.
-     *
-     * @param waitTime the time, in seconds, to wait
-     */
-    void waitForServer(int waitTime);
 }

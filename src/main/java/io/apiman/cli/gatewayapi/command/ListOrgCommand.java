@@ -17,11 +17,13 @@ package io.apiman.cli.gatewayapi.command;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameters;
+import com.google.inject.Inject;
 import io.apiman.cli.annotations.CommandAvailableSince;
 import io.apiman.cli.exception.CommandException;
 import io.apiman.cli.gatewayapi.GatewayApi;
 import io.apiman.cli.gatewayapi.GatewayHelper;
 import io.apiman.cli.gatewayapi.command.common.AbstractGatewayCommand;
+import io.apiman.cli.gatewayapi.command.factory.GatewayApiService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -34,18 +36,23 @@ import java.util.List;
  */
 @CommandAvailableSince("1.3.2")
 @Parameters(commandDescription = "List all Organization IDs")
-public class ListOrgCommand extends AbstractGatewayCommand implements GatewayHelper {
+public class ListOrgCommand extends AbstractGatewayCommand
+        implements GatewayHelper {
 
     private Logger LOGGER = LogManager.getLogger(ListOrgCommand.class);
 
+    @Inject
+    protected ListOrgCommand(GatewayApiService apiService) {
+        super(apiService);
+    }
+
     @Override
-    public void performAction(JCommander parser) throws CommandException {
-        GatewayApi gatewayApi = buildGatewayApiClient(getApiFactory(), getGatewayConfig());
+    public void performFinalAction(JCommander parser) throws CommandException {
+        GatewayApi gatewayApi = getGatewayApiService().buildGatewayApiClient();
         // Do status check
         statusCheck(gatewayApi, getGatewayConfig().getGatewayApiEndpoint());
         // Get endpoint (if any)
-        List<String> orgs = callAndCatch(getGatewayConfig().getGatewayApiEndpoint(),
-                () -> gatewayApi.listOrgs());
+        List<String> orgs = callAndCatch(() -> gatewayApi.listOrgs());
         LOGGER.debug("Orgs returned: {}", orgs.size());
         // Sort case insensitively
         orgs.sort(String::compareToIgnoreCase);
