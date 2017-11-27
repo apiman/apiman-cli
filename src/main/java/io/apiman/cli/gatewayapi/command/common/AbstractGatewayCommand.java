@@ -43,7 +43,6 @@ public abstract class AbstractGatewayCommand extends AbstractFinalCommand {
     protected AbstractGatewayCommand(GatewayApiService gatewayApiService) {
         super(gatewayApiService);
         this.gatewayApiService = gatewayApiService;
-        System.out.println(gatewayCommon.getGatewayApiEndpoint());
         gatewayApiService.configureEndpoint(gatewayCommon);
     }
 

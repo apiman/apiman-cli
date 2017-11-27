@@ -5,7 +5,7 @@ jdk:
 services:
   - docker
 before_install:
- - docker pull apiman/on-wildfly10:master
+  - docker pull apiman/on-wildfly10:master
 script:
- - docker run -d -p 8080:8080 apiman/on-wildfly10:master
- - ./gradlew test -PintegrationTest --info
+  - docker run -d -p 8080:8080 apiman/on-wildfly10:master
+  - ./gradlew test -PintegrationTest --info --stacktrace

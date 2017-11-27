@@ -19,6 +19,7 @@ package io.apiman.cli.managerapi;
 import com.beust.jcommander.Parameter;
 import io.apiman.cli.managerapi.command.common.model.ManagementApiVersion;
 import io.apiman.cli.managerapi.service.ManagementApiService;
+import io.apiman.cli.util.LogUtil;
 
 import static io.apiman.cli.util.AuthUtil.DEFAULT_SERVER_PASSWORD;
 import static io.apiman.cli.util.AuthUtil.DEFAULT_SERVER_USERNAME;
@@ -66,21 +67,18 @@ public class ManagerCommon {
                 getManagementApiEndpoint(),
                 getManagementApiUsername(),
                 getManagementApiPassword(),
-                true);
+                LogUtil.isLogDebug());
     }
 
     public String getManagementApiEndpoint() {
-        // TODO consider reading from config file/environment
         return serverAddress;
     }
 
     public String getManagementApiUsername() {
-        // TODO consider reading from config file/environment
         return serverUsername;
     }
 
     public String getManagementApiPassword() {
-        // TODO consider reading from config file/environment
         return serverPassword;
     }
 
