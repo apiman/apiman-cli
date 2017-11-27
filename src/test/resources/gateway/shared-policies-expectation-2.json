@@ -1,0 +1,21 @@
+{
+  "publicAPI" : true,
+  "organizationId" : "test",
+  "apiId" : "example1",
+  "version" : "1.0",
+  "endpoint" : "http://example.com",
+  "endpointType" : "rest",
+  "endpointContentType" : null,
+  "endpointProperties" : {
+    "authorization.type" : "basic",
+    "basic-auth.requireSSL" : "false",
+    "basic-auth.username" : "user",
+    "basic-auth.password" : "Password123"
+  },
+  "parsePayload" : false,
+  "apiPolicies" : [ {
+    "policyJsonConfig" : "{\n  \"ttl\" : 60\n}",
+    "policyImpl" : "class:io.apiman.gateway.engine.policies.CachingPolicy"
+  } ],
+  "maxPayloadBufferSize" : 0
+}

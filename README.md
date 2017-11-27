@@ -79,6 +79,9 @@ Here's a simple YAML file (you can use JSON if you want):
             - name: "CachingPolicy"
               config:
                 ttl: 60
+          definition:
+            file: "/home/user/swagger/example.json"
+            type: "application/json"
 
 ### Step 2: Apply the environment declaration
 
@@ -87,6 +90,7 @@ Here's a simple YAML file (you can use JSON if you want):
     INFO Adding org: test
     INFO Adding API: example
     INFO Configuring API: example
+    INFO Setting definition for API: example
     INFO Adding policy 'CachingPolicy' to API: example
     INFO Publishing API: example
     INFO Applied declaration
@@ -95,8 +99,9 @@ The following things just happened:
 
 1. an organisation named `test` was created,
 2. an API named `example` was added with the endpoint `http://example.com`,
-3. a caching policy was added to the API and configured with a TTL of 60 seconds and, finally,
-4. the API was published to the gateway.
+3. a swagger definition was uploaded for the API in json format
+4. a caching policy was added to the API and configured with a TTL of 60 seconds and, finally,
+5. the API was published to the gateway.
     
 Declarations also allow you to add gateways, install plugins and more. See the `examples` directory.
 
@@ -119,11 +124,11 @@ Additionally, you can specify a properties files, containing key-value pairs, su
 To avoid repeating the same policy definitions, you can define them once in the _shared_ section of your declaration file,
 then refer to them by name later.
 
-For example, see the [shared-policies.yml](shared-policies.yml) file.
+For example, see the [shared-policies.yml](examples/declarative/shared-policies.yml) file.
 
 The same goes for properties - you can define them in the _shared_ section and reuse them.
 
-See the [shared-properties.yml](shared-properties.yml) example file.
+See the [shared-properties.yml](examples/declarative/shared-properties.yml) example file.
 
 # Requirements
 

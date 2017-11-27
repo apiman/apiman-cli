@@ -1,0 +1,31 @@
+# Simple apiman example
+---
+  system:
+    gateways:
+      - name: "thegateway"
+        type: "REST"
+        config:
+          endpoint: "http://localhost:8080/apiman-gateway-api"
+          username: "apimanager"
+          password: "apiman123!"
+    plugins:
+      - name: "test-policy-plugin"
+        groupId: "io.apiman.plugins"
+        artifactId: "apiman-plugins-test-policy"
+        version: "1.3.1.Final"
+  org:
+    name: "theorgname"
+    apis:
+      - name: "mycoolapi"
+        version: "1.0"
+        config:
+          endpoint: "http://example.com"
+          endpointType: "rest"
+          security:
+            authorizationType: "basic"
+            username: "user"
+            password: "ILoveApiman"
+          public: true
+          gateway: "thegateway"
+        policies:
+          - plugin: "test-policy-plugin"
