@@ -16,25 +16,29 @@
 
 package io.apiman.cli;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.jayway.restassured.response.Response;
-import io.apiman.cli.util.AuthUtil;
+import static com.jayway.restassured.RestAssured.given;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import io.apiman.cli.common.BaseTest;
 import io.apiman.cli.common.IntegrationTest;
 import io.apiman.cli.core.plugin.model.Plugin;
+import io.apiman.cli.util.AuthUtil;
 import io.apiman.cli.util.MappingUtil;
+
+import java.net.HttpURLConnection;
+import java.util.List;
+import java.util.Optional;
+
 import org.jetbrains.annotations.NotNull;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runners.MethodSorters;
 
-import java.net.HttpURLConnection;
-import java.util.List;
-import java.util.Optional;
-
-import static com.jayway.restassured.RestAssured.given;
-import static org.junit.Assert.*;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.jayway.restassured.response.Response;
 
 /**
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
@@ -97,7 +101,8 @@ public class PluginTest extends BaseTest {
      */
     @Test
     public void test1_create() {
-        Cli.main("plugin", "add",
+        Cli.main("manager",
+                "plugin", "add",
                 "--debug",
                 "--server", getApimanUrl(),
                 "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,
@@ -114,7 +119,8 @@ public class PluginTest extends BaseTest {
         // look up plugin by its generated ID
         final Long pluginId = addedPlugin.getId();
 
-        Cli.main("plugin", "show",
+        Cli.main("manager",
+                "plugin", "show",
                 "--debug",
                 "--server", getApimanUrl(),
                 "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,
@@ -124,7 +130,8 @@ public class PluginTest extends BaseTest {
 
     @Test
     public void test3_list() {
-        Cli.main("plugin", "list",
+        Cli.main("manager",
+                "plugin", "list",
                 "--debug",
                 "--server", getApimanUrl(),
                 "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,

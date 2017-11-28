@@ -16,24 +16,27 @@
 
 package io.apiman.cli.management;
 
-import com.google.common.io.CharStreams;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Key;
 import io.apiman.cli.core.common.model.ManagementApiVersion;
 import io.apiman.cli.exception.CommandException;
 import io.apiman.cli.management.binding.ManagementApiBindings;
 import io.apiman.cli.management.factory.ManagementApiFactory;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.util.function.Supplier;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.google.common.io.CharStreams;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 /**
  * Shared Management API utility methods.
@@ -95,13 +98,11 @@ public class ManagementApiUtil {
     @SuppressWarnings("unchecked")
     public static <T> T buildServerApiClient(Class<T> clazz, String endpoint, String username,
                                              String password, boolean debugLogging, ManagementApiVersion serverVersion) {
-
         if (!factoriesInitialised) {
             LOGGER.trace("Initialising API factories");
             apiFactories = Guice.createInjector(new ManagementApiFactoryModule());
             factoriesInitialised = true;
         }
-
         // locate the Management API factory
         final ManagementApiFactory managementApiFactory;
         try {

@@ -16,11 +16,6 @@
 
 package io.apiman.cli.util;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.google.common.collect.Lists;
 import io.apiman.cli.core.api.model.ApiConfig;
 import io.apiman.cli.core.api.model.ApiGateway;
 import io.apiman.cli.core.api.model.EndpointProperties;
@@ -29,10 +24,22 @@ import io.apiman.cli.core.declarative.model.DeclarativeApiConfig;
 import io.apiman.cli.core.declarative.model.DeclarativeEndpointSecurity;
 import io.apiman.cli.core.declarative.model.DeclarativeGateway;
 import io.apiman.cli.core.gateway.model.Gateway;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.Collection;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.google.common.collect.Lists;
 
 /**
  * Shared POJO/JSON/YAML mapping utility methods.
@@ -78,6 +85,37 @@ public class MappingUtil {
         } catch (NullPointerException | JsonProcessingException e) {
             LOGGER.trace(String.format("Error writing value as JSON string: %s", obj), e);
             return null;
+        }
+    }
+
+    /**
+     * Unmarshall the contents of given URL into an instance of klazz
+     *
+     * @param url the URL to read
+     * @param klazz the class to marshall into
+     * @return the unmarshalled representation
+     */
+    public static <T> T readJsonValue(URL url, Class<T> klazz) {
+        try {
+            return JSON_MAPPER.readValue(url, klazz);
+        } catch (IOException e) {
+            throw new RuntimeException(String.format("Error reading JSON from: %s", url), e);
+        }
+    }
+
+    /**
+     * Unmarshall the contents of given URL into a collection of type klazz.
+     *
+     * @param url the URL to read
+     * @param collectionClazz the collection class to unmarshall into (e.g. List.class)
+     * @param targetClazz the target class to unmarshall into
+     * @return the unmarshalled representation
+     */
+    public static <C extends Collection<? super T>, T> C readJsonValue(URL url, Class<C> collectionClazz, Class<T> targetClazz) {
+        try {
+            return JSON_MAPPER.readValue(url, TypeFactory.defaultInstance().constructCollectionType(collectionClazz, targetClazz));
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to decode:" + e.getMessage()); //$NON-NLS-1$
         }
     }
 

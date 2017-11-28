@@ -18,6 +18,7 @@ package io.apiman.cli;
 
 import io.apiman.cli.common.IntegrationTest;
 import io.apiman.cli.util.AuthUtil;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.ExpectedSystemExit;
@@ -37,7 +38,8 @@ public class ExceptionTest {
     public void testExitWithCode1OnException() {
         exit.expectSystemExitWithStatus(1);
 
-        Cli.main("gateway", "list",
+        Cli.main("manager",
+                "gateway", "list",
                 "--debug",
                 "--server", INVALID_URL,
                 "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,

@@ -55,7 +55,7 @@ public class LogUtil {
         if (logDebug) {
             rootLogger.setLevel(Level.DEBUG);
             appender = context.getConfiguration().getAppender("ConsoleVerbose");
-            
+
         } else {
             appender = context.getConfiguration().getAppender("ConsoleTerse");
         }

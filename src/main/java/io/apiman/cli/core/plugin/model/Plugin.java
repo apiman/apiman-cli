@@ -16,6 +16,9 @@
 
 package io.apiman.cli.core.plugin.model;
 
+import io.apiman.common.plugin.PluginCoordinates;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -81,5 +84,15 @@ public class Plugin {
 
     public String getClassifier() {
         return classifier;
+    }
+
+    @JsonIgnore
+    public PluginCoordinates getCoordinates() {
+        PluginCoordinates pluginCoords = new PluginCoordinates();
+        pluginCoords.setGroupId(groupId);
+        pluginCoords.setArtifactId(artifactId);
+        pluginCoords.setVersion(version);
+        pluginCoords.setClassifier(classifier);
+        return pluginCoords;
     }
 }

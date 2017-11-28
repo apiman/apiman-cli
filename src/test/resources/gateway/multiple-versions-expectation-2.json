@@ -1,0 +1,16 @@
+{
+  "publicAPI" : true,
+  "organizationId" : "test",
+  "apiId" : "multi-version-example",
+  "version" : "1.0",
+  "endpoint" : "http://example.com/v1",
+  "endpointType" : "rest",
+  "endpointContentType" : null,
+  "endpointProperties" : { },
+  "parsePayload" : false,
+  "apiPolicies" : [ {
+    "policyJsonConfig" : "{\n  \"ttl\" : 60\n}",
+    "policyImpl" : "class:io.apiman.gateway.engine.policies.CachingPolicy"
+  } ],
+  "maxPayloadBufferSize" : 0
+}

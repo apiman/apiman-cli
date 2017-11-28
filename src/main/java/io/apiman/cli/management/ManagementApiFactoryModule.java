@@ -16,11 +16,9 @@
 
 package io.apiman.cli.management;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Singleton;
+import io.apiman.cli.core.api.VersionAgnosticApi;
 import io.apiman.cli.core.api.factory.Version11XManagementApiFactoryImpl;
 import io.apiman.cli.core.api.factory.Version12XManagementApiFactoryImpl;
-import io.apiman.cli.core.api.VersionAgnosticApi;
 import io.apiman.cli.core.common.ActionApi;
 import io.apiman.cli.core.common.model.ManagementApiVersion;
 import io.apiman.cli.core.gateway.GatewayApi;
@@ -29,6 +27,9 @@ import io.apiman.cli.core.plugin.PluginApi;
 import io.apiman.cli.management.binding.ManagementApiBindings;
 import io.apiman.cli.management.factory.ManagementApiFactory;
 import io.apiman.cli.management.factory.SimpleManagementApiFactoryImpl;
+
+import com.google.inject.AbstractModule;
+import com.google.inject.Singleton;
 
 /**
  * Bindings for Management API factories.

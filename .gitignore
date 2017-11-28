@@ -3,3 +3,8 @@
 build/
 *.iml
 classes
+/bin/
+.settings
+.classpath
+.project
+/out/

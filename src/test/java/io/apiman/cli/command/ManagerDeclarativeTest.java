@@ -16,33 +16,36 @@
 
 package io.apiman.cli.command;
 
-import com.google.common.collect.Lists;
 import io.apiman.cli.common.BaseTest;
 import io.apiman.cli.common.IntegrationTest;
 import io.apiman.cli.core.common.model.ManagementApiVersion;
-import io.apiman.cli.core.declarative.command.ApplyCommand;
+import io.apiman.cli.core.declarative.command.AbstractApplyCommand;
+import io.apiman.cli.core.declarative.command.ManagerApplyCommand;
 import io.apiman.cli.util.LogUtil;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.nio.file.Paths;
 import java.util.List;
 
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+
+import com.google.common.collect.Lists;
+
 /**
- * Tests for {@link ApplyCommand}.
+ * Tests for {@link AbstractApplyCommand}.
  *
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
 @Category(IntegrationTest.class)
-public class DeclarativeTest extends BaseTest {
+public class ManagerDeclarativeTest extends BaseTest {
     private static final boolean LOG_DEBUG = true;
 
-    private ApplyCommand command;
+    private ManagerApplyCommand command;
 
     @Before
     public void setUp() {
-        command = new ApplyCommand();
+        command = new ManagerApplyCommand();
         command.setServerAddress(getApimanUrl());
 
         // version specific test
@@ -60,7 +63,7 @@ public class DeclarativeTest extends BaseTest {
      */
     @Test
     public void testApplyDeclaration_JustPlugins() throws Exception {
-        command.setDeclarationFile(Paths.get(DeclarativeTest.class.getResource("/simple-plugin.yml").toURI()));
+        command.setDeclarationFile(Paths.get(ManagerDeclarativeTest.class.getResource("/simple-plugin.yml").toURI()));
         command.applyDeclaration();
     }
 
@@ -71,7 +74,7 @@ public class DeclarativeTest extends BaseTest {
      */
     @Test
     public void testApplyDeclaration_Full() throws Exception {
-        command.setDeclarationFile(Paths.get(DeclarativeTest.class.getResource("/simple-no-plugin.yml").toURI()));
+        command.setDeclarationFile(Paths.get(ManagerDeclarativeTest.class.getResource("/simple-no-plugin.yml").toURI()));
         command.applyDeclaration();
     }
 
@@ -92,11 +95,11 @@ public class DeclarativeTest extends BaseTest {
                 "gw.endpoint=http://example.com"
         );
 
-        command.setDeclarationFile(Paths.get(DeclarativeTest.class.getResource("/simple-placeholders.yml").toURI()));
+        command.setDeclarationFile(Paths.get(ManagerDeclarativeTest.class.getResource("/simple-placeholders.yml").toURI()));
         command.setProperties(inlineProperties);
         command.setPropertiesFiles(Lists.newArrayList(
-                Paths.get(DeclarativeTest.class.getResource("/placeholder-test.properties").toURI()),
-                Paths.get(DeclarativeTest.class.getResource("/placeholder-test.xml").toURI())
+                Paths.get(ManagerDeclarativeTest.class.getResource("/placeholder-test.properties").toURI()),
+                Paths.get(ManagerDeclarativeTest.class.getResource("/placeholder-test.xml").toURI())
         ));
         command.applyDeclaration();
     }
@@ -109,7 +112,7 @@ public class DeclarativeTest extends BaseTest {
      */
     @Test
     public void testApplyDeclaration_MultipleVersions() throws Exception {
-        command.setDeclarationFile(Paths.get(DeclarativeTest.class.getResource("/multiple-versions.yml").toURI()));
+        command.setDeclarationFile(Paths.get(ManagerDeclarativeTest.class.getResource("/multiple-versions.yml").toURI()));
         command.applyDeclaration();
     }
 }

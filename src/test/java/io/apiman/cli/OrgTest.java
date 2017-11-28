@@ -16,9 +16,10 @@
 
 package io.apiman.cli;
 
-import io.apiman.cli.util.AuthUtil;
 import io.apiman.cli.common.BaseTest;
 import io.apiman.cli.common.IntegrationTest;
+import io.apiman.cli.util.AuthUtil;
+
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -38,7 +39,8 @@ public class OrgTest extends BaseTest {
 
     @Test
     public void test2_fetch() {
-        Cli.main("org", "show",
+        Cli.main("manager",
+                "org", "show",
                 "--debug",
                 "--server", getApimanUrl(),
                 "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,

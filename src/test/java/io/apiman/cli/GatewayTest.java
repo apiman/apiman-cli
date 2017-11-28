@@ -16,9 +16,10 @@
 
 package io.apiman.cli;
 
-import io.apiman.cli.util.AuthUtil;
 import io.apiman.cli.common.BaseTest;
 import io.apiman.cli.common.IntegrationTest;
+import io.apiman.cli.util.AuthUtil;
+
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -33,7 +34,8 @@ public class GatewayTest extends BaseTest {
 
     @Test
     public void test1_test() {
-        Cli.main("gateway", "test",
+        Cli.main("manager",
+                "gateway", "test",
                 "--debug",
                 "--server", getApimanUrl(),
                 "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,
@@ -46,7 +48,8 @@ public class GatewayTest extends BaseTest {
 
     @Test
     public void test2_create() {
-        Cli.main("gateway", "create",
+        Cli.main("manager",
+                "gateway", "create",
                 "--debug",
                 "--server", getApimanUrl(),
                 "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,
@@ -61,7 +64,8 @@ public class GatewayTest extends BaseTest {
 
     @Test
     public void test3_fetch() {
-        Cli.main("gateway", "show",
+        Cli.main("manager",
+                "gateway", "show",
                 "--debug",
                 "--server", getApimanUrl(),
                 "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,
@@ -71,7 +75,8 @@ public class GatewayTest extends BaseTest {
 
     @Test
     public void test4_list() {
-        Cli.main("gateway", "list",
+        Cli.main("manager",
+                "gateway", "list",
                 "--debug",
                 "--server", getApimanUrl(),
                 "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,

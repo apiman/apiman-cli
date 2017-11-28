@@ -16,9 +16,10 @@
 
 package io.apiman.cli;
 
-import io.apiman.cli.util.AuthUtil;
 import io.apiman.cli.common.BaseTest;
 import io.apiman.cli.common.IntegrationTest;
+import io.apiman.cli.util.AuthUtil;
+
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -38,7 +39,8 @@ public class ApiTest extends BaseTest {
         createOrg(ORG_NAME);
 
         // test
-        Cli.main("api", "create",
+        Cli.main("manager",
+                "api", "create",
                 "--debug",
                 "--server", getApimanUrl(),
                 "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,
@@ -55,7 +57,8 @@ public class ApiTest extends BaseTest {
      */
     @Test
     public void test2_addPolicy() {
-        Cli.main("api", "policy", "add",
+        Cli.main("manager",
+                "api", "policy", "add",
                 "--debug",
                 "--server", getApimanUrl(),
                 "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,
@@ -69,7 +72,8 @@ public class ApiTest extends BaseTest {
 
     @Test
     public void test3_publish() {
-        Cli.main("api", "publish",
+        Cli.main("manager",
+                "api", "publish",
                 "--debug",
                 "--server", getApimanUrl(),
                 "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,
@@ -81,7 +85,8 @@ public class ApiTest extends BaseTest {
 
     @Test
     public void test4_list() {
-        Cli.main("api", "list",
+        Cli.main("manager",
+                "api", "list",
                 "--debug",
                 "--server", getApimanUrl(),
                 "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,

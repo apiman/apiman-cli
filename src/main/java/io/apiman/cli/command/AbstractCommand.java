@@ -16,24 +16,28 @@
 
 package io.apiman.cli.command;
 
-import com.google.common.collect.Maps;
+import static io.apiman.cli.util.AuthUtil.DEFAULT_SERVER_PASSWORD;
+import static io.apiman.cli.util.AuthUtil.DEFAULT_SERVER_USERNAME;
+import static io.apiman.cli.util.LogUtil.LINE_SEPARATOR;
+
 import io.apiman.cli.core.common.model.ManagementApiVersion;
 import io.apiman.cli.exception.CommandException;
 import io.apiman.cli.exception.ExitWithCodeException;
 import io.apiman.cli.management.ManagementApiUtil;
 import io.apiman.cli.util.LogUtil;
+
+import java.util.List;
+import java.util.Map;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 
-import java.util.List;
-import java.util.Map;
-
-import static io.apiman.cli.util.AuthUtil.DEFAULT_SERVER_PASSWORD;
-import static io.apiman.cli.util.AuthUtil.DEFAULT_SERVER_USERNAME;
-import static io.apiman.cli.util.LogUtil.LINE_SEPARATOR;
+import com.google.common.collect.Maps;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 /**
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
@@ -71,11 +75,13 @@ public abstract class AbstractCommand implements Command {
      * The name of this command.
      */
     private String commandName;
+    private Injector injector;
 
     public AbstractCommand() {
         // get child commands
         commandMap = Maps.newHashMap();
         populateCommands(commandMap);
+        injector = Guice.createInjector();
     }
 
     /**
@@ -98,6 +104,7 @@ public abstract class AbstractCommand implements Command {
     /**
      * @param commandName the name of this command
      */
+    @Override
     public void setCommandName(String commandName) {
         this.commandName = commandName;
     }
@@ -105,6 +112,7 @@ public abstract class AbstractCommand implements Command {
     /**
      * @return the name of this command
      */
+    @Override
     public String getCommandName() {
         return commandName;
     }
@@ -260,12 +268,12 @@ public abstract class AbstractCommand implements Command {
         final Class<? extends Command> commandClass = commandMap.get(commandName);
         if (null != commandClass) {
             try {
-                final Command command = commandClass.newInstance();
+                final Command command = injector.getInstance(commandClass);
                 command.setParent(this);
                 command.setCommandName(commandName);
 
                 return command;
-            } catch (InstantiationException | IllegalAccessException e) {
+            } catch (Exception e) {
                 throw new CommandException(String.format("Error getting child command for args: %s", args), e);
             }
         }
@@ -314,5 +322,9 @@ public abstract class AbstractCommand implements Command {
 
     public void setLogDebug(boolean logDebug) {
         this.logDebug = logDebug;
+    }
+
+    public boolean getLogDebug() {
+        return logDebug;
     }
 }
