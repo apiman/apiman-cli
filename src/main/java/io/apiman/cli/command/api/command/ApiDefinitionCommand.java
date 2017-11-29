@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package io.apiman.cli.core.api.command;
+package io.apiman.cli.command.api.command;
 
-import com.google.common.collect.Lists;
 import com.google.common.io.CharStreams;
-import io.apiman.cli.core.api.ApiMixin;
-import io.apiman.cli.core.api.VersionAgnosticApi;
-import io.apiman.cli.core.api.model.*;
+import io.apiman.cli.command.api.ApiMixin;
+import io.apiman.cli.command.api.VersionAgnosticApi;
 import io.apiman.cli.exception.CommandException;
 import io.apiman.cli.exception.ExitWithCodeException;
 import io.apiman.cli.management.ManagementApiUtil;
+import io.apiman.cli.service.ManagementApiService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import retrofit.mime.TypedString;
 
+import javax.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -59,6 +59,12 @@ public class ApiDefinitionCommand extends AbstractApiCommand implements ApiMixin
 
     @Option(name = "--definitionType", aliases = {"-t"}, usage = "Endpoint", required = true)
     private String definitionType = "application/json";
+
+    @Inject
+    public ApiDefinitionCommand(ManagementApiService managementApiService) {
+        super(managementApiService);
+    }
+
 
     @Override
     protected String getCommandDescription() {
