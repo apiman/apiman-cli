@@ -15,7 +15,7 @@
  */
 
 group 'io.apiman.cli'
-version '0.2.4-SNAPSHOT'
+version '0.2.4'
 
 buildscript {
     repositories {
@@ -25,12 +25,12 @@ buildscript {
         }
     }
     dependencies {
-        classpath "com.github.jengelman.gradle.plugins:shadow:1.2.3"
+        classpath "com.github.jengelman.gradle.plugins:shadow:2.0.1"
     }
 }
 
 apply plugin: 'java'
-apply plugin: "com.github.johnrengelman.shadow"
+apply plugin: 'com.github.johnrengelman.shadow'
 
 repositories {
     mavenCentral()
@@ -103,4 +103,8 @@ test {
 
     systemProperty "apiman.host", project.properties.get("apiman.host")
     systemProperty "apiman.port", project.properties.get("apiman.port")
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = "4.3.1"
 }
