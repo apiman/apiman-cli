@@ -14,24 +14,29 @@
  * limitations under the License.
  */
 
-package io.apiman.cli.service;
+package io.apiman.cli.managerapi.service;
 
 import com.google.common.io.CharStreams;
-import io.apiman.cli.command.api.VersionAgnosticApi;
-import io.apiman.cli.command.api.model.*;
-import io.apiman.cli.command.common.model.ManagementApiVersion;
+import io.apiman.cli.command.api.model.Api;
+import io.apiman.cli.command.api.model.ApiConfig;
+import io.apiman.cli.command.api.model.ApiPolicy;
+import io.apiman.cli.command.api.model.ApiVersion;
+import io.apiman.cli.command.api.model.EndpointProperties;
 import io.apiman.cli.command.declarative.model.DeclarativeApi;
 import io.apiman.cli.command.declarative.model.DeclarativeGateway;
 import io.apiman.cli.command.declarative.model.DeclarativeOrg;
-import io.apiman.cli.command.gateway.GatewayApi;
 import io.apiman.cli.command.gateway.model.Gateway;
-import io.apiman.cli.command.org.OrgApi;
 import io.apiman.cli.command.org.model.Org;
-import io.apiman.cli.management.ManagementApiUtil;
+import io.apiman.cli.managerapi.command.api.VersionAgnosticApi;
+import io.apiman.cli.managerapi.command.common.model.ManagementApiVersion;
+import io.apiman.cli.managerapi.command.gateway.GatewayApi;
+import io.apiman.cli.managerapi.command.org.OrgApi;
+import io.apiman.cli.managerapi.management.ManagementApiUtil;
 import io.apiman.cli.util.MappingUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import retrofit.mime.TypedString;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -40,15 +45,10 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import retrofit.mime.TypedString;
-
-import javax.inject.Inject;
 import java.util.List;
 
-import static io.apiman.cli.command.common.model.ManagementApiVersion.v11x;
-import static io.apiman.cli.command.common.model.ManagementApiVersion.v12x;
+import static io.apiman.cli.managerapi.command.common.model.ManagementApiVersion.v11x;
+import static io.apiman.cli.managerapi.command.common.model.ManagementApiVersion.v12x;
 import static io.apiman.cli.util.Functions.of;
 import static java.util.Optional.ofNullable;
 
