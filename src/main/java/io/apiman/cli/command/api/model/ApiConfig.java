@@ -56,6 +56,22 @@ public class ApiConfig {
         this.gateways = gateways;
     }
 
+    public List<ApiGateway> getGateways() {
+        return gateways;
+    }
+
+    public String getEndpoint() {
+        return endpoint;
+    }
+
+    public String getEndpointType() {
+        return endpointType;
+    }
+
+    public EndpointProperties getEndpointProperties() {
+        return endpointProperties;
+    }
+
     public void setGateways(ArrayList<ApiGateway> gateways) {
         this.gateways = gateways;
     }

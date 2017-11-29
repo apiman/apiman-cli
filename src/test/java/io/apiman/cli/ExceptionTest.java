@@ -34,10 +34,11 @@ public class ExceptionTest {
     public final ExpectedSystemExit exit = ExpectedSystemExit.none();
 
     @Test
-    public void testExitWithCode1OnException() {
-        exit.expectSystemExitWithStatus(1);
+    public void testExitWithCode255OnException() {
+        exit.expectSystemExitWithStatus(255);
 
-        Cli.main("gateway", "list",
+        Cli.main("manager",
+                "gateway", "list",
                 "--debug",
                 "--server", INVALID_URL,
                 "--serverUsername", AuthUtil.DEFAULT_SERVER_USERNAME,

@@ -16,8 +16,8 @@
 
 package io.apiman.cli.command.core;
 
+import com.beust.jcommander.JCommander;
 import io.apiman.cli.exception.CommandException;
-import org.kohsuke.args4j.CmdLineParser;
 
 import java.util.List;
 
@@ -25,23 +25,27 @@ import java.util.List;
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
 public interface Command {
+
+    /**
+     * If the command is a child, the parent.
+     *
+     * @param command the parent command.
+     */
     void setParent(Command command);
 
+    /**
+     * Name of the command
+     *
+     * @param command the command name
+     */
     void setCommandName(String command);
-
-    String getCommandName();
 
     /**
      * Parse the given arguments and perform a command.
      *
      * @param args the arguments to parse
      */
-    void run(List<String> args);
-
-    /**
-     * @return a concatenation of the parent's command name and this command name
-     */
-    String getCommandChain();
+    void run(List<String> args, JCommander jcommander);
 
     /**
      * Default implementation will print usage and exit with an error code.
@@ -49,5 +53,13 @@ public interface Command {
      *
      * @param parser the command line parser
      */
-    void performAction(CmdLineParser parser) throws CommandException;
+    void performAction(JCommander parser) throws CommandException;
+
+    /**
+     * Build subcommands and instantiate any children.
+     *
+     * @param jcommander the jcommander instance
+     */
+    void build(JCommander jcommander);
+
 }
