@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+### Added
+- ...
+
 ## [0.2.4] - 2017-11-29
 ### Added
 - Adds the ability to wait for the server to start before attempting to run commands.
