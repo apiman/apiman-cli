@@ -3,9 +3,19 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [0.3.0] - 2018-02-16
 ### Added
-- ...
+- Allow gateway to be driven directly using declarations (Marc Savy)
+- Adds the ability to specify a definition for an API (Raleigh Pickard)
+- Adds the ability to wait for the server to start before attempting to run commands (Pete Cornish)
+- Improves documentation (Pete Cornish)
+
+### Fixed
+- Fixes #14. Fetches added plugin and uses generated ID in fetch test (Pete Cornish)
+
+### Changed
+- Reorganises command package structure (Pete Cornish)
+- Factors out declarative application logic into separate services (Pete Cornish)
 
 ## [0.2.4] - 2017-11-29
 ### Added
