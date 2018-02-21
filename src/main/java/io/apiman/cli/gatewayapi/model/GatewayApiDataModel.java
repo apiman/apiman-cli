@@ -186,7 +186,7 @@ public class GatewayApiDataModel {
     }
 
     private List<Policy> buildPolicyChain(List<DeclarativePolicy> policies) {
-        return policies.stream()
+        return ofNullable(policies).orElse(Collections.emptyList()).stream()
                 .map(declarativePolicy -> {
                     Policy policy = new Policy();
                     policy.setPolicyImpl(determinePolicyImpl(declarativePolicy));
