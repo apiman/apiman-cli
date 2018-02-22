@@ -17,6 +17,7 @@
 package io.apiman.cli.common;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import io.apiman.cli.util.AuthUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,7 +32,6 @@ import org.rnorth.ducttape.ratelimits.RateLimiterBuilder;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -78,7 +78,7 @@ public class WaitForHttp implements TestRule {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
-                final List<Throwable> errors = new ArrayList<>();
+                final List<Throwable> errors = Lists.newArrayList();
 
                 starting();
 

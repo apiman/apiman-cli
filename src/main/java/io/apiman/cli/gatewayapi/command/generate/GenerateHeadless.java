@@ -18,6 +18,7 @@ package io.apiman.cli.gatewayapi.command.generate;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import io.apiman.cli.command.declarative.command.AbstractApplyCommand;
 import io.apiman.cli.command.declarative.model.BaseDeclaration;
@@ -37,7 +38,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -85,23 +88,33 @@ public class GenerateHeadless extends AbstractApplyCommand implements GatewayHel
     public void setJsonWriter(JsonWriter jsonWriter) { this.jsonWriter = jsonWriter; }
 
     @Override
-    protected void applyDeclaration(BaseDeclaration declaration) {
-        GatewayApiDataModel dataModel = new GatewayApiDataModel(declaration, policyResolver);
+    protected void applyDeclarations(List<BaseDeclaration> declarations) {
+        final Map<DeclarativeGateway, List<Api>> gatewaysMap = new HashMap<>();
 
-        if (dataModel.getGatewaysMap().size() > 1) {
+        declarations.forEach(declaration -> {
+            final GatewayApiDataModel dataModel = new GatewayApiDataModel(declaration, policyResolver);
+
+            dataModel.getGatewayToApisMap().forEach((gateway, apis) -> {
+                final List<Api> gatewayApis = gatewaysMap.getOrDefault(gateway, Lists.newArrayList());
+                gatewayApis.addAll(apis);
+                gatewaysMap.put(gateway, gatewayApis);
+            });
+        });
+
+        if (gatewaysMap.keySet().size() > 1) {
             LOGGER.info("{} gateway targets exist in declaration. " +
-                    "Multiple configurations will be generated as a result.", dataModel.getGatewaysMap().size());
+                    "Multiple configurations will be generated as a result.", gatewaysMap.keySet().size());
         }
 
-        LOGGER.debug("Generating {} JSON configuration(s)", dataModel.getGatewaysMap().size());
-        generateJsonConfig(dataModel);
+        LOGGER.debug("Generating {} JSON configuration(s)", gatewaysMap.keySet().size());
+        generateJsonConfig(gatewaysMap);
     }
 
-    private void generateJsonConfig(GatewayApiDataModel dataModel) {
-        boolean directorySpecified = (outputFiles.size() == 1 && Files.isDirectory(outputFiles.get(0)));
+    private void generateJsonConfig(Map<DeclarativeGateway, List<Api>> gatewaysMap) {
+        final boolean directorySpecified = (outputFiles.size() == 1 && Files.isDirectory(outputFiles.get(0)));
 
-        dataModel.getGatewayToApisMap().forEach((gateway, apis) -> {
-            HeadlessConfigBean bean = new HeadlessConfigBean(apis, Collections.emptyList()); // TODO look up clients for the gateway
+        gatewaysMap.forEach((gateway, apis) -> {
+            final HeadlessConfigBean bean = new HeadlessConfigBean(apis, Collections.emptyList()); // TODO look up clients for the gateway
 
             if (useStdout || outputFiles.isEmpty()) {
                 System.out.println(bean.toJson());

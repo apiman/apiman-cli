@@ -5,7 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
-- ...
+- Adds support for applying multiple API declarations at once.
 
 ## [0.3.0] - 2018-03-08
 ### Added

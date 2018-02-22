@@ -57,12 +57,14 @@ public class GatewayApplyCommand extends AbstractApplyCommand
     }
 
     @Override
-    protected void applyDeclaration(BaseDeclaration declaration) {
-        GatewayApiDataModel dataModel = new GatewayApiDataModel(declaration, policyResolver);
-        // Do gateway status checks: Tests whether gateways exist and advertise as up/available.
-        doGatewayStatusChecks(dataModel);
-        // Finally, publish.
-        publishAll(dataModel);
+    protected void applyDeclarations(List<BaseDeclaration> declarations) {
+        declarations.forEach(declaration -> {
+            GatewayApiDataModel dataModel = new GatewayApiDataModel(declaration, policyResolver);
+            // Do gateway status checks: Tests whether gateways exist and advertise as up/available.
+            doGatewayStatusChecks(dataModel);
+            // Finally, publish.
+            publishAll(dataModel);
+        });
     }
 
     private void doGatewayStatusChecks(GatewayApiDataModel dataModel) {

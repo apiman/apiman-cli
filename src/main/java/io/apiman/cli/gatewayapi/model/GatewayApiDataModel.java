@@ -15,6 +15,7 @@
  */
 package io.apiman.cli.gatewayapi.model;
 
+import com.google.common.collect.Lists;
 import io.apiman.cli.command.api.model.ApiGateway;
 import io.apiman.cli.command.api.model.EndpointProperties;
 import io.apiman.cli.command.declarative.model.BaseDeclaration;
@@ -35,7 +36,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.AbstractMap;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -115,7 +115,7 @@ public class GatewayApiDataModel {
             Api addApi = entry.getKey();
             List<DeclarativeGateway> gateways = entry.getValue();
             for (DeclarativeGateway gateway : gateways) {
-                List<Api> apiList = outMap.getOrDefault(gateway, new ArrayList<>());
+                List<Api> apiList = outMap.getOrDefault(gateway, Lists.newArrayList());
                 apiList.add(addApi);
                 outMap.put(gateway, apiList);
             }
