@@ -105,7 +105,7 @@ public class GatewayApiDataModel {
         LOGGER.debug("APIs to Gateway map: {}", apiToGatewaysMap);
 
         gatewayToApisMap = buildApisOnGatewaysMap();
-        LOGGER.debug("Gateways to APIs map: {}", apiToGatewaysMap);
+        LOGGER.debug("Gateways to APIs map: {}", gatewayToApisMap);
     }
 
     private Map<DeclarativeGateway, List<Api>> buildApisOnGatewaysMap() {
