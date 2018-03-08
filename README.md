@@ -282,6 +282,9 @@ Typically, you will administer the Manager, then publish your changes to the Gat
 
 ### Apply declaration
 
+A 'declaration' is a configuration file specifying Gateways, APIs and policies. See the _Declarative API management_
+section for more information.
+
     apiman manager apply [args...]
     
      --declarationFile (-f) PATH : Declaration file
@@ -301,20 +304,27 @@ The following commands are available, when administering the Gateway directly:
     --debug: Log at DEBUG level
     --help, -h: Display usage only
 
+## Tips and tricks
+
+When working with declaration files, in any of the following scenarios:
+
+* declarative gateway
+* declarative manager
+* generate headless gateway configuration 
+
+...the commands support repetition of the `--declarationFile` argument.
+
+This means you can do things like:
+
+    ./apiman manager apply --declarationFile=/path/to/file1.yml --declarationFile=/path/to/file2.yml
+
+...and the declarations will be merged in the order the files are provided.
+
 # Recent changes and Roadmap
 
 For recent changes see the [Changelog](CHANGELOG.md).
 
-## Roadmap
-
-* Support reading management API configuration from environment variables
-* Better support for non-public APIs
-* Support deletion
-* Support for retiring published APIs
-* Option to skip or fail for existing items in declarative mode
-* Docs - split examples into separate file
-* Docs - split detailed API usage into separate file
-* Docs - simplify README examples
+See the [Roadmap](ROADMAP.md) document for future plans. 
 
 # Building
 
