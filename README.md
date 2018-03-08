@@ -10,7 +10,7 @@ Let's assume you have an _apiman_ server running on http://localhost:8080
 
 Step 1: Create a new API:
 
-    $ ./apiman api create \
+    $ ./apiman manager api create \
             --name example \
             --endpoint http://example.com \
             --initialVersion 1.0 \
@@ -19,7 +19,7 @@ Step 1: Create a new API:
 
 Step 2: Publish it:
 
-    $ ./apiman api publish \
+    $ ./apiman manager api publish \
             --name example \
             --version 1.0 \
             --orgName test
@@ -32,7 +32,7 @@ You can also manage your _apiman_ server.
     
 Add a gateway:
 
-    $ ./apiman gateway create \
+    $ ./apiman manager gateway create \
             --name test-gw \
             --endpoint http://localhost:1234 \
             --username apimanager \
@@ -41,7 +41,7 @@ Add a gateway:
 
 Add a plugin:
 
-    $ ./apiman plugin add \
+    $ ./apiman manager plugin add \
             --groupId io.apiman.plugins \
             --artifactId apiman-plugins-test-policy \
             --version 1.2.4.Final
@@ -85,7 +85,7 @@ Here's a simple YAML file (you can use JSON if you want):
 
 ### Step 2: Apply the environment declaration
 
-    $ ./apiman apply -f simple.yml
+    $ ./apiman manager apply -f simple.yml
     INFO Loaded declaration: examples/declarative/simple.yml
     INFO Adding org: test
     INFO Adding API: example
@@ -113,11 +113,11 @@ You can also use placeholders in your declaration files. This helps you reuse de
 
 ...then pass them in when you run the _apply_ command:
 
-    ./apiman apply -f simple.yml -P myApiEndpoint=http://example.com
+    ./apiman manager apply -f simple.yml -P myApiEndpoint=http://example.com
 
 Additionally, you can specify a properties files, containing key-value pairs, such as:
 
-    ./apiman apply -f simple.yml --propertiesFile /path/to/placeholder.properties
+    ./apiman manager apply -f simple.yml --propertiesFile /path/to/placeholder.properties
 
 ## Shared policies and properties
 
@@ -138,11 +138,17 @@ See the [shared-properties.yml](examples/declarative/shared-properties.yml) exam
 
 # Usage
 
-    apiman plugin [args...]
-    apiman org [args...]
-    apiman api [args...]
-    apiman gateway [args...]
-    apiman apply [args...]
+The CLI lets you control both the apiman Manager and apiman Gateway components.
+ 
+Typically, you will administer the Manager, then publish your changes to the Gateway (as per the UI flow).
+
+## Manager commands 
+
+    apiman manager plugin [args...]
+    apiman manager org [args...]
+    apiman manager api [args...]
+    apiman manager gateway [args...]
+    apiman manager apply [args...]
     
     --debug                    : Log at DEBUG level (default: false)
     --help (-h)                : Display usage only (default: false)
@@ -152,55 +158,38 @@ See the [shared-properties.yml](examples/declarative/shared-properties.yml) exam
                                  admin123!)
     --serverUsername (-su) VAL : Management API server username (default: apiman)
                       
-## Manage Organisations
+### Manage Organisations
    
-    apiman org show [args...]
-    apiman org create [args...]
+    apiman manager org show [args...]
+    apiman manager org create [args...]
     
-### Show Org
+#### Show Org
     
-    apiman org show [args...]
+    apiman manager org show [args...]
     
     --name (-n) VAL            : Name
 
-### Create Org
+#### Create Org
     
-    apiman org create [args...]
+    apiman manager org create [args...]
     
     --description (-d) VAL     : Description
     --name (-n) VAL            : Name
 
-## Manage Gateways
+### Manage Gateways
    
-    apiman gateway test [args...]
-    apiman gateway show [args...]
-    apiman gateway create [args...]
-    apiman gateway list [args...]
+    apiman manager gateway test [args...]
+    apiman manager gateway show [args...]
+    apiman manager gateway create [args...]
+    apiman manager gateway list [args...]
 
-### List Gateways
+#### List Gateways
     
-    apiman gateway list [args...]
+    apiman manager gateway list [args...]
     
-### Create Gateway
+#### Create Gateway
     
-    apiman gateway create [args...]
-    
-    --description (-d) VAL     : Description
-    --endpoint (-e) VAL        : Endpoint
-    --name (-n) VAL            : Name
-    --password (-p) VAL        : Password
-    --type (-t) [REST | SOAP]  : type (default: REST)
-    --username (-u) VAL        : Username
-
-### Show Gateway
-    
-    apiman gateway show [args...]
-    
-    --name (-n) VAL            : Name
-
-### Test Gateway
-    
-    apiman gateway test [args...]
+    apiman manager gateway create [args...]
     
     --description (-d) VAL     : Description
     --endpoint (-e) VAL        : Endpoint
@@ -209,23 +198,40 @@ See the [shared-properties.yml](examples/declarative/shared-properties.yml) exam
     --type (-t) [REST | SOAP]  : type (default: REST)
     --username (-u) VAL        : Username
 
-## Manage Plugins
-   
-    apiman plugin show [args...]
-    apiman plugin add [args...]
-    apiman plugin list [args...]
+#### Show Gateway
+    
+    apiman manager gateway show [args...]
+    
+    --name (-n) VAL            : Name
 
-### Show Plugin
+#### Test Gateway
+    
+    apiman manager gateway test [args...]
+    
+    --description (-d) VAL     : Description
+    --endpoint (-e) VAL        : Endpoint
+    --name (-n) VAL            : Name
+    --password (-p) VAL        : Password
+    --type (-t) [REST | SOAP]  : type (default: REST)
+    --username (-u) VAL        : Username
+
+### Manage Plugins
    
-    apiman plugin show [args...]
+    apiman manager plugin show [args...]
+    apiman manager plugin add [args...]
+    apiman manager plugin list [args...]
+
+#### Show Plugin
+   
+    apiman manager plugin show [args...]
    
     --debug                    : Log at DEBUG level (default: false)
     --help (-h)                : Display usage only (default: false)
     --id (-i) VAL              : Plugin ID
 
-### Add Plugin
+#### Add Plugin
     
-    apiman plugin add [args...]
+    apiman manager plugin add [args...]
     
     --artifactId (-a) VAL      : Artifact ID
     --classifier (-c) VAL      : Classifier
@@ -234,17 +240,17 @@ See the [shared-properties.yml](examples/declarative/shared-properties.yml) exam
 
 ### List Plugins
     
-    apiman plugin list [args...]
+    apiman manager plugin list [args...]
       
-## Manage APIs
+### Manage APIs
    
-    apiman api create [args...]
-    apiman api list [args...]
-    apiman api publish [args...]
+    apiman manager api create [args...]
+    apiman manager api list [args...]
+    apiman manager api publish [args...]
 
-### Create API
+#### Create API
     
-    apiman api create [args...]
+    apiman manager api create [args...]
     
     --endpoint (-e) VAL                 : Endpoint
     --endpointType (-t) VAL             : Endpoint type (default: rest)
@@ -256,17 +262,17 @@ See the [shared-properties.yml](examples/declarative/shared-properties.yml) exam
     --serverVersion (-sv) [v11x | v12x] : Management API server version (default:
                                           v11x)
 
-### List APIs
+#### List APIs
     
-    apiman api list [args...]
+    apiman manager api list [args...]
     
     --orgName (-o) VAL                  : Organisation name
     --serverVersion (-sv) [v11x | v12x] : Management API server version (default:
                                           v11x)
 
-### Publish API
+#### Publish API
     
-    apiman api publish [args...]
+    apiman manager api publish [args...]
     
     --version (-v) VAL                  : API version
     --name (-n) VAL                     : API name
@@ -274,12 +280,26 @@ See the [shared-properties.yml](examples/declarative/shared-properties.yml) exam
     --serverVersion (-sv) [v11x | v12x] : Management API server version (default:
                                           v11x)
 
-## Apply declaration
+### Apply declaration
 
-    apiman apply [args...]
+    apiman manager apply [args...]
     
      --declarationFile (-f) PATH : Declaration file
      -P VAL                      : Set property (key=value)
+
+## Gateway commands
+
+The following commands are available, when administering the Gateway directly:
+    
+    apiman gateway generate: Generate configurations
+    apiman gateway apply: Apply Apiman Gateway declaration
+    apiman gateway org: List Organizations
+    apiman gateway api: Retire and list APIs
+    apiman gateway client: Retire and list Clients
+    apiman gateway status: View Gateway Status
+    
+    --debug: Log at DEBUG level
+    --help, -h: Display usage only
 
 # Recent changes and Roadmap
 
