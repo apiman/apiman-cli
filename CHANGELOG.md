@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+### Added
+- ...
+
 ## [0.3.0] - 2018-03-08
 ### Added
 - Allow gateway to be driven directly using declarations (Marc Savy). See _Changes_ section for details of changes to 
