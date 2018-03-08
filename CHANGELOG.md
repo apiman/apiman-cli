@@ -3,19 +3,22 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.3.0] - 2018-02-16
+## [0.3.0] - 2018-03-08
 ### Added
-- Allow gateway to be driven directly using declarations (Marc Savy)
-- Adds the ability to specify a definition for an API (Raleigh Pickard)
-- Adds the ability to wait for the server to start before attempting to run commands (Pete Cornish)
-- Improves documentation (Pete Cornish)
+- Allow gateway to be driven directly using declarations (Marc Savy). See _Changes_ section for details of changes to 
+  the command syntax.
+- Adds the ability to specify a definition for an API (Raleigh Pickard).
+- Adds the ability to wait for the server to start before attempting to run commands (Pete Cornish).
+- Improves documentation (Pete Cornish).
 
 ### Fixed
-- Fixes #14. Fetches added plugin and uses generated ID in fetch test (Pete Cornish)
+- Fixes #14. Fetches added plugin and uses generated ID in fetch test (Pete Cornish).
 
 ### Changed
-- Reorganises command package structure (Pete Cornish)
-- Factors out declarative application logic into separate services (Pete Cornish)
+- **Breaking change:** the syntax for administering the manager has changed. Where previously you would have written 
+  `./apiman [command]` you would now write `./apiman manager [command]`.
+- Factors out declarative application logic into separate services (Pete Cornish).
+- Reorganises command package structure (Pete Cornish).
 
 ## [0.2.4] - 2017-11-29
 ### Added
