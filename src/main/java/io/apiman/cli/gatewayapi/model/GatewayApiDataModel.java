@@ -44,6 +44,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -89,23 +90,25 @@ public class GatewayApiDataModel {
     }
 
     private void buildDataModel() {
-        orgId = declaration.getOrg().getName();
-        LOGGER.debug("Organization ID: {}", orgId);
-
-        gatewaysMap = declaration.getSystem().getGateways()
-                .stream()
-                .collect(Collectors.toMap(Gateway::getName, gw -> gw));
+        gatewaysMap = ofNullable(declaration.getSystem().getGateways()).orElse(emptyList())
+            .stream()
+            .collect(Collectors.toMap(Gateway::getName, gw -> gw));
 
         LOGGER.debug("Gateways map: {}", gatewaysMap);
 
-        pluginMap = buildPluginMap(declaration);
+        pluginMap = buildPluginMap(ofNullable(declaration.getSystem().getPlugins()).orElse(emptyList()));
         LOGGER.debug("Plugin map: {}", pluginMap);
 
-        apiToGatewaysMap = buildApisToGatewayMap(declaration);
-        LOGGER.debug("APIs to Gateway map: {}", apiToGatewaysMap);
+        ofNullable(declaration.getOrg()).ifPresent(org -> {
+            orgId = org.getName();
+            LOGGER.debug("Organization ID: {}", orgId);
 
-        gatewayToApisMap = buildApisOnGatewaysMap();
-        LOGGER.debug("Gateways to APIs map: {}", gatewayToApisMap);
+            apiToGatewaysMap = buildApisToGatewayMap(declaration);
+            LOGGER.debug("APIs to Gateway map: {}", apiToGatewaysMap);
+
+            gatewayToApisMap = buildApisOnGatewaysMap();
+            LOGGER.debug("Gateways to APIs map: {}", gatewayToApisMap);
+        });
     }
 
     private Map<DeclarativeGateway, List<Api>> buildApisOnGatewaysMap() {
@@ -123,10 +126,10 @@ public class GatewayApiDataModel {
         return outMap;
     }
 
-    private Map<String, Plugin> buildPluginMap(BaseDeclaration declaration) {
+    private Map<String, Plugin> buildPluginMap(List<Plugin> plugins) {
         Map<String, Plugin> pluginMap = new LinkedHashMap<>();
-        List<Plugin> pluginsList = ofNullable(declaration.getSystem().getPlugins())
-                .orElse(Collections.emptyList());
+        List<Plugin> pluginsList = ofNullable(plugins)
+                .orElse(emptyList());
 
         pluginsList
                 .forEach(plugin -> {
@@ -186,7 +189,7 @@ public class GatewayApiDataModel {
     }
 
     private List<Policy> buildPolicyChain(List<DeclarativePolicy> policies) {
-        return ofNullable(policies).orElse(Collections.emptyList()).stream()
+        return ofNullable(policies).orElse(emptyList()).stream()
                 .map(declarativePolicy -> {
                     Policy policy = new Policy();
                     policy.setPolicyImpl(determinePolicyImpl(declarativePolicy));
