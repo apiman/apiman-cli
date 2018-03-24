@@ -3,9 +3,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.3.1] - 2018-03-08
+## [0.3.1] - 2018-03-24
 ### Added
 - Adds support for applying multiple API declarations at once.
+- Improves null safety of headless configuration generator.
 
 ## [0.3.0] - 2018-03-08
 ### Added
