@@ -20,6 +20,7 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterDescription;
 import com.beust.jcommander.ParameterException;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Injector;
 import io.apiman.cli.exception.CommandException;
@@ -59,7 +60,7 @@ public abstract class AbstractCommand implements Command {
      * land into it, throwing a custom error message instead.
      */
     @Parameter(hidden=true)
-    private List<String> mainParameter = new ArrayList<>();
+    private List<String> mainParameter = Lists.newArrayList();
 
     /**
      * The parent Command (<code>null</code> if root).

@@ -64,10 +64,10 @@ public class GenerateHeadlessTest extends BaseTest {
     public void testGenerateConfig_withRealFileOutput()  throws Exception {
         String outputPath = "/tmp/plugin-and-builtin-policies_headless.json";
 
-        command.setDeclarationFile(getResourceAsPath("/gateway/generateHeadless/plugin-and-builtin-policies.yml"));
+        command.setDeclarationFiles(getResourceAsPathList("/gateway/generateHeadless/plugin-and-builtin-policies.yml"));
         command.outputFiles.add(Paths.get(outputPath));
         // Run
-        command.applyDeclaration();
+        command.applyDeclarations();
         // Verify file exists
         isTrue(Files.exists(Paths.get(outputPath)));
         // Read the output file back in, and compare with expected result
@@ -77,10 +77,10 @@ public class GenerateHeadlessTest extends BaseTest {
 
     @Test
     public void testGenerateConfig_writeToDirectory() throws Exception {
-        command.setDeclarationFile(getResourceAsPath("/gateway/generateHeadless/plugin-and-builtin-policies.yml"));
+        command.setDeclarationFiles(getResourceAsPathList("/gateway/generateHeadless/plugin-and-builtin-policies.yml"));
         command.outputFiles.add(Paths.get("/tmp"));
         // Run
-        command.applyDeclaration();
+        command.applyDeclarations();
         // Verify file exists
         isTrue(Files.exists(Paths.get("/tmp/test-gw.json"))); // Note generated name
         // Read the output file back in, and compare with expected result
@@ -92,10 +92,10 @@ public class GenerateHeadlessTest extends BaseTest {
     public void testGenerateConfig_withExplicitOutputFilename() throws Exception {
         command.setJsonWriter(mJsonWriter);
 
-        command.setDeclarationFile(getResourceAsPath("/gateway/generateHeadless/plugin-and-builtin-policies.yml"));
+        command.setDeclarationFiles(getResourceAsPathList("/gateway/generateHeadless/plugin-and-builtin-policies.yml"));
         command.outputFiles.add(Paths.get("/tmp/someOutputFile.json")); // Doesn't matter, we're stubbing this.
         // Run
-        command.applyDeclaration();
+        command.applyDeclarations();
         // Verify
         Api expectedApi = expectJson("/gateway/plugin-and-builtin-policies-expectation.json", Api.class);
         // We expect the above API to be written
@@ -107,10 +107,10 @@ public class GenerateHeadlessTest extends BaseTest {
     public void testGenerateConfig_withTransformedName() throws Exception {
         command.setJsonWriter(mJsonWriter);
 
-        command.setDeclarationFile(getResourceAsPath("/gateway/generateHeadless/transform-name.yml"));
+        command.setDeclarationFiles(getResourceAsPathList("/gateway/generateHeadless/transform-name.yml"));
         command.outputFiles.add(Paths.get("/tmp"));
         // Run
-        command.applyDeclaration();
+        command.applyDeclarations();
         // Verify
         HeadlessConfigBean expected = expectJson("/gateway/generateHeadless/transform-name.json", HeadlessConfigBean.class);
         // Space-type characters and forward slashes should be substituted with -
@@ -121,11 +121,11 @@ public class GenerateHeadlessTest extends BaseTest {
     public void testGenerateConfig_withMultipleGatewayConfigs_ExplicitName() throws Exception {
         command.setJsonWriter(mJsonWriter);
 
-        command.setDeclarationFile(getResourceAsPath("/gateway/generateHeadless/plugin-and-builtin-policies_multiple-gateways.yml"));
+        command.setDeclarationFiles(getResourceAsPathList("/gateway/generateHeadless/plugin-and-builtin-policies_multiple-gateways.yml"));
         command.outputFiles.add(Paths.get("/tmp/someOutputFile.json")); // Doesn't matter, we're stubbing this.
         command.outputFiles.add(Paths.get("/tmp/someOutputFile2.json")); // Doesn't matter, we're stubbing this.
         // Run
-        command.applyDeclaration();
+        command.applyDeclarations();
         // Verify it matches our reference configs.
         HeadlessConfigBean expectedConfig1 = expectJson("/gateway/generateHeadless/expected-multiple-gateways.json", HeadlessConfigBean.class);
         HeadlessConfigBean expectedConfig2 = expectJson("/gateway/generateHeadless/expected-multiple-gateways-2.json", HeadlessConfigBean.class);
@@ -138,10 +138,10 @@ public class GenerateHeadlessTest extends BaseTest {
     public void testGenerateConfig_withMultipleGatewayConfigs_GeneratedName() throws Exception {
         command.setJsonWriter(mJsonWriter);
 
-        command.setDeclarationFile(getResourceAsPath("/gateway/generateHeadless/plugin-and-builtin-policies_multiple-gateways.yml"));
+        command.setDeclarationFiles(getResourceAsPathList("/gateway/generateHeadless/plugin-and-builtin-policies_multiple-gateways.yml"));
         command.outputFiles.add(Paths.get("/tmp")); // Directory.
         // Run
-        command.applyDeclaration();
+        command.applyDeclarations();
         // Verify it matches our reference configs.
         HeadlessConfigBean expectedConfig1 = expectJson("/gateway/generateHeadless/expected-multiple-gateways.json", HeadlessConfigBean.class);
         HeadlessConfigBean expectedConfig2 = expectJson("/gateway/generateHeadless/expected-multiple-gateways-2.json", HeadlessConfigBean.class);

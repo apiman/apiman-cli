@@ -76,7 +76,7 @@ public class DeclarativeUtil {
             return declaration;
 
         } catch (IOException e) {
-            throw new DeclarativeException(e);
+            throw new DeclarativeException("Unable to load declaration: " + path, e);
         }
     }
 
@@ -90,7 +90,7 @@ public class DeclarativeUtil {
      * @throws IOException
      */
     private static BaseDeclaration loadDeclaration(ObjectMapper mapper, String unresolved,
-                                               Map<String, String> properties) throws IOException {
+                                                   Map<String, String> properties) throws IOException {
 
         final String resolved = BeanUtil.resolvePlaceholders(unresolved, properties);
         LOGGER.trace("Declaration file after resolving {} placeholders: {}", properties.size(), resolved);

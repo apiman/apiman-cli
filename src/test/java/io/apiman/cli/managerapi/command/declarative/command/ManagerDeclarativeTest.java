@@ -64,8 +64,8 @@ public class ManagerDeclarativeTest extends BaseTest {
      */
     @Test
     public void testApplyDeclaration_JustPlugins() throws Exception {
-        command.setDeclarationFile(Paths.get(ManagerDeclarativeTest.class.getResource("/simple-plugin.yml").toURI()));
-        command.applyDeclaration();
+        command.setDeclarationFiles(getResourceAsPathList("/simple-plugin.yml"));
+        command.applyDeclarations();
     }
 
     /**
@@ -75,8 +75,8 @@ public class ManagerDeclarativeTest extends BaseTest {
      */
     @Test
     public void testApplyDeclaration_Full() throws Exception {
-        command.setDeclarationFile(Paths.get(ManagerDeclarativeTest.class.getResource("/simple-no-plugin.yml").toURI()));
-        command.applyDeclaration();
+        command.setDeclarationFiles(getResourceAsPathList("/simple-no-plugin.yml"));
+        command.applyDeclarations();
     }
 
     /**
@@ -96,13 +96,13 @@ public class ManagerDeclarativeTest extends BaseTest {
                 "gw.endpoint=http://example.com"
         );
 
-        command.setDeclarationFile(Paths.get(ManagerDeclarativeTest.class.getResource("/simple-placeholders.yml").toURI()));
+        command.setDeclarationFiles(getResourceAsPathList("/simple-placeholders.yml"));
         command.setProperties(inlineProperties);
         command.setPropertiesFiles(Lists.newArrayList(
                 Paths.get(ManagerDeclarativeTest.class.getResource("/placeholder-test.properties").toURI()),
                 Paths.get(ManagerDeclarativeTest.class.getResource("/placeholder-test.xml").toURI())
         ));
-        command.applyDeclaration();
+        command.applyDeclarations();
     }
 
     /**
@@ -113,7 +113,7 @@ public class ManagerDeclarativeTest extends BaseTest {
      */
     @Test
     public void testApplyDeclaration_MultipleVersions() throws Exception {
-        command.setDeclarationFile(Paths.get(ManagerDeclarativeTest.class.getResource("/multiple-versions.yml").toURI()));
-        command.applyDeclaration();
+        command.setDeclarationFiles(getResourceAsPathList("/multiple-versions.yml"));
+        command.applyDeclarations();
     }
 }

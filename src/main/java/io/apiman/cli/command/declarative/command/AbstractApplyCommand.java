@@ -37,6 +37,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import static java.util.Optional.ofNullable;
 
@@ -51,7 +52,7 @@ public abstract class AbstractApplyCommand extends AbstractFinalCommand {
     protected static final String JSON_EXTENSION = ".json";
 
     @Parameter(names = {"--declarationFile", "-f"}, description = "Declaration file")
-    protected Path declarationFile;
+    protected List<Path> declarationFiles;
 
     @Parameter(names = "-P", description = "Set property (key=value)")
     protected List<String> properties;
@@ -70,16 +71,26 @@ public abstract class AbstractApplyCommand extends AbstractFinalCommand {
     @Override
     public void performFinalAction(JCommander parser) throws CommandException {
         try {
-            applyDeclaration(loadDeclaration());
+            applyDeclarations();
         } catch (Exception e) {
             throw new CommandException("Error applying declaration", e);
         }
     }
 
     /**
-     * Load and then apply the Declaration.
+     * @return load all the {@link #declarationFiles}
      */
-    private BaseDeclaration loadDeclaration() {
+    private List<BaseDeclaration> loadDeclarations() {
+        return declarationFiles.stream()
+                .map(this::loadDeclaration)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Load and then apply the Declaration.
+     * @param declarationFile
+     */
+    private BaseDeclaration loadDeclaration(Path declarationFile) {
         final Map<String, String> parsedProperties = BeanUtil.parseReplacements(properties);
 
         // check for properties file
@@ -106,11 +117,11 @@ public abstract class AbstractApplyCommand extends AbstractFinalCommand {
         return declaration;
     }
 
-    public void applyDeclaration() {
-        applyDeclaration(loadDeclaration());
+    public void applyDeclarations() {
+        applyDeclarations(loadDeclarations());
     }
 
-    protected abstract void applyDeclaration(BaseDeclaration declaration);
+    protected abstract void applyDeclarations(List<BaseDeclaration> declaration);
 
     protected BaseDeclaration loadDeclaration(Path declarationFile, Map<String, String> parsedProperties) {
       // parse declaration
@@ -122,8 +133,8 @@ public abstract class AbstractApplyCommand extends AbstractFinalCommand {
       }
     }
 
-    public void setDeclarationFile(Path declarationFile) {
-        this.declarationFile = declarationFile;
+    public void setDeclarationFiles(List<Path> declarationFiles) {
+        this.declarationFiles = declarationFiles;
     }
 
     public void setProperties(List<String> properties) {

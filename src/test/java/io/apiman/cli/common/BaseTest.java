@@ -17,6 +17,7 @@
 package io.apiman.cli.common;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.jayway.restassured.RestAssured;
 import com.google.common.io.BaseEncoding;
 import io.apiman.cli.Cli;
@@ -28,11 +29,12 @@ import org.junit.ClassRule;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 import static io.apiman.cli.util.Functions.not;
 import static java.util.Optional.ofNullable;
@@ -43,11 +45,6 @@ import static java.util.Optional.ofNullable;
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
 public class BaseTest {
-    /**
-     * Basic auth header.
-     */
-    protected static final String HEADER_AUTHORIZATION = "Authorization";
-
     /**
      * Management API username.
      */
@@ -112,18 +109,24 @@ public class BaseTest {
     }
 
     protected <T> T expectJson(String resource, Class<T> klazz) throws URISyntaxException, MalformedURLException {
-        return MappingUtil.readJsonValue(getResourceAsURL(resource), klazz);
+        return MappingUtil.readJsonValue(getResourceAsURI(resource).toURL(), klazz);
     }
 
-    protected URL getResourceAsURL(String resource) throws URISyntaxException, MalformedURLException {
-        return BaseTest.class.getResource(resource).toURI().toURL();
+    protected URI getResourceAsURI(String resource) throws URISyntaxException {
+        return BaseTest.class.getResource(resource).toURI();
     }
 
-    protected Path getResourceAsPath(String resource) throws URISyntaxException, MalformedURLException {
-        return Paths.get(getResourceAsURL(resource).toURI());
+    protected Path getResourceAsPath(String resource) throws URISyntaxException {
+        return Paths.get(getResourceAsURI(resource));
+    }
+
+    protected List<Path> getResourceAsPathList(String resource) throws URISyntaxException {
+        final List<Path> paths = Lists.newArrayList();
+        paths.add(getResourceAsPath(resource));
+        return paths;
     }
 
     protected String getResourceAsString(String resource) throws URISyntaxException, IOException {
-        return new String(Files.readAllBytes(Paths.get(getResourceAsURL(resource).toURI())));
+        return new String(Files.readAllBytes(Paths.get(getResourceAsURI(resource))));
     }
 }

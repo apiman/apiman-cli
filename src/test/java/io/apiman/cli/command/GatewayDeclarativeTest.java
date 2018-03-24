@@ -63,10 +63,10 @@ public class GatewayDeclarativeTest extends BaseTest {
 
     @Test
     public void testApplyDeclaration_PluginAndBuiltInPolicies() throws Exception {
-        command.setDeclarationFile(getResourceAsPath("/gateway/plugin-and-builtin-policies.yml"));
+        command.setDeclarationFiles(getResourceAsPathList("/gateway/plugin-and-builtin-policies.yml"));
         Api expected = expectJson("/gateway/plugin-and-builtin-policies-expectation.json", Api.class);
         // Run
-        command.applyDeclaration();
+        command.applyDeclarations();
         // Verify
         verify(mGatewayApi).publishApi(Mockito.argThat(api -> EqualsBuilder.reflectionEquals(api, expected)));
     }
@@ -81,11 +81,11 @@ public class GatewayDeclarativeTest extends BaseTest {
      */
     @Test
     public void testApplyDeclaration_IgnoreUnusedFields() throws Exception {
-        command.setDeclarationFile(getResourceAsPath("/multiple-versions.yml"));
+        command.setDeclarationFiles(getResourceAsPathList("/multiple-versions.yml"));
         Api expected1 = expectJson("/gateway/multiple-versions-expectation-1.json", Api.class);
         Api expected2 = expectJson("/gateway/multiple-versions-expectation-2.json", Api.class);
         // Run
-        command.applyDeclaration();
+        command.applyDeclarations();
         // Verify
         verify(mGatewayApi).publishApi(Mockito.argThat(api -> EqualsBuilder.reflectionEquals(api, expected1)));
         verify(mGatewayApi).publishApi(Mockito.argThat(api -> EqualsBuilder.reflectionEquals(api, expected2)));
@@ -99,11 +99,11 @@ public class GatewayDeclarativeTest extends BaseTest {
      */
     @Test
     public void testApplyDeclaration_SharedPolicies() throws Exception {
-        command.setDeclarationFile(getResourceAsPath("/shared-policies.yml"));
+        command.setDeclarationFiles(getResourceAsPathList("/shared-policies.yml"));
         Api expected1 = expectJson("/gateway/shared-policies-expectation-1.json", Api.class);
         Api expected2 = expectJson("/gateway/shared-policies-expectation-2.json", Api.class);
         // Run
-        command.applyDeclaration();
+        command.applyDeclarations();
         // Verify
         verify(mGatewayApi).publishApi(Mockito.argThat(api -> EqualsBuilder.reflectionEquals(api, expected1)));
         verify(mGatewayApi).publishApi(Mockito.argThat(api -> EqualsBuilder.reflectionEquals(api, expected2)));

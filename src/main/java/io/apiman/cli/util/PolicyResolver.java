@@ -16,6 +16,7 @@
 
 package io.apiman.cli.util;
 
+import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import com.google.common.io.Resources;
 import io.apiman.cli.exception.CommandException;
@@ -28,7 +29,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -55,7 +55,7 @@ public final class PolicyResolver extends AbstractPluginRegistry {
     private void buildInbuiltPolicyMap() {
         URL policyDefResource = Resources.getResource("data/all-policyDefs.json");
         @SuppressWarnings("unchecked")
-        List<PolicyDefinitionBean> inbuilts = new ArrayList<>(MappingUtil.readJsonValue(policyDefResource, List.class, PolicyDefinitionBean.class));
+        List<PolicyDefinitionBean> inbuilts = Lists.newArrayList(MappingUtil.readJsonValue(policyDefResource, List.class, PolicyDefinitionBean.class));
 
         for (PolicyDefinitionBean policyDef : inbuilts) {
             inbuiltPolicyMap.put(policyDef.getId().toLowerCase(), policyDef); // TODO

@@ -31,6 +31,8 @@ import org.apache.logging.log4j.Logger;
 
 import javax.inject.Inject;
 
+import java.util.List;
+
 import static java.util.Optional.ofNullable;
 
 @Parameters(commandDescription = "Apply Apiman Manager declaration")
@@ -58,27 +60,29 @@ public class ManagerApplyCommand extends AbstractApplyCommand {
     /**
      * Apply the given Declaration.
      *
-     * @param declaration the Declaration to apply.
+     * @param declarations the Declarations to apply.
      */
     @Override
-    protected void applyDeclaration(BaseDeclaration declaration) {
-        LOGGER.debug("Applying declaration");
+    protected void applyDeclarations(List<BaseDeclaration> declarations) {
+        declarations.forEach(declaration -> {
+            LOGGER.debug("Applying declaration");
 
-        // add gateways
-        ofNullable(declaration.getSystem().getGateways()).ifPresent(declarativeService::applyGateways);
+            // add gateways
+            ofNullable(declaration.getSystem().getGateways()).ifPresent(declarativeService::applyGateways);
 
-        // add plugins
-        ofNullable(declaration.getSystem().getPlugins()).ifPresent(pluginService::addPlugins);
+            // add plugins
+            ofNullable(declaration.getSystem().getPlugins()).ifPresent(pluginService::addPlugins);
 
-        // add org and APIs
-        ofNullable(declaration.getOrg()).ifPresent(org -> {
-            declarativeService.applyOrg(org);
+            // add org and APIs
+            ofNullable(declaration.getOrg()).ifPresent(org -> {
+                declarativeService.applyOrg(org);
 
-            ofNullable(org.getApis()).ifPresent(apis ->
-                    declarativeService.applyApis(serverVersion, apis, org.getName()));
+                ofNullable(org.getApis()).ifPresent(apis ->
+                        declarativeService.applyApis(serverVersion, apis, org.getName()));
+            });
+
+            LOGGER.info("Applied declaration");
         });
-
-        LOGGER.info("Applied declaration");
     }
 
     public void setServerAddress(String serverAddress) {
