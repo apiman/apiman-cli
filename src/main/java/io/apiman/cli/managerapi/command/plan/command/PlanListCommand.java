@@ -47,7 +47,7 @@ public class PlanListCommand extends AbstractPlanCommand {
         LOGGER.debug("Listing {}", this::getModelName);
 
         final List<Plan> plans = getManagerConfig()
-                .buildServerApiClient(PlanApi.class, getManagerConfig().getServerVersion())
+                .buildServerApiClient(PlanApi.class)
                 .list(orgName);
         LogUtil.OUTPUT.info(MappingUtil.safeWriteValueAsJson(plans));
     }

@@ -20,11 +20,11 @@ package io.apiman.cli.managerapi.command.plan;
 import io.apiman.cli.command.api.model.ApiPolicy;
 import io.apiman.cli.command.plan.model.Plan;
 import io.apiman.cli.command.plan.model.PlanVersion;
-import io.apiman.cli.managerapi.command.api.PolicyApi;
 import retrofit.client.Response;
 import retrofit.http.Body;
 import retrofit.http.GET;
 import retrofit.http.POST;
+import retrofit.http.PUT;
 import retrofit.http.Path;
 
 import java.util.List;
@@ -32,7 +32,7 @@ import java.util.List;
 /**
  * @author Jean-Charles Quantin {@literal <jeancharles.quantin@gmail.com>}
  */
-public interface PlanApi extends PolicyApi {
+public interface PlanApi {
 
     @POST("/organizations/{orgName}/plans")
     Response create(@Path("orgName") String orgName, @Body Plan plan);
@@ -56,13 +56,15 @@ public interface PlanApi extends PolicyApi {
     Response addPolicy(@Path("orgName") String orgName, @Path("planName") String apiName,
                        @Path("version") String version, @Body ApiPolicy policyConfig);
 
-    @Override
     @GET("/organizations/{orgName}/plans/{planName}/versions/{version}/policies")
     List<ApiPolicy> fetchPolicies(@Path("orgName") String orgName, @Path("planName") String planName,
                                   @Path("version") String version);
 
-    @Override
     @GET("/organizations/{orgName}/plans/{planName}/versions/{version}/policies/{policyId}")
     ApiPolicy fetchPolicy(@Path("orgName") String orgName, @Path("planName") String planName,
                                   @Path("version") String version, @Path("policyId") Long policyId);
+
+    @PUT("/organizations/{orgName}/plans/{planName}/versions/{version}/policies/{policyId}")
+    Response configurePolicy(@Path("orgName") String orgName, @Path("planName") String planName,
+                             @Path("version") String version, @Path("policyId") Long policyId, @Body ApiPolicy policyConfig);
 }

@@ -28,10 +28,10 @@ public class ApiPlanAddCommand extends AbstractApiCommand implements ApiMixin {
     @Parameter(names = { "--version", "-v" }, description = "API version", required = true)
     private String apiVersion;
 
-    @Parameter(names = { "--planName", "-p" }, description = "Plan name", required = true)
+    @Parameter(names = { "--planName", "-pn" }, description = "Plan name", required = true)
     private String planName;
 
-    @Parameter(names = { "--planVersion", "-w" }, description = "Plan Version", required = true)
+    @Parameter(names = { "--planVersion", "-pv" }, description = "Plan Version", required = true)
     private String planVersion;
 
     @Inject

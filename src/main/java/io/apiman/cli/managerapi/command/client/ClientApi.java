@@ -16,11 +16,11 @@
 package io.apiman.cli.managerapi.command.client;
 
 
+import io.apiman.cli.command.api.model.ApiPolicy;
 import io.apiman.cli.command.api.model.EntityVersion;
 import io.apiman.cli.command.client.model.ApiKey;
 import io.apiman.cli.command.client.model.Client;
 import io.apiman.cli.command.client.model.Contract;
-import io.apiman.cli.managerapi.command.api.PolicyApi;
 import io.apiman.manager.api.beans.clients.ClientVersionBean;
 import retrofit.client.Response;
 import retrofit.http.Path;
@@ -30,11 +30,11 @@ import java.util.List;
 /**
  * @author Jean-Charles Quantin {@literal <jeancharles.quantin@gmail.com>}
  */
-public interface ClientApi extends PolicyApi {
+public interface ClientApi {
 
     List<Client> list(String orgName); // Hack to display only name, seemingly.
 
-	List<Client> listVersions(@Path("orgName") String orgName, @Path("clientName") String clientName); // Hack to display only version, seemingly.
+	List<Client> listVersions( String orgName, @Path("clientName") String clientName); // Hack to display only version, seemingly.
 
 	Response create(String orgName, Client client);
 
@@ -50,6 +50,12 @@ public interface ClientApi extends PolicyApi {
 	
 	List<Contract> listContracts(String orgName, String clientName, String version);
 
+	// Policy
+	Response addPolicy(String orgName, String apiName, String version, ApiPolicy policyConfig);
 
+	List<ApiPolicy> fetchPolicies(String orgName, String planName, String version);
 
+	ApiPolicy fetchPolicy(String orgName, String planName, String version, Long policyId);
+
+	Response configurePolicy(String orgName, String planName, String version, Long policyId, ApiPolicy policyConfig);
 }

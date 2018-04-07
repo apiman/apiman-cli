@@ -60,8 +60,7 @@ public class PlanCreateCommand extends AbstractPlanCommand {
                 initialVersion);
 
         // create
-        final PlanApi planClient = getManagerConfig()
-                .buildServerApiClient(PlanApi.class, getManagerConfig().getServerVersion());
+        final PlanApi planClient = getManagerConfig().buildServerApiClient(PlanApi.class);
         ManagementApiUtil.invokeAndCheckResponse(() -> planClient.create(orgName, plan));
     }
 }

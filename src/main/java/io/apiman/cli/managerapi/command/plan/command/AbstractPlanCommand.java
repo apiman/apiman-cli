@@ -17,21 +17,27 @@
 package io.apiman.cli.managerapi.command.plan.command;
 
 import com.beust.jcommander.Parameter;
-import io.apiman.cli.command.api.model.Api;
-import io.apiman.cli.managerapi.command.api.ApiMixin;
-import io.apiman.cli.managerapi.command.api.Version12xServerApi;
+import io.apiman.cli.command.plan.model.Plan;
 import io.apiman.cli.managerapi.command.common.command.AbstractManagerModelCommand;
+import io.apiman.cli.managerapi.command.plan.PlanApi;
 import io.apiman.cli.managerapi.service.ManagementApiService;
 
 /**
  * @author Marc Savy {@literal <marc@rhymewithgravy.com>}
  */
-public abstract class AbstractPlanCommand extends AbstractManagerModelCommand<Api, Version12xServerApi>
-        implements ApiMixin {
+public abstract class AbstractPlanCommand extends AbstractManagerModelCommand<Plan, PlanApi> {
     @Parameter(names = { "--orgName", "-o"}, description = "Organisation name", required = true)
     protected String orgName;
 
     public AbstractPlanCommand(ManagementApiService managementApiService) {
         super(managementApiService);
+    }
+
+    public Class<Plan> getModelClass() {
+        return Plan.class;
+    }
+
+    public Class<PlanApi> getApiClass() {
+        return PlanApi.class;
     }
 }

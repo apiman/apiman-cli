@@ -41,6 +41,8 @@ import io.apiman.cli.managerapi.command.gateway.GatewayApi;
 import io.apiman.cli.managerapi.command.org.OrgApi;
 import io.apiman.cli.managerapi.command.plan.PlanApi;
 import io.apiman.cli.managerapi.management.ManagementApiUtil;
+import io.apiman.cli.managerapi.service.delegates.ClientPolicyDelegate;
+import io.apiman.cli.managerapi.service.delegates.PlanPolicyDelegate;
 import io.apiman.cli.util.MappingUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -181,7 +183,7 @@ public class DeclarativeServiceImpl implements DeclarativeService {
             applyClient(clientApi, declarativeClient, orgName, clientName, apiVersion);
 
             // add policies
-            applyClientPolicies(clientApi, serverVersion, declarativeClient, orgName, clientName, apiVersion);
+            applyClientPolicies(ClientPolicyDelegate.wrap(clientApi), serverVersion, declarativeClient, orgName, clientName, apiVersion);
 
             // publish Client
             if (declarativeClient.isRegistered()) {
@@ -195,7 +197,7 @@ public class DeclarativeServiceImpl implements DeclarativeService {
         LOGGER.debug("Applying Clients");
 
         plans.forEach(declarativePlan -> {
-            final PlanApi clientApi = managementApiService.buildServerApiClient(PlanApi.class);
+            final PlanApi planApi = managementApiService.buildServerApiClient(PlanApi.class);
             final String clientName = declarativePlan.getName();
 
             // determine the version of the API being configured
@@ -205,10 +207,10 @@ public class DeclarativeServiceImpl implements DeclarativeService {
             final String apiVersion = ofNullable(declarativePlan.getVersion()).orElse(declarativePlan.getInitialVersion());
 
             // create and configure API
-            applyPlan(clientApi, declarativePlan, orgName, clientName, apiVersion);
+            applyPlan(planApi, declarativePlan, orgName, clientName, apiVersion);
 
             // add policies
-            applyPlanPolicies(clientApi, serverVersion, declarativePlan, orgName, clientName, apiVersion);
+            applyPlanPolicies(PlanPolicyDelegate.wrap(planApi), serverVersion, declarativePlan, orgName, clientName, apiVersion);
 
             // publish Client
             if (declarativePlan.isLocked()) {
@@ -468,4 +470,5 @@ public class DeclarativeServiceImpl implements DeclarativeService {
             });
         });
     }
+    
 }

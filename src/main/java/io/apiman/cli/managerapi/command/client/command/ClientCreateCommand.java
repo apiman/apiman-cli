@@ -31,9 +31,6 @@ import org.apache.logging.log4j.Logger;
 import javax.inject.Inject;
 
 /**
- * Create an API.
- *
- * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
 @Parameters(commandDescription = "Create a Client")
 public class ClientCreateCommand extends AbstractClientCommand {
