@@ -19,7 +19,7 @@ package io.apiman.cli.managerapi.command.api;
 import io.apiman.cli.command.api.model.Api;
 import io.apiman.cli.command.api.model.ApiConfig;
 import io.apiman.cli.command.api.model.ApiPolicy;
-import io.apiman.cli.command.api.model.ApiVersion;
+import io.apiman.cli.command.api.model.EntityVersion;
 import io.apiman.cli.command.api.model.ServiceConfig;
 import retrofit.client.Response;
 import retrofit.http.Body;
@@ -42,7 +42,7 @@ public interface Version11xServerApi {
     Response create(@Path("orgName") String orgName, @Body Api api);
 
     @POST("/organizations/{orgName}/services/{serviceName}/versions")
-    Response createVersion(@Path("orgName") String orgName, @Path("serviceName") String serviceName, @Body ApiVersion apiVersion);
+    Response createVersion(@Path("orgName") String orgName, @Path("serviceName") String serviceName, @Body EntityVersion apiVersion);
 
     @GET("/organizations/{orgName}/services")
     List<Api> list(@Path("orgName") String orgName);
@@ -77,9 +77,10 @@ public interface Version11xServerApi {
 
     @GET("/organizations/{orgName}/services/{serviceName}/versions/{version}/policies/{policyId}")
     ApiPolicy fetchPolicy(@Path("orgName") String orgName, @Path("serviceName") String serviceName,
-                                  @Path("version") String version, @Path("policyId") Long policyId);
+                          @Path("version") String version, @Path("policyId") Long policyId);
 
     @PUT("/organizations/{orgName}/services/{serviceName}/versions/{version}/policies/{policyId}")
     Response configurePolicy(@Path("orgName") String orgName, @Path("serviceName") String serviceName,
                              @Path("version") String version, @Path("policyId") Long policyId, @Body ApiPolicy policyConfig);
+    
 }

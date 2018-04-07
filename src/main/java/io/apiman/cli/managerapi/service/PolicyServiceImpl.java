@@ -17,7 +17,7 @@
 package io.apiman.cli.managerapi.service;
 
 import io.apiman.cli.command.api.model.ApiPolicy;
-import io.apiman.cli.managerapi.command.api.VersionAgnosticApi;
+import io.apiman.cli.managerapi.command.api.PolicyApi;
 import io.apiman.cli.managerapi.command.common.model.ManagementApiVersion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -47,22 +47,23 @@ public class PolicyServiceImpl implements PolicyService {
      * {@inheritDoc}
      */
     @Override
-    public List<ApiPolicy> fetchPolicies(ManagementApiVersion serverVersion, String orgName,
+    public List<ApiPolicy> fetchPolicies(PolicyApi policyApi, ManagementApiVersion serverVersion, String orgName,
                                          String apiName, String apiVersion) {
-
-        final VersionAgnosticApi apiClient = managementApiService.buildServerApiClient(VersionAgnosticApi.class, serverVersion);
-        return apiClient.fetchPolicies(orgName, apiName, apiVersion);
+        return policyApi.fetchPolicies(orgName, apiName, apiVersion);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void applyPolicies(ManagementApiVersion serverVersion, String orgName,
-                              String apiName, String apiVersion, List<ApiPolicy> apiPolicies,
-                              String policyName, ApiPolicy apiPolicy) {
-
-        final VersionAgnosticApi apiClient = managementApiService.buildServerApiClient(VersionAgnosticApi.class, serverVersion);
+    public void applyPolicies(PolicyApi policyApi,
+                               ManagementApiVersion serverVersion,
+                              String orgName,
+                              String apiName,
+                              String apiVersion,
+                              List<ApiPolicy> apiPolicies,
+                              String policyName,
+                              ApiPolicy apiPolicy) {
 
         // determine if the policy already exists for this API
         final Optional<ApiPolicy> existingPolicy = apiPolicies.stream()
@@ -75,7 +76,7 @@ public class PolicyServiceImpl implements PolicyService {
                 LOGGER.info("Updating existing policy '{}' configuration for API: {}", policyName, apiName);
 
                 final Long policyId = existingPolicy.get().getId();
-                apiClient.configurePolicy(orgName, apiName, apiVersion, policyId, apiPolicy);
+                policyApi.configurePolicy(orgName, apiName, apiVersion, policyId, apiPolicy);
 
             } else {
                 LOGGER.info("Policy '{}' already exists for API '{}' - skipping configuration update", policyName, apiName);
@@ -86,7 +87,7 @@ public class PolicyServiceImpl implements PolicyService {
             LOGGER.info("Adding policy '{}' to API: {}", policyName, apiName);
 
             apiPolicy.setDefinitionId(policyName);
-            apiClient.addPolicy(orgName, apiName, apiVersion, apiPolicy);
+            policyApi.addPolicy(orgName, apiName, apiVersion, apiPolicy);
         }
     }
 }

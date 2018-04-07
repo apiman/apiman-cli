@@ -72,6 +72,12 @@ public class ManagerApplyCommand extends AbstractApplyCommand {
 
             ofNullable(org.getApis()).ifPresent(apis ->
                     declarativeService.applyApis(managerCommon.getServerVersion(), apis, org.getName()));
+
+            ofNullable(org.getClients()).ifPresent(clients ->
+                    declarativeService.applyClients(managerCommon.getServerVersion(), clients, org.getName()));
+
+            ofNullable(org.getPlans()).ifPresent(plans ->
+                    declarativeService.applyPlans(managerCommon.getServerVersion(), plans, org.getName()));
         });
 
         LOGGER.info("Applied declaration");

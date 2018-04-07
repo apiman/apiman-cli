@@ -16,11 +16,12 @@
 package io.apiman.cli.managerapi.command.client;
 
 
+import io.apiman.cli.command.api.model.EntityVersion;
 import io.apiman.cli.command.client.model.ApiKey;
 import io.apiman.cli.command.client.model.Client;
 import io.apiman.cli.command.client.model.Contract;
+import io.apiman.cli.managerapi.command.api.PolicyApi;
 import io.apiman.manager.api.beans.clients.ClientVersionBean;
-import io.apiman.manager.api.beans.clients.NewClientVersionBean;
 import retrofit.client.Response;
 import retrofit.http.Path;
 
@@ -29,7 +30,7 @@ import java.util.List;
 /**
  * @author Jean-Charles Quantin {@literal <jeancharles.quantin@gmail.com>}
  */
-public interface ClientApi {
+public interface ClientApi extends PolicyApi {
 
     List<Client> list(String orgName); // Hack to display only name, seemingly.
 
@@ -39,7 +40,7 @@ public interface ClientApi {
 
 	Client fetch(String orgName, String clientName);
 
-	Client createVersion(String orgName, String clientName, NewClientVersionBean client);
+	Client createVersion(String orgName, String clientName, EntityVersion client);
 
 	ClientVersionBean fetchVersion(String orgName, String clientName, String version);
 
@@ -48,4 +49,7 @@ public interface ClientApi {
 	Response createContract(String orgName, String clientName, String version, Contract contract);
 	
 	List<Contract> listContracts(String orgName, String clientName, String version);
+
+
+
 }

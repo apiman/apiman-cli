@@ -28,6 +28,7 @@ public class ServiceModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(ManagementApiService.class).to(ManagementApiServiceImpl.class).in(Singleton.class);
+        bind(ClientService.class).to(ClientServiceImpl.class).in(Singleton.class);
         bind(ApiService.class).to(ApiServiceImpl.class).in(Singleton.class);
         bind(PluginService.class).to(PluginServiceImpl.class).in(Singleton.class);
         bind(PolicyService.class).to(PolicyServiceImpl.class).in(Singleton.class);

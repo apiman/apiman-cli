@@ -19,7 +19,7 @@ package io.apiman.cli.managerapi.command.api.factory;
 import io.apiman.cli.command.api.model.Api;
 import io.apiman.cli.command.api.model.ApiConfig;
 import io.apiman.cli.command.api.model.ApiPolicy;
-import io.apiman.cli.command.api.model.ApiVersion;
+import io.apiman.cli.command.api.model.EntityVersion;
 import io.apiman.cli.managerapi.command.api.Version12xServerApi;
 import io.apiman.cli.managerapi.command.api.VersionAgnosticApi;
 import io.apiman.cli.managerapi.management.factory.AbstractManagementApiFactory;
@@ -46,7 +46,7 @@ public class Version12XManagementApiFactoryImpl extends AbstractManagementApiFac
             }
 
             @Override
-            public Response createVersion(String orgName, String apiName, ApiVersion apiVersion) {
+            public Response createVersion(String orgName, String apiName, EntityVersion apiVersion) {
                 return delegate.createVersion(orgName, apiName, apiVersion);
             }
 

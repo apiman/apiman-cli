@@ -17,8 +17,10 @@
 package io.apiman.cli.managerapi.service;
 
 import io.apiman.cli.command.declarative.model.DeclarativeApi;
+import io.apiman.cli.command.declarative.model.DeclarativeClient;
 import io.apiman.cli.command.declarative.model.DeclarativeGateway;
 import io.apiman.cli.command.declarative.model.DeclarativeOrg;
+import io.apiman.cli.command.declarative.model.DeclarativePlan;
 import io.apiman.cli.managerapi.command.common.model.ManagementApiVersion;
 
 import java.util.List;
@@ -51,4 +53,24 @@ public interface DeclarativeService {
      * @param orgName       the name of the organisation.
      */
     void applyApis(ManagementApiVersion serverVersion, List<DeclarativeApi> apis, String orgName);
+
+
+    /**
+     * Add Clients to the specified organisation, if they are not present, then configure them.
+     *
+     * @param serverVersion the management server version.
+     * @param clients          the Clients to add.
+     * @param orgName       the name of the organisation.
+     */
+    void applyClients(ManagementApiVersion serverVersion, List<DeclarativeClient> clients, String orgName);
+
+
+    /**
+     * Add Plans to the specified organisation, if they are not present, then configure them.
+     *
+     * @param serverVersion the management server version.
+     * @param plans          the APIs to add.
+     * @param orgName        the name of the organisation.
+     */
+    void applyPlans(ManagementApiVersion serverVersion, List<DeclarativePlan> plans, String orgName);
 }

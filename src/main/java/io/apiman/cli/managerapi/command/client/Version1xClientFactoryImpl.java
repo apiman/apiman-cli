@@ -16,13 +16,13 @@ import java.util.List;
 /**
  * @author Marc Savy {@literal <marc@rhymewithgravy.com>}
  */
-public class Version2xClientFactoryImpl
-        extends AbstractManagementApiFactory<ClientApi, ClientApiVersion2x>
+public class Version1xClientFactoryImpl
+        extends AbstractManagementApiFactory<ClientApi, ClientApiVersion1x>
         implements ManagementApiFactory<ClientApi> {
 
     @Override
     public ClientApi build(String endpoint, String username, String password, boolean debugLogging) {
-        final ClientApiVersion2x delegate = buildClient(ClientApiVersion2x.class, endpoint, username, password, debugLogging);
+        final ClientApiVersion1x delegate = buildClient(ClientApiVersion1x.class, endpoint, username, password, debugLogging);
 
         return new ClientApi() {
 

@@ -1,6 +1,5 @@
-package io.apiman.cli.command.declarative.model;
 /*
- * Copyright 2017 Jean-Charles Quantin
+ * Copyright 2017 Pete Cornish
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,38 +14,30 @@ package io.apiman.cli.command.declarative.model;
  * limitations under the License.
  */
 
+package io.apiman.cli.command.api.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.apiman.cli.command.plan.model.Plan;
-
-import java.util.List;
 
 /**
- * Declarative Plan representation.
+ * Models an API version.
  *
- * @author Jean-Charles Quantin {@literal <jeancharles.quantin@gmail.com>}
+ * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DeclarativePlan extends Plan {
-
+public class EntityVersion {
     @JsonProperty
-    private boolean locked;
+    private String version;
 
+    /**
+     * Never clone a previous version when creating a new version.
+     */
     @JsonProperty
-    private List<DeclarativePolicy> policies;
+    final private boolean clone = false;
 
-    public List<DeclarativePolicy> getPolicies() {
-        return policies;
-    }
-
-    public void setPolicies(List<DeclarativePolicy> policies) {
-        this.policies = policies;
-    }
-
-    public boolean isLocked() {
-        return locked;
+    public EntityVersion(String version) {
+        this.version = version;
     }
 }

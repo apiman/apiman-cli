@@ -18,7 +18,7 @@ package io.apiman.cli.managerapi.command.api;
 import io.apiman.cli.command.api.model.Api;
 import io.apiman.cli.command.api.model.ApiConfig;
 import io.apiman.cli.command.api.model.ApiPolicy;
-import io.apiman.cli.command.api.model.ApiVersion;
+import io.apiman.cli.command.api.model.EntityVersion;
 import retrofit.client.Response;
 import retrofit.mime.TypedString;
 
@@ -27,10 +27,10 @@ import java.util.List;
 /**
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
-public interface VersionAgnosticApi {
+public interface VersionAgnosticApi extends PolicyApi {
     Response create(String orgName, Api api);
 
-    Response createVersion(String orgName, String apiName, ApiVersion apiVersion);
+    Response createVersion(String orgName, String apiName, EntityVersion apiVersion);
 
     List<Api> list(String orgName);
 
@@ -45,18 +45,25 @@ public interface VersionAgnosticApi {
     Response configure(String orgName, String apiName,
                        String version, ApiConfig config);
 
+
+    Response setDefinition(String orgName, String apiName,
+
+                           String version, String definitionType,  TypedString definition);
+
+
+    @Override
     Response addPolicy(String orgName, String apiName,
                        String version, ApiPolicy policyConfig);
 
-    Response setDefinition(String orgName, String apiName,
-                           String version, String definitionType,  TypedString definition);
-
+    @Override
     List<ApiPolicy> fetchPolicies(String orgName, String serviceName,
                                   String version);
-    
+
+    @Override
     ApiPolicy fetchPolicy(String orgName, String apiName,
     					String version, Long policyId);
 
+    @Override
     Response configurePolicy(String orgName, String apiName,
                              String apiVersion, Long policyId, ApiPolicy policyConfig);
 }

@@ -19,7 +19,6 @@ package io.apiman.cli.command.declarative.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import io.apiman.cli.command.client.model.Client;
 import io.apiman.cli.command.org.model.Org;
 
 import java.util.List;
@@ -48,7 +47,7 @@ public class DeclarativeOrg extends Org {
     private List<DeclarativePlan> plans;
 
     @JsonProperty
-    private List<Client> clients;
+    private List<DeclarativeClient> clients;
     
     public List<DeclarativeApi> getApis() {
         return apis;
@@ -66,11 +65,11 @@ public class DeclarativeOrg extends Org {
         this.plans = plans;
     }
 
-    public List<Client> getClients() {
+    public List<DeclarativeClient> getClients() {
         return clients;
     }
 
-    public void setClients(List<Client> clients) {
+    public void setClients(List<DeclarativeClient> clients) {
         this.clients = clients;
     }
 }

@@ -14,30 +14,43 @@
  * limitations under the License.
  */
 
-package io.apiman.cli.command.api.model;
+package io.apiman.cli.command.declarative.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.apiman.cli.command.client.model.Client;
+
+import java.util.List;
 
 /**
- * Models an API version.
+ * Declarative API representation.
  *
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ApiVersion {
+public class DeclarativeClient extends Client {
     @JsonProperty
-    private String version;
+    private boolean registered;
 
-    /**
-     * Never clone a previous version when creating a new version.
-     */
     @JsonProperty
-    final private boolean clone = false;
+    private List<DeclarativePolicy> policies;
 
-    public ApiVersion(String version) {
-        this.version = version;
+    public boolean isRegistered() {
+        return registered;
     }
+
+    public void setPublished(boolean registered) {
+        this.registered = registered;
+    }
+
+    public List<DeclarativePolicy> getPolicies() {
+        return policies;
+    }
+
+    public void setPolicies(List<DeclarativePolicy> policies) {
+        this.policies = policies;
+    }
+
 }

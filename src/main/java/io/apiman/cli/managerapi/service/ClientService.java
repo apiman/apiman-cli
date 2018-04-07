@@ -16,42 +16,36 @@
 
 package io.apiman.cli.managerapi.service;
 
-import io.apiman.cli.command.api.model.ApiPolicy;
-import io.apiman.cli.managerapi.command.api.PolicyApi;
 import io.apiman.cli.managerapi.command.common.model.ManagementApiVersion;
 
-import java.util.List;
-
 /**
- * Manages policies.
+ * Manages APIs.
  *
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
-public interface PolicyService {
-    /**
-     * Fetch the policies attached to the specified API.
-     *
-     * @param serverVersion the management server API version
-     * @param orgName       the organisation name
-     * @param apiName       the API name
-     * @param apiVersion    the API version
-     * @return the policies
-     */
-    List<ApiPolicy> fetchPolicies(PolicyApi policyApi, ManagementApiVersion serverVersion, String orgName,
-                                  String apiName, String apiVersion);
+public interface ClientService {
+    String STATE_READY = "READY";
+    String STATE_REGISTERED = "REGISTERED";
+    String STATE_UNREGISTERED = "UNREGISTERED";
 
     /**
-     * Apply the policies to the specified API.
+     * Return the current state of the API.
      *
      * @param serverVersion the management server API version
      * @param orgName       the organisation name
      * @param apiName       the API name
      * @param apiVersion    the API version
-     * @param apiPolicies   the policies to apply.
-     * @param policyName    the policy name
-     * @param apiPolicy     the policy to apply
+     * @return the API state
      */
-    void applyPolicies(PolicyApi policyApi, ManagementApiVersion serverVersion, String orgName,
-                       String apiName, String apiVersion, List<ApiPolicy> apiPolicies,
-                       String policyName, ApiPolicy apiPolicy);
+    String fetchCurrentState(ManagementApiVersion serverVersion, String orgName, String apiName, String apiVersion);
+
+    /**
+     * Publish the API, if it is in the 'Ready' state.
+     *
+     * @param serverVersion the management server API version
+     * @param orgName       the organisation name
+     * @param apiName       the API name
+     * @param apiVersion    the API version
+     */
+    void register(ManagementApiVersion serverVersion, String orgName, String apiName, String apiVersion);
 }

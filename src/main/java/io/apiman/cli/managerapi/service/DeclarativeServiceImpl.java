@@ -20,17 +20,26 @@ import com.google.common.io.CharStreams;
 import io.apiman.cli.command.api.model.Api;
 import io.apiman.cli.command.api.model.ApiConfig;
 import io.apiman.cli.command.api.model.ApiPolicy;
-import io.apiman.cli.command.api.model.ApiVersion;
 import io.apiman.cli.command.api.model.EndpointProperties;
+import io.apiman.cli.command.api.model.EntityVersion;
+import io.apiman.cli.command.client.model.Client;
 import io.apiman.cli.command.declarative.model.DeclarativeApi;
+import io.apiman.cli.command.declarative.model.DeclarativeClient;
 import io.apiman.cli.command.declarative.model.DeclarativeGateway;
 import io.apiman.cli.command.declarative.model.DeclarativeOrg;
+import io.apiman.cli.command.declarative.model.DeclarativePlan;
+import io.apiman.cli.command.declarative.model.DeclarativePolicy;
 import io.apiman.cli.command.gateway.model.Gateway;
 import io.apiman.cli.command.org.model.Org;
+import io.apiman.cli.command.plan.model.Plan;
+import io.apiman.cli.command.plan.model.PlanVersion;
+import io.apiman.cli.managerapi.command.api.PolicyApi;
 import io.apiman.cli.managerapi.command.api.VersionAgnosticApi;
+import io.apiman.cli.managerapi.command.client.ClientApi;
 import io.apiman.cli.managerapi.command.common.model.ManagementApiVersion;
 import io.apiman.cli.managerapi.command.gateway.GatewayApi;
 import io.apiman.cli.managerapi.command.org.OrgApi;
+import io.apiman.cli.managerapi.command.plan.PlanApi;
 import io.apiman.cli.managerapi.management.ManagementApiUtil;
 import io.apiman.cli.util.MappingUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -60,15 +69,19 @@ import static java.util.Optional.ofNullable;
 public class DeclarativeServiceImpl implements DeclarativeService {
     private static final Logger LOGGER = LogManager.getLogger(DeclarativeServiceImpl.class);
 
-    private ManagementApiService managementApiService;
-    private ApiService apiService;
-    private PolicyService policyService;
+    private final ManagementApiService managementApiService;
+    private final ClientService clientService;
+    private final ApiService apiService;
+    private final PolicyService policyService;
 
     @Inject
     public DeclarativeServiceImpl(ManagementApiService managementApiService,
-                                  ApiService apiService, PolicyService policyService) {
+                                  ClientService clientService,
+                                  ApiService apiService,
+                                  PolicyService policyService) {
 
         this.managementApiService = managementApiService;
+        this.clientService = clientService;
         this.apiService = apiService;
         this.policyService = policyService;
     }
@@ -141,7 +154,7 @@ public class DeclarativeServiceImpl implements DeclarativeService {
             applyDefinition(apiClient, declarativeApi, orgName, apiName, apiVersion);
 
             // add policies
-            applyPolicies(serverVersion, declarativeApi, orgName, apiName, apiVersion);
+            applyApiPolicies(apiClient, serverVersion, declarativeApi, orgName, apiName, apiVersion);
 
             // publish API
             if (declarativeApi.isPublished()) {
@@ -150,16 +163,155 @@ public class DeclarativeServiceImpl implements DeclarativeService {
         });
     }
 
+    @Override
+    public void applyClients(ManagementApiVersion serverVersion, List<DeclarativeClient> clients, String orgName) {
+        LOGGER.debug("Applying Clients");
+
+        clients.forEach(declarativeClient -> {
+            final ClientApi clientApi = managementApiService.buildServerApiClient(ClientApi.class, serverVersion);
+            final String clientName = declarativeClient.getName();
+
+            // determine the version of the API being configured
+            ofNullable(declarativeClient.getInitialVersion()).ifPresent(v ->
+                    LOGGER.warn("Use of 'initialVersion' is deprecated and will be removed in future - use 'version' instead."));
+
+            final String apiVersion = ofNullable(declarativeClient.getVersion()).orElse(declarativeClient.getInitialVersion());
+
+            // create and configure Client
+            applyClient(clientApi, declarativeClient, orgName, clientName, apiVersion);
+
+            // add policies
+            applyClientPolicies(clientApi, serverVersion, declarativeClient, orgName, clientName, apiVersion);
+
+            // publish Client
+            if (declarativeClient.isRegistered()) {
+                clientService.register(serverVersion, orgName, clientName, apiVersion);
+            }
+        });
+    }
+
+    @Override
+    public void applyPlans(ManagementApiVersion serverVersion, List<DeclarativePlan> plans, String orgName) {
+        LOGGER.debug("Applying Clients");
+
+        plans.forEach(declarativePlan -> {
+            final PlanApi clientApi = managementApiService.buildServerApiClient(PlanApi.class);
+            final String clientName = declarativePlan.getName();
+
+            // determine the version of the API being configured
+            ofNullable(declarativePlan.getInitialVersion()).ifPresent(v ->
+                    LOGGER.warn("Use of 'initialVersion' is deprecated and will be removed in future - use 'version' instead."));
+
+            final String apiVersion = ofNullable(declarativePlan.getVersion()).orElse(declarativePlan.getInitialVersion());
+
+            // create and configure API
+            applyPlan(clientApi, declarativePlan, orgName, clientName, apiVersion);
+
+            // add policies
+            applyPlanPolicies(clientApi, serverVersion, declarativePlan, orgName, clientName, apiVersion);
+
+            // publish Client
+            if (declarativePlan.isLocked()) {
+                clientService.register(serverVersion, orgName, clientName, apiVersion);
+            }
+        });
+    }
+
     /**
      * Add the API, if it is not present, then configure it.
      *
      * @param apiClient
-     * @param declarativeApi
+     * @param declarativeClient
      * @param orgName
-     * @param apiName
-     * @param apiVersion
+     * @param clientName
+     * @param clientVersion
      * @return the state of the API
      */
+    private void applyClient(ClientApi apiClient,
+                             DeclarativeClient declarativeClient, String orgName, String clientName, String clientVersion) {
+
+        LOGGER.debug("Applying Client: {}", clientName);
+
+        // base Client
+        of(ManagementApiUtil.checkExists(() -> apiClient.fetch(orgName, clientName)))
+                .ifPresent(existing -> {
+                    LOGGER.info("Client '{}' already exists", clientName);
+                })
+                .ifNotPresent(() -> {
+                    LOGGER.info("Adding '{}' Client", clientName);
+                    final Client client = MappingUtil.map(declarativeClient, Client.class);
+
+                    // IMPORTANT: don't include version in the creation request
+                    client.setInitialVersion(null);
+                    client.setVersion(null);
+
+                    // create Client *without* version
+                    apiClient.create(orgName, client);
+                });
+
+        // Client version
+        of(ManagementApiUtil.checkExists(() -> apiClient.fetchVersion(orgName, clientName, clientVersion)))
+                .ifPresent(existing -> {
+                    LOGGER.info("Client '{}' version '{}' already exists", clientName, clientVersion);
+                })
+                .ifNotPresent(() -> {
+                    LOGGER.info("Adding Client '{}' version '{}'", clientName, clientVersion);
+
+                    // create version
+                    final EntityVersion apiVersionWrapper = new EntityVersion(clientVersion);
+                    Client client = apiClient.createVersion(orgName, clientName, apiVersionWrapper);
+
+                    // Apply contracts
+                    applyContracts(apiClient, orgName, client);
+                });
+    }
+
+    private void applyContracts(ClientApi api, String orgName, Client client) {
+        ofNullable(client.getContracts()).ifPresent(contracts -> {
+            LOGGER.debug("Applying contracts to Client: {}", client.getName());
+
+            contracts.forEach(contract -> {
+                api.createContract(orgName, client.getVersion(), client.getVersion(), contract);
+            });
+        });
+    }
+
+    private void applyPlan(PlanApi planClient,
+                             DeclarativePlan declarativeClient, String orgName, String clientName, String clientVersion) {
+
+        LOGGER.debug("Applying Client: {}", clientName);
+
+        // base API
+        of(ManagementApiUtil.checkExists(() -> planClient.fetch(orgName, clientName)))
+                .ifPresent(existing -> {
+                    LOGGER.info("Plan '{}' already exists", clientName);
+                })
+                .ifNotPresent(() -> {
+                    LOGGER.info("Adding '{}' Plan", clientName);
+                    final Plan client = MappingUtil.map(declarativeClient, Plan.class);
+
+                    // IMPORTANT: don't include version in the creation request
+                    client.setInitialVersion(null);
+                    client.setVersion(null);
+
+                    // create API *without* version
+                    planClient.create(orgName, client);
+                });
+
+        // API version
+        of(ManagementApiUtil.checkExists(() -> planClient.fetchVersion(orgName, clientName, clientVersion)))
+                .ifPresent(existing -> {
+                    LOGGER.info("Plan '{}' version '{}' already exists", clientName, clientVersion);
+                })
+                .ifNotPresent(() -> {
+                    LOGGER.info("Adding Client '{}' version '{}'", clientName, clientVersion);
+
+                    // create version
+                    final PlanVersion planVersion = new PlanVersion(clientVersion);
+                    planClient.createVersion(orgName, clientName, planVersion);
+                });
+    }
+
     private void applyApi(ManagementApiVersion serverVersion, VersionAgnosticApi apiClient,
                           DeclarativeApi declarativeApi, String orgName, String apiName, String apiVersion) {
 
@@ -191,7 +343,7 @@ public class DeclarativeServiceImpl implements DeclarativeService {
                     LOGGER.info("Adding API '{}' version '{}'", apiName, apiVersion);
 
                     // create version
-                    final ApiVersion apiVersionWrapper = new ApiVersion(apiVersion);
+                    final EntityVersion apiVersionWrapper = new EntityVersion(apiVersion);
                     apiClient.createVersion(orgName, apiName, apiVersionWrapper);
 
                     if (v11x.equals(serverVersion)) {
@@ -238,12 +390,6 @@ public class DeclarativeServiceImpl implements DeclarativeService {
 
     /**
      * Adds a definition to the API.
-     *
-     * @param apiClient
-     * @param declarativeApi
-     * @param orgName
-     * @param apiName
-     * @param apiVersion
      */
     private void applyDefinition(VersionAgnosticApi apiClient, DeclarativeApi declarativeApi, String orgName,
                                  String apiName, String apiVersion) {
@@ -272,22 +418,45 @@ public class DeclarativeServiceImpl implements DeclarativeService {
         });
     }
 
+    private void applyPlanPolicies(PolicyApi policyApi,
+                                  ManagementApiVersion serverVersion,
+                                  DeclarativePlan declarativePlan,
+                                  String orgName,
+                                  String apiName,
+                                  String apiVersion) {
+
+        applyPolicies(policyApi, serverVersion, orgName, apiName, apiVersion, declarativePlan.getPolicies());
+    }
+
+    private void applyApiPolicies(PolicyApi policyApi,
+                                  ManagementApiVersion serverVersion,
+                                  DeclarativeApi declarativeApi,
+                                  String orgName,
+                                  String apiName,
+                                  String apiVersion) {
+
+        applyPolicies(policyApi, serverVersion, orgName, apiName, apiVersion, declarativeApi.getPolicies());
+    }
+
+    private void applyClientPolicies(PolicyApi policyApi,
+                                     ManagementApiVersion serverVersion,
+                                     DeclarativeClient declarativeClient,
+                                     String orgName,
+                                     String apiName,
+                                     String apiVersion) {
+
+        applyPolicies(policyApi, serverVersion, orgName, apiName, apiVersion, declarativeClient.getPolicies());
+    }
+
     /**
      * Add policies to the API if they are not present.
-     *
-     * @param declarativeApi
-     * @param orgName
-     * @param apiName
-     * @param apiVersion
      */
-    private void applyPolicies(ManagementApiVersion serverVersion, DeclarativeApi declarativeApi,
-                               String orgName, String apiName, String apiVersion) {
-
-        ofNullable(declarativeApi.getPolicies()).ifPresent(declarativePolicies -> {
+    private void applyPolicies(PolicyApi policyApi, ManagementApiVersion serverVersion, String orgName, String apiName, String apiVersion, List<DeclarativePolicy> policies) {
+        ofNullable(policies).ifPresent(declarativePolicies -> {
             LOGGER.debug("Applying policies to API: {}", apiName);
 
             // existing policies for the API
-            final List<ApiPolicy> apiPolicies = policyService.fetchPolicies(serverVersion, orgName, apiName, apiVersion);
+            final List<ApiPolicy> apiPolicies = policyService.fetchPolicies(policyApi, serverVersion, orgName, apiName, apiVersion);
 
             declarativePolicies.forEach(declarativePolicy -> {
                 final String policyName = declarativePolicy.getName();
@@ -295,7 +464,7 @@ public class DeclarativeServiceImpl implements DeclarativeService {
                 final ApiPolicy apiPolicy = new ApiPolicy(
                         MappingUtil.safeWriteValueAsJson(declarativePolicy.getConfig()));
 
-                policyService.applyPolicies(serverVersion, orgName, apiName, apiVersion, apiPolicies, policyName, apiPolicy);
+                policyService.applyPolicies(policyApi, serverVersion, orgName, apiName, apiVersion, apiPolicies, policyName, apiPolicy);
             });
         });
     }
