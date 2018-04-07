@@ -18,6 +18,7 @@ package io.apiman.cli.managerapi.command.api.command;
 
 import com.beust.jcommander.Parameters;
 import io.apiman.cli.command.core.Command;
+import io.apiman.cli.managerapi.AbstractManagerCommand;
 import io.apiman.cli.managerapi.service.ManagementApiService;
 
 import javax.inject.Inject;
@@ -40,7 +41,7 @@ public class ApiCommand extends AbstractManagerCommand {
     protected void populateCommands(Map<String, Class<? extends Command>> commandMap) {
         commandMap.put("create", ApiCreateCommand.class);
         commandMap.put("list", ApiListCommand.class);
-        commandMap.put("dlist", ApiDeepListCommand.class);
+        //commandMap.put("dlist", ApiDeepListCommand.class);
         commandMap.put("publish", ApiPublishCommand.class);
         commandMap.put("policy", ApiPolicyCommand.class);
         commandMap.put("definition", ApiDefinitionCommand.class);

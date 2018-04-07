@@ -18,7 +18,7 @@ package io.apiman.cli.managerapi.command.plugin.command;
 
 import com.beust.jcommander.Parameters;
 import io.apiman.cli.command.core.Command;
-import io.apiman.cli.managerapi.command.api.command.AbstractManagerCommand;
+import io.apiman.cli.managerapi.AbstractManagerCommand;
 import io.apiman.cli.managerapi.service.ManagementApiService;
 
 import javax.inject.Inject;

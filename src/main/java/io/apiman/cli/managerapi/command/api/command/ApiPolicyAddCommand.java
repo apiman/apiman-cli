@@ -88,6 +88,8 @@ public class ApiPolicyAddCommand extends AbstractApiCommand implements ApiMixin 
         apiPolicy.setDefinitionId(policyName);
 
         ManagementApiUtil.invokeAndCheckResponse(() ->
-                getManagerConfig().buildServerApiClient(VersionAgnosticApi.class, serverVersion).addPolicy(orgName, name, version, apiPolicy));
+                getManagerConfig()
+                        .buildServerApiClient(VersionAgnosticApi.class, getManagerConfig().getServerVersion())
+                        .addPolicy(orgName, name, version, apiPolicy));
     }
 }

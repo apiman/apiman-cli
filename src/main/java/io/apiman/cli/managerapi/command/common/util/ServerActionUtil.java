@@ -96,9 +96,20 @@ public class ServerActionUtil {
      * @param clientVersion    the client version
      * @param actionClient     the Server Action API client
      */
-    public static void registerClient(String orgName, String clientName, String clientVersion, ActionApi actionClient) {
-        String actionType = "registerClient";
+    public static void registerClient(String orgName, String clientName, String clientVersion,
+                                      ManagementApiVersion serverVersion, ActionApi actionClient) {
+        String actionType;
+        switch (serverVersion) {
+            case v11x:
+                // legacy apiman 1.1.x support
+                actionType = "registerApplication";
+                break;
 
+            default:
+                // apiman 1.2.x support
+                actionType = "registerClient";
+                break;
+        }
         ManagementApiUtil.invokeAndCheckResponse(HttpURLConnection.HTTP_NO_CONTENT, () -> {
             final ServerAction action = new ServerAction(
                     actionType,

@@ -17,6 +17,7 @@
 package io.apiman.cli.managerapi.command.api;
 
 import io.apiman.cli.command.api.model.Api;
+import io.apiman.cli.command.api.model.ApiConfig;
 import io.apiman.cli.command.api.model.ApiPolicy;
 import io.apiman.cli.command.api.model.ApiVersion;
 import io.apiman.cli.command.api.model.ServiceConfig;

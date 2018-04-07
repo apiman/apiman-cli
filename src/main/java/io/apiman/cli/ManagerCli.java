@@ -20,8 +20,10 @@ import com.beust.jcommander.Parameters;
 import io.apiman.cli.command.core.AbstractCommand;
 import io.apiman.cli.command.core.Command;
 import io.apiman.cli.managerapi.command.api.command.ApiCommand;
+import io.apiman.cli.managerapi.command.client.command.ClientCommand;
 import io.apiman.cli.managerapi.command.gateway.command.GatewayCommand;
 import io.apiman.cli.managerapi.command.org.command.OrgCommand;
+import io.apiman.cli.managerapi.command.plan.command.PlanCommand;
 import io.apiman.cli.managerapi.command.plugin.command.PluginCommand;
 import io.apiman.cli.managerapi.declarative.command.ManagerApplyCommand;
 
@@ -42,6 +44,8 @@ public class ManagerCli extends AbstractCommand {
         commandMap.put("gateway", GatewayCommand.class);
         commandMap.put("plugin", PluginCommand.class);
         commandMap.put("api", ApiCommand.class);
+        commandMap.put("client", ClientCommand.class);
+        commandMap.put("plan", PlanCommand.class);
         commandMap.put("apply", ManagerApplyCommand.class);
     }
 

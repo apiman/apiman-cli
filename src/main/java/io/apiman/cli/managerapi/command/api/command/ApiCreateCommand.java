@@ -84,7 +84,8 @@ public class ApiCreateCommand extends AbstractApiCommand implements ApiMixin {
                 Lists.newArrayList(new ApiGateway(gateway)));
 
         // create
-        final VersionAgnosticApi apiClient = getManagerConfig().buildServerApiClient(VersionAgnosticApi.class, serverVersion);
+        final VersionAgnosticApi apiClient = getManagerConfig()
+                .buildServerApiClient(VersionAgnosticApi.class, getManagerConfig().getServerVersion());
         ManagementApiUtil.invokeAndCheckResponse(() -> apiClient.create(orgName, api));
 
         // configure

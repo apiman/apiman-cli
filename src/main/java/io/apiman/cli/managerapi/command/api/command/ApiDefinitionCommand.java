@@ -84,6 +84,7 @@ public class ApiDefinitionCommand extends AbstractApiCommand implements ApiMixin
         LOGGER.debug("Adding definition to API '{}' with contents: {}", this::getModelName, () -> definition);
 
         ManagementApiUtil.invokeAndCheckResponse(() ->
-                getManagerConfig().buildServerApiClient(VersionAgnosticApi.class, serverVersion).setDefinition(orgName, name, version, definitionType, new TypedString(definition)));
+                getManagerConfig().buildServerApiClient(VersionAgnosticApi.class, getManagerConfig().getServerVersion())
+                        .setDefinition(orgName, name, version, definitionType, new TypedString(definition)));
     }
 }

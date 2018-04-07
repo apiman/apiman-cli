@@ -21,7 +21,6 @@ import io.apiman.cli.command.api.model.Api;
 import io.apiman.cli.managerapi.command.api.ApiMixin;
 import io.apiman.cli.managerapi.command.api.Version12xServerApi;
 import io.apiman.cli.managerapi.command.common.command.AbstractManagerModelCommand;
-import io.apiman.cli.managerapi.command.common.model.ManagementApiVersion;
 import io.apiman.cli.managerapi.service.ManagementApiService;
 
 /**
@@ -34,10 +33,7 @@ public abstract class AbstractApiCommand extends AbstractManagerModelCommand<Api
     @Parameter(names = { "--orgName", "-o"}, description = "Organisation name", required = true)
     protected String orgName;
 
-    @Parameter(names = { "--serverVersion", "-sv"}, description = "Management API server version")
-    protected ManagementApiVersion serverVersion = ManagementApiVersion.DEFAULT_VERSION;
-
-    AbstractApiCommand(ManagementApiService managementApiService) {
+    public AbstractApiCommand(ManagementApiService managementApiService) {
         super(managementApiService);
     }
 }

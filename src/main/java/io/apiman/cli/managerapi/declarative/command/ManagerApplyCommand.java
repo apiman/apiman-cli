@@ -16,7 +16,6 @@
 
 package io.apiman.cli.managerapi.declarative.command;
 
-import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.beust.jcommander.ParametersDelegate;
 import io.apiman.cli.command.declarative.command.AbstractApplyCommand;
@@ -36,9 +35,6 @@ import static java.util.Optional.ofNullable;
 @Parameters(commandDescription = "Apply Apiman Manager declaration")
 public class ManagerApplyCommand extends AbstractApplyCommand {
     private static final Logger LOGGER = LogManager.getLogger(ManagerApplyCommand.class);
-
-    @Parameter(names = {"--serverVersion", "-sv"}, description = "Management API server version")
-    private ManagementApiVersion serverVersion = ManagementApiVersion.DEFAULT_VERSION;
 
     @ParametersDelegate
     private final ManagerCommon managerCommon;
@@ -75,7 +71,7 @@ public class ManagerApplyCommand extends AbstractApplyCommand {
             declarativeService.applyOrg(org);
 
             ofNullable(org.getApis()).ifPresent(apis ->
-                    declarativeService.applyApis(serverVersion, apis, org.getName()));
+                    declarativeService.applyApis(managerCommon.getServerVersion(), apis, org.getName()));
         });
 
         LOGGER.info("Applied declaration");
@@ -86,6 +82,6 @@ public class ManagerApplyCommand extends AbstractApplyCommand {
     }
 
     public void setServerVersion(ManagementApiVersion serverVersion) {
-        this.serverVersion = serverVersion;
+        this.managerCommon.setServerVersion(serverVersion);
     }
 }

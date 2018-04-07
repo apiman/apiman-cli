@@ -37,7 +37,9 @@ import static io.apiman.cli.util.MappingUtil.MODEL_MAPPER;
  *
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
-public class Version11XManagementApiFactoryImpl extends AbstractManagementApiFactory<VersionAgnosticApi, Version11xServerApi> implements ManagementApiFactory<VersionAgnosticApi> {
+public class Version11XManagementApiFactoryImpl
+        extends AbstractManagementApiFactory<VersionAgnosticApi, Version11xServerApi>
+        implements ManagementApiFactory<VersionAgnosticApi> {
     @Override
     public VersionAgnosticApi build(String endpoint, String username, String password, boolean debugLogging) {
         final Version11xServerApi delegate = buildClient(Version11xServerApi.class, endpoint, username, password, debugLogging);
@@ -72,6 +74,7 @@ public class Version11XManagementApiFactoryImpl extends AbstractManagementApiFac
             public List<Api> fetchVersions(String orgName, String apiName) {
                 return delegate.fetchVersions(orgName, apiName);
             }
+
             @Override
             public ApiConfig fetchVersionConfig(String orgName, String apiName, String version) {
                 return delegate.fetchVersionConfig(orgName, apiName, version);

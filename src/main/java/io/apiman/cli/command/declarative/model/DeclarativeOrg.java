@@ -19,6 +19,7 @@ package io.apiman.cli.command.declarative.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import io.apiman.cli.command.client.model.Client;
 import io.apiman.cli.command.org.model.Org;
 
 import java.util.List;
@@ -31,16 +32,23 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class DeclarativeOrg extends Org {
+
+    public DeclarativeOrg() {
+        super();
+    }
+
+    public DeclarativeOrg(String name, String description) {
+        super(name, description);
+    }
+
     @JsonProperty
     private List<DeclarativeApi> apis;
-    
 
     @JsonProperty
     private List<DeclarativePlan> plans;
 
     @JsonProperty
     private List<Client> clients;
-
     
     public List<DeclarativeApi> getApis() {
         return apis;

@@ -53,7 +53,7 @@ public class GatewayDeclarativeTest extends BaseTest {
         command.setLogDebug(LOG_DEBUG);
         LogUtil.configureLogging(LOG_DEBUG);
         // Stub Gateway API Factory
-        when(mGatewayApiFactory.build("http://localhost:8080/apiman-gateway-api", "apimanager", "apiman123!", true, null))
+        when(mGatewayApiFactory.build("http://localhost:8080/apiman-gateway-api", "apimanager", "apiman123!", true))
                 .thenReturn(mGatewayApi);
         // Bake in OK status
         SystemStatus okStatus = new SystemStatus();

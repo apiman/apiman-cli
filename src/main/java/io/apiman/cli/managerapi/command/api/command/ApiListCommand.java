@@ -49,7 +49,9 @@ public class ApiListCommand extends AbstractApiCommand implements ApiMixin {
     public void performFinalAction(JCommander parser) throws CommandException {
         LOGGER.debug("Listing {}", this::getModelName);
 
-        final List<Api> apis = getManagerConfig().buildServerApiClient(VersionAgnosticApi.class, serverVersion).list(orgName);
+        final List<Api> apis = getManagerConfig()
+                .buildServerApiClient(VersionAgnosticApi.class, getManagerConfig().getServerVersion())
+                .list(orgName);
         LogUtil.OUTPUT.info(MappingUtil.safeWriteValueAsJson(apis));
     }
 }

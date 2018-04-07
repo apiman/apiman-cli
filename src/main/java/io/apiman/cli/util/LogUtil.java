@@ -70,7 +70,8 @@ public final class LogUtil {
             appender = context.getConfiguration().getAppender("ConsoleTerse");
         }
 
-        rootLogger.addAppender(appender, null, null);
+        if (appender != null)
+            rootLogger.addAppender(appender, null, null);
         context.updateLoggers();
     }
 

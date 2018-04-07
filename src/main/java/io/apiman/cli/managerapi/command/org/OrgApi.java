@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.apiman.cli.managerapi.command.org;
 
 import io.apiman.cli.command.org.model.Org;
+import io.apiman.cli.command.org.model.OrgSearchIn;
+import io.apiman.cli.command.org.model.OrgSearchOut;
 import retrofit.client.Response;
 import retrofit.http.Body;
 import retrofit.http.GET;
@@ -27,6 +28,7 @@ import retrofit.http.Path;
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
 public interface OrgApi {
+
     @POST("/organizations")
     Response create(@Body Org organisation);
 

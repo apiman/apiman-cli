@@ -1,0 +1,54 @@
+/*
+ * Copyright 2018 JBoss Inc
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.apiman.cli.managerapi.command.plan.command;
+
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.Parameters;
+import io.apiman.cli.command.plan.model.Plan;
+import io.apiman.cli.exception.CommandException;
+import io.apiman.cli.managerapi.command.plan.PlanApi;
+import io.apiman.cli.managerapi.service.ManagementApiService;
+import io.apiman.cli.util.LogUtil;
+import io.apiman.cli.util.MappingUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import javax.inject.Inject;
+import java.util.List;
+
+/**
+ * @author Marc Savy {@literal <marc@rhymewithgravy.com>}
+ */
+@Parameters(commandDescription = "List Plans")
+public class PlanListCommand extends AbstractPlanCommand {
+    private static final Logger LOGGER = LogManager.getLogger(PlanListCommand.class);
+
+    @Inject
+    public PlanListCommand(ManagementApiService managementApiService) {
+        super(managementApiService);
+    }
+
+    @Override
+    public void performFinalAction(JCommander parser) throws CommandException {
+        LOGGER.debug("Listing {}", this::getModelName);
+
+        final List<Plan> plans = getManagerConfig()
+                .buildServerApiClient(PlanApi.class, getManagerConfig().getServerVersion())
+                .list(orgName);
+        LogUtil.OUTPUT.info(MappingUtil.safeWriteValueAsJson(plans));
+    }
+}

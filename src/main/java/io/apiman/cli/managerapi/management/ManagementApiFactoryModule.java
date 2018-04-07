@@ -21,10 +21,13 @@ import com.google.inject.Singleton;
 import io.apiman.cli.managerapi.command.api.VersionAgnosticApi;
 import io.apiman.cli.managerapi.command.api.factory.Version11XManagementApiFactoryImpl;
 import io.apiman.cli.managerapi.command.api.factory.Version12XManagementApiFactoryImpl;
+import io.apiman.cli.managerapi.command.client.ClientApi;
+import io.apiman.cli.managerapi.command.client.Version2xClientFactoryImpl;
 import io.apiman.cli.managerapi.command.common.ActionApi;
 import io.apiman.cli.managerapi.command.common.model.ManagementApiVersion;
 import io.apiman.cli.managerapi.command.gateway.GatewayApi;
 import io.apiman.cli.managerapi.command.org.OrgApi;
+import io.apiman.cli.managerapi.command.plan.PlanApi;
 import io.apiman.cli.managerapi.command.plugin.PluginApi;
 import io.apiman.cli.managerapi.management.api.StatusApi;
 import io.apiman.cli.managerapi.management.binding.ManagementApiBindings;
@@ -68,11 +71,12 @@ public class ManagementApiFactoryModule extends AbstractModule {
                 .to(Version12XManagementApiFactoryImpl.class).in(Singleton.class);
 
         bind(ManagementApiFactory.class)
+                .annotatedWith(ManagementApiBindings.boundTo(ClientApi.class, ManagementApiVersion.v12x))
+                .to(Version2xClientFactoryImpl.class).in(Singleton.class);
+
+        bind(ManagementApiFactory.class)
                 .annotatedWith(ManagementApiBindings.boundTo(PlanApi.class))
                 .toInstance(new SimpleManagementApiFactoryImpl<>(PlanApi.class));
-        
-        bind(ManagementApiFactory.class)
-        		.annotatedWith(ManagementApiBindings.boundTo(ClientApi.class))
-        		.toInstance(new SimpleManagementApiFactoryImpl<>(ClientApi.class));
     }
+
 }

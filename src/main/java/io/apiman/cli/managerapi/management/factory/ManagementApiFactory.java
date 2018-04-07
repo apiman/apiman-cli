@@ -16,6 +16,8 @@
 
 package io.apiman.cli.managerapi.management.factory;
 
+import io.apiman.cli.management.factory.PostConverter;
+
 /**
  * Builds a Management API client proxy for a given API interface.
  *
@@ -30,5 +32,5 @@ public interface ManagementApiFactory<T> {
      * @param postConverter the PostConverter if needs
      * @return an API client for the given Class
      */
-    T build(String endpoint, String username, String password, boolean debugLogging, PostConverter postConverter);
+    T build(String endpoint, String username, String password, boolean debugLogging);
 }

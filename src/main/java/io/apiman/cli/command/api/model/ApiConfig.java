@@ -16,6 +16,7 @@
 
 package io.apiman.cli.command.api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -49,7 +50,18 @@ public class ApiConfig {
     @JsonProperty
     private List<ApiPlan> plans;
 
+    @JsonIgnore
+    private boolean hasPlans;
+
     public ApiConfig() {
+    }
+
+    public ApiConfig(String endpoint, String endpointType, boolean publicApi, List<ApiGateway> gateways) {
+        this.endpoint = endpoint;
+        this.endpointType = endpointType;
+        this.publicApi = publicApi;
+        this.gateways = gateways;
+        this.hasPlans = false;
     }
 
     public ApiConfig(String endpoint, String endpointType, boolean publicApi, List<ApiGateway> gateways, List<ApiPlan> plans) {
@@ -80,12 +92,12 @@ public class ApiConfig {
         this.gateways = gateways;
     }
 
-    public void setPlans(ArrayList<ApiPlan> plans) {
-        this.plans = plans;
-    }
-
     public List<ApiPlan> getPlans() {
         return plans;
+    }
+
+    public void setPlans(ArrayList<ApiPlan> plans) {
+        this.plans = plans;
     }
 
     public void setPublicApi(boolean publicApi) {
@@ -98,5 +110,9 @@ public class ApiConfig {
 
     public void setEndpointProperties(EndpointProperties endpointProperties) {
         this.endpointProperties = endpointProperties;
+    }
+
+    public boolean hasPlans() {
+        return hasPlans;
     }
 }

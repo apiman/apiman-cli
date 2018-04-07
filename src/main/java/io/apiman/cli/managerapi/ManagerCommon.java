@@ -34,6 +34,9 @@ public class ManagerCommon {
     @Parameter(names = { "--server", "-s" }, description = "Management API server address")
     private String serverAddress = DEFAULT_SERVER_ADDRESS;
 
+    @Parameter(names = { "--serverVersion", "-sv"}, description = "Management API server version")
+    private ManagementApiVersion serverVersion = ManagementApiVersion.DEFAULT_VERSION;
+
     @Parameter(names = { "--serverUsername", "-su"}, description = "Management API server username")
     private String serverUsername = DEFAULT_SERVER_USERNAME;
 
@@ -84,5 +87,13 @@ public class ManagerCommon {
 
     public void setServerAddress(String serverAddress) {
         this.serverAddress = serverAddress;
+    }
+
+    public ManagementApiVersion getServerVersion() {
+        return serverVersion;
+    }
+
+    public void setServerVersion(ManagementApiVersion serverVersion) {
+        this.serverVersion = serverVersion;
     }
 }

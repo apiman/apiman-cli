@@ -52,7 +52,11 @@ public class ApiPublishCommand extends AbstractApiCommand implements ApiMixin {
     @Override
     public void performFinalAction(JCommander parser) throws CommandException {
         LOGGER.debug("Publishing {}", this::getModelName);
-        ServerActionUtil.publishApi(orgName, name, version, serverVersion, getManagerConfig().buildServerApiClient(ActionApi.class));
+        ServerActionUtil.publishApi(orgName,
+                name,
+                version,
+                getManagerConfig().getServerVersion(),
+                getManagerConfig().buildServerApiClient(ActionApi.class));
     }
 
 }

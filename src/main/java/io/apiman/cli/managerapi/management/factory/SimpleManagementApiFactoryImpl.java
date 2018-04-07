@@ -30,8 +30,7 @@ public class SimpleManagementApiFactoryImpl<T> extends AbstractManagementApiFact
 
 
 	@Override
-	public T build(String endpoint, String username, String password, boolean debugLogging,
-			PostConverter postConverter) {
-		return buildClient(apiClass, endpoint, username, password, debugLogging, postConverter);
+	public T build(String endpoint, String username, String password, boolean debugLogging) {
+		return buildClient(apiClass, endpoint, username, password, debugLogging);
 	}
 }
