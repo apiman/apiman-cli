@@ -43,6 +43,7 @@ public class ApiCommand extends AbstractManagerCommand {
         commandMap.put("list", ApiListCommand.class);
         commandMap.put("publish", ApiPublishCommand.class);
         commandMap.put("policy", ApiPolicyCommand.class);
+        commandMap.put("plan", ApiPlanCommand.class);
         commandMap.put("definition", ApiDefinitionCommand.class);
     }
 

@@ -50,7 +50,6 @@ public interface VersionAgnosticApi extends PolicyApi {
 
                            String version, String definitionType,  TypedString definition);
 
-
     @Override
     Response addPolicy(String orgName, String apiName,
                        String version, ApiPolicy policyConfig);

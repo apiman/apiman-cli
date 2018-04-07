@@ -44,7 +44,7 @@ import java.nio.file.Path;
  */
 @Parameters(commandDescription = "Add policy to API")
 public class ApiPolicyAddCommand extends AbstractApiCommand implements ApiMixin {
-    private static final Logger LOGGER = LogManager.getLogger(ApiPolicyAddCommand.class);
+    private static final Logger LOGGER = LogManager.getLogger(ApiPlanAddCommand.class);
 
     @Parameter(names = { "--name", "-n" }, description = "API name", required = true)
     private String name;
