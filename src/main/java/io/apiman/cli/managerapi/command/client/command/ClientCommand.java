@@ -39,6 +39,7 @@ public class ClientCommand extends AbstractManagerCommand {
     @Override
     protected void populateCommands(Map<String, Class<? extends Command>> commandMap) {
         commandMap.put("create", ClientCreateCommand.class);
+        commandMap.put("contract", ClientContractCommand.class);
         commandMap.put("list", ClientListCommand.class);
         commandMap.put("register", ClientRegisterCommand.class);
         commandMap.put("policy", ClientPolicyCommand.class);
