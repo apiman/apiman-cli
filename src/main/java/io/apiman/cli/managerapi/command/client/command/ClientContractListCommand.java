@@ -4,6 +4,7 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import io.apiman.cli.command.client.model.Contract;
 import io.apiman.cli.exception.CommandException;
+import io.apiman.cli.gatewayapi.GatewayHelper;
 import io.apiman.cli.managerapi.command.client.ClientApi;
 import io.apiman.cli.managerapi.command.plan.command.PlanListCommand;
 import io.apiman.cli.managerapi.service.ManagementApiService;
@@ -18,7 +19,7 @@ import java.util.List;
 /**
  * @author Marc Savy {@literal <marc@rhymewithgravy.com>}
  */
-public class ClientContractListCommand extends AbstractClientCommand {
+public class ClientContractListCommand extends AbstractClientCommand implements GatewayHelper {
     private static final Logger LOGGER = LogManager.getLogger(PlanListCommand.class);
 
     @Parameter(names = {"--name", "-n"}, description = "Client name", required = true)
@@ -36,9 +37,13 @@ public class ClientContractListCommand extends AbstractClientCommand {
     public void performFinalAction(JCommander parser) throws CommandException {
         LOGGER.debug("Listing {}", this::getModelName);
 
-        final List<Contract> plans = getManagerConfig()
-                .buildServerApiClient(ClientApi.class, getManagerConfig().getServerVersion())
-                .listContracts(orgName, clientName, clientVersion);
+        ClientApi clientApi = getManagerConfig()
+                .buildServerApiClient(ClientApi.class, getManagerConfig().getServerVersion());
+
+        List<Contract> plans = callAndCatch(() -> {
+            return clientApi.listContracts(orgName, clientName, clientVersion);
+        });
+
         LogUtil.OUTPUT.info(MappingUtil.safeWriteValueAsJson(plans));
     }
 }
