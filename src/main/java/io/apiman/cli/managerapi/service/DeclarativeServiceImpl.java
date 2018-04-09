@@ -74,17 +74,20 @@ public class DeclarativeServiceImpl implements DeclarativeService {
     private final ManagementApiService managementApiService;
     private final ClientService clientService;
     private final ApiService apiService;
+    private final PlanService planService;
     private final PolicyService policyService;
 
     @Inject
     public DeclarativeServiceImpl(ManagementApiService managementApiService,
                                   ClientService clientService,
                                   ApiService apiService,
+                                  PlanService planService,
                                   PolicyService policyService) {
 
         this.managementApiService = managementApiService;
         this.clientService = clientService;
         this.apiService = apiService;
+        this.planService = planService;
         this.policyService = policyService;
     }
 
@@ -194,27 +197,27 @@ public class DeclarativeServiceImpl implements DeclarativeService {
 
     @Override
     public void applyPlans(ManagementApiVersion serverVersion, List<DeclarativePlan> plans, String orgName) {
-        LOGGER.debug("Applying Clients");
+        LOGGER.debug("Applying Plans");
 
         plans.forEach(declarativePlan -> {
             final PlanApi planApi = managementApiService.buildServerApiClient(PlanApi.class);
-            final String clientName = declarativePlan.getName();
+            final String planName = declarativePlan.getName();
 
             // determine the version of the API being configured
             ofNullable(declarativePlan.getInitialVersion()).ifPresent(v ->
                     LOGGER.warn("Use of 'initialVersion' is deprecated and will be removed in future - use 'version' instead."));
 
-            final String apiVersion = ofNullable(declarativePlan.getVersion()).orElse(declarativePlan.getInitialVersion());
+            final String planVersion = ofNullable(declarativePlan.getVersion()).orElse(declarativePlan.getInitialVersion());
 
             // create and configure API
-            applyPlan(planApi, declarativePlan, orgName, clientName, apiVersion);
+            applyPlan(planApi, declarativePlan, orgName, planName, planVersion);
 
             // add policies
-            applyPlanPolicies(PlanPolicyDelegate.wrap(planApi), serverVersion, declarativePlan, orgName, clientName, apiVersion);
+            applyPlanPolicies(PlanPolicyDelegate.wrap(planApi), serverVersion, declarativePlan, orgName, planName, planVersion);
 
-            // publish Client
+            // lock plan
             if (declarativePlan.isLocked()) {
-                clientService.register(serverVersion, orgName, clientName, apiVersion);
+                planService.lock(orgName, planName, planVersion);
             }
         });
     }
@@ -281,7 +284,7 @@ public class DeclarativeServiceImpl implements DeclarativeService {
     private void applyPlan(PlanApi planClient,
                              DeclarativePlan declarativeClient, String orgName, String clientName, String clientVersion) {
 
-        LOGGER.debug("Applying Client: {}", clientName);
+        LOGGER.debug("Applying Plan: {}", clientName);
 
         // base API
         of(ManagementApiUtil.checkExists(() -> planClient.fetch(orgName, clientName)))
@@ -306,7 +309,7 @@ public class DeclarativeServiceImpl implements DeclarativeService {
                     LOGGER.info("Plan '{}' version '{}' already exists", clientName, clientVersion);
                 })
                 .ifNotPresent(() -> {
-                    LOGGER.info("Adding Client '{}' version '{}'", clientName, clientVersion);
+                    LOGGER.info("Adding Plan '{}' version '{}'", clientName, clientVersion);
 
                     // create version
                     final PlanVersion planVersion = new PlanVersion(clientVersion);

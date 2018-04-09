@@ -30,6 +30,7 @@ public class ServiceModule extends AbstractModule {
         bind(ManagementApiService.class).to(ManagementApiServiceImpl.class).in(Singleton.class);
         bind(ClientService.class).to(ClientServiceImpl.class).in(Singleton.class);
         bind(ApiService.class).to(ApiServiceImpl.class).in(Singleton.class);
+        bind(PlanService.class).to(PlanServiceImpl.class).in(Singleton.class);
         bind(PluginService.class).to(PluginServiceImpl.class).in(Singleton.class);
         bind(PolicyService.class).to(PolicyServiceImpl.class).in(Singleton.class);
         bind(DeclarativeService.class).to(DeclarativeServiceImpl.class).in(Singleton.class);

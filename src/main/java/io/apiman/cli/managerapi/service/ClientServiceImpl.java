@@ -29,7 +29,7 @@ import javax.inject.Inject;
 import static java.util.Optional.ofNullable;
 
 /**
- * Manages APIs.
+ * Manages Clients.
  *
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
@@ -57,7 +57,7 @@ public class ClientServiceImpl implements ClientService {
      */
     @Override
     public void register(ManagementApiVersion serverVersion, String orgName, String apiName, String apiVersion) {
-        LOGGER.debug("Attempting to publish API: {}", apiName);
+        LOGGER.debug("Attempting to publish Client: {}", apiName);
         final String apiState = fetchCurrentState(serverVersion, orgName, apiName, apiVersion);
 
         switch (apiState.toUpperCase()) {
@@ -68,11 +68,11 @@ public class ClientServiceImpl implements ClientService {
             case STATE_REGISTERED:
                 switch (serverVersion) {
                     case v11x:
-                        LOGGER.info("Client '{}' already published - skipping republish", apiName);
+                        LOGGER.info("Client '{}' already register - skipping republish", apiName);
                         break;
 
                     case v12x:
-                        LOGGER.info("Republishing API: {}", apiName);
+                        LOGGER.info("Registering Client: {}", apiName);
                         performRegister(serverVersion, orgName, apiName, apiVersion);
                         break;
                 }
@@ -80,7 +80,7 @@ public class ClientServiceImpl implements ClientService {
 
             default:
                 throw new CommandException(String.format(
-                        "Unable to publish API '%s' in state: %s", apiName, apiState));
+                        "Unable to publish Client '%s' in state: %s", apiName, apiState));
         }
     }
 

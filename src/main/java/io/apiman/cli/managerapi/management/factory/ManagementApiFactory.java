@@ -16,8 +16,6 @@
 
 package io.apiman.cli.managerapi.management.factory;
 
-import io.apiman.cli.management.factory.PostConverter;
-
 /**
  * Builds a Management API client proxy for a given API interface.
  *
