@@ -16,15 +16,22 @@
 
 package io.apiman.cli.command.declarative.model;
 
-import java.io.IOException;
-
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import java.io.IOException;
 
 /**
  * Declarative policy representation.
@@ -41,10 +48,11 @@ public class DeclarativePolicy {
     @JsonProperty
     private String name;
 
-    @JsonProperty
     private String plugin;
 
-    @JsonProperty
+    @JsonProperty("config")
+    @JsonSerialize(using = JsonNodeToStringSerializer.class, as = String.class)
+    @JsonDeserialize(using = StringToJsonNodeDeserializer.class)
     private JsonNode config;
 
     public String getId() {
@@ -62,17 +70,10 @@ public class DeclarativePolicy {
     public JsonNode getConfig() {
         return config;
     }
-    
-	public void setConfig(String jsonConfig) {
-		ObjectMapper mapper = new ObjectMapper();
-		JsonNode actualObj = null;
-		try {
-			actualObj = mapper.readTree(jsonConfig);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		this.config = actualObj;
-	}
+
+    public void setConfig(JsonNode config) {
+        this.config = config;
+    }
 
     public String getPlugin() {
         return plugin;
@@ -90,4 +91,24 @@ public class DeclarativePolicy {
 		this.id = id;
 	}
 
+
+    public static final class JsonNodeToStringSerializer extends JsonSerializer<JsonNode> {
+
+        @Override
+        public void serialize(JsonNode tmpNode,
+                              JsonGenerator jsonGenerator,
+                              SerializerProvider serializerProvider)
+                throws IOException {
+            jsonGenerator.writeObject(tmpNode.toString());
+        }
+    }
+
+    public static final class StringToJsonNodeDeserializer extends JsonDeserializer<JsonNode> {
+        public StringToJsonNodeDeserializer() {}
+
+        @Override
+        public JsonNode deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+            return p.readValueAsTree();
+        }
+    }
 }
