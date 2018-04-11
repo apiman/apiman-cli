@@ -23,7 +23,6 @@ import io.apiman.cli.command.client.model.Client;
 import io.apiman.cli.command.client.model.Contract;
 import io.apiman.manager.api.beans.clients.ClientVersionBean;
 import retrofit.client.Response;
-import retrofit.http.Path;
 
 import java.util.List;
 
@@ -34,7 +33,7 @@ public interface ClientApi {
 
     List<Client> list(String orgName); // Hack to display only name, seemingly.
 
-	List<Client> listVersions( String orgName, @Path("clientName") String clientName); // Hack to display only version, seemingly.
+	List<Client> listVersions( String orgName, String clientName); // Hack to display only version, seemingly.
 
 	Response create(String orgName, Client client);
 

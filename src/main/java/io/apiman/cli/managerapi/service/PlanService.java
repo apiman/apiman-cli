@@ -1,9 +1,6 @@
 package io.apiman.cli.managerapi.service;
 
 /**
- * Manages APIs.
- *
- * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
 public interface PlanService {
     String STATE_READY = "READY";

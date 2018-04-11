@@ -217,7 +217,14 @@ public class DeclarativeServiceImpl implements DeclarativeService {
 
             // lock plan
             if (declarativePlan.isLocked()) {
-                planService.lock(orgName, planName, planVersion);
+                String state = planService.fetchCurrentState(orgName, planName, planVersion);
+
+                if (state.equalsIgnoreCase(PlanService.STATE_READY) || state.equalsIgnoreCase(PlanService.STATE_CREATED)) {
+                    planService.lock(orgName, planName, planVersion);
+                } else if (state.equalsIgnoreCase(PlanService.STATE_LOCKED)) {
+                    LOGGER.info("Plan {} {} already locked.",
+                            declarativePlan.getName(), declarativePlan.getVersion());
+                }
             }
         });
     }
@@ -458,7 +465,7 @@ public class DeclarativeServiceImpl implements DeclarativeService {
      */
     private void applyPolicies(PolicyApi policyApi, ManagementApiVersion serverVersion, String orgName, String apiName, String apiVersion, List<DeclarativePolicy> policies) {
         ofNullable(policies).ifPresent(declarativePolicies -> {
-            LOGGER.debug("Applying policies to API: {}", apiName);
+            LOGGER.debug("Applying policies to Entity: {}", apiName);
 
             // existing policies for the API
             final List<ApiPolicy> apiPolicies = policyService.fetchPolicies(policyApi, serverVersion, orgName, apiName, apiVersion);

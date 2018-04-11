@@ -19,6 +19,9 @@ version '0.3.0-SNAPSHOT'
 
 buildscript {
     repositories {
+        maven {
+           url "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
         jcenter()
         maven {
             url "https://plugins.gradle.org/m2/"
@@ -34,6 +37,9 @@ apply plugin: 'com.github.johnrengelman.shadow'
 
 repositories {
     mavenCentral()
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots/"
+    }
 }
 
 compileJava {
@@ -46,12 +52,12 @@ ext {
     version_log4j = '2.8.2'
     version_guava = '19.0'
     version_retrofit = '1.9.0'
-    version_jackson = '2.9.2'
-    version_jackson_yaml = '2.9.2'
+    version_jackson = '2.9.5'
+    version_jackson_yaml = '2.9.5'
     version_modelmapper = '0.7.5'
     version_commons_lang = '3.4'
     version_guice = '4.0'
-    version_apiman = '1.3.1.Final'
+    version_apiman = '1.3.2-SNAPSHOT'
 
     // test dependencies
     version_junit = '4.12'
@@ -68,6 +74,7 @@ dependencies {
     compile "com.google.guava:guava:$version_guava"
     compile "com.squareup.retrofit:retrofit:$version_retrofit"
     compile "com.squareup.retrofit:converter-jackson:$version_retrofit"
+    compile "com.fasterxml.jackson.core:jackson-annotations:$version_jackson"        
     compile "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$version_jackson_yaml"
     compile "org.modelmapper:modelmapper:$version_modelmapper"
     compile "org.apache.commons:commons-lang3:$version_commons_lang"

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Jean-Charles Quantin
+ * Copyright 2017 Pete Cornish
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,40 +14,19 @@
  * limitations under the License.
  */
 
-package io.apiman.cli.command.api.model;
+package io.apiman.cli.command.declarative.model;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import io.apiman.cli.command.client.model.Contract;
 
 /**
- * @author Jean-Charles Quantin {@literal <jeancharles.quantin@gmail.com>}
+ * Declarative policy representation.
+ *
+ * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ApiPlan {
-
-    @JsonAlias({"name", "planId"})
-    private String planId;
-
-    @JsonProperty
-    private String version;
-
-    public ApiPlan() {
-    }
-
-    public ApiPlan(String planId, String version) {
-        this.planId = planId;
-        this.version = version;
-    }
-
-    public String getPlanId() {
-        return planId;
-    }
-
-    public String getVersion() {
-        return version;
-    }
+public class DeclarativeContract extends Contract {
 
 }
