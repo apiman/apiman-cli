@@ -39,7 +39,7 @@ public class ApiPolicyCommand extends AbstractManagerCommand {
 
     @Override
     protected void populateCommands(Map<String, Class<? extends Command>> commandMap) {
-        commandMap.put("add", ApiPlanAddCommand.class);
+        commandMap.put("add", ApiPolicyAddCommand.class);
     }
 
 }
