@@ -188,7 +188,7 @@ public class DeclarativeServiceImpl implements DeclarativeService {
             // add policies
             applyClientPolicies(ClientPolicyDelegate.wrap(clientApi), serverVersion, declarativeClient, orgName, clientName, apiVersion);
 
-            // publish Client
+            // Register Client
             if (declarativeClient.isRegistered()) {
                 clientService.register(serverVersion, orgName, clientName, apiVersion);
             }
@@ -217,14 +217,7 @@ public class DeclarativeServiceImpl implements DeclarativeService {
 
             // lock plan
             if (declarativePlan.isLocked()) {
-                String state = planService.fetchCurrentState(orgName, planName, planVersion);
-
-                if (state.equalsIgnoreCase(PlanService.STATE_READY) || state.equalsIgnoreCase(PlanService.STATE_CREATED)) {
-                    planService.lock(orgName, planName, planVersion);
-                } else if (state.equalsIgnoreCase(PlanService.STATE_LOCKED)) {
-                    LOGGER.info("Plan {} {} already locked.",
-                            declarativePlan.getName(), declarativePlan.getVersion());
-                }
+                planService.lock(orgName, planName, planVersion);
             }
         });
     }
@@ -367,7 +360,7 @@ public class DeclarativeServiceImpl implements DeclarativeService {
         if (v12x.equals(serverVersion)) {
             // The v1.2.x API supports configuration of the API even if published (but not retired)
             final String apiState = apiService.fetchCurrentState(serverVersion, orgName, apiName, apiVersion);
-            if (ApiService.STATE_RETIRED.equals(apiState.toUpperCase())) {
+            if (ApiService.STATE_RETIRED.equalsIgnoreCase(apiState)) {
                 LOGGER.warn("API '{}' is retired - skipping configuration", apiName);
 
             } else {
