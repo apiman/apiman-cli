@@ -25,8 +25,13 @@ import io.apiman.cli.managerapi.command.common.model.ManagementApiVersion;
  */
 public interface ApiService {
     String STATE_READY = "READY";
+    String STATE_CREATED = "CREATED";
     String STATE_PUBLISHED = "PUBLISHED";
     String STATE_RETIRED = "RETIRED";
+
+    default boolean isUnpublished(String state) {
+        return state.equalsIgnoreCase(STATE_READY) || state.equalsIgnoreCase(STATE_CREATED);
+    }
 
     /**
      * Return the current state of the API.

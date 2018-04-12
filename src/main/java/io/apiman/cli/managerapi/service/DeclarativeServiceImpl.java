@@ -367,7 +367,7 @@ public class DeclarativeServiceImpl implements DeclarativeService {
                 LOGGER.warn("API '{}' is retired - skipping configuration", apiName);
             } else {
                 // If it's a public API or any API in ready state, then it's safe to configure.
-                if (declarativeApi.getConfig().isPublicApi() || ApiService.STATE_READY.equalsIgnoreCase(apiState)) {
+                if (declarativeApi.getConfig().isPublicApi() || apiService.isUnpublished(apiState)) {
                     configureApi(declarativeApi, apiClient, orgName, apiName, apiVersion);
                 } else {
                     // Otherwise it's a private API and in a non-modifiable state.
