@@ -16,6 +16,7 @@
 
 package io.apiman.cli.managerapi.command.api.command;
 
+import com.beust.jcommander.DynamicParameter;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
@@ -23,6 +24,7 @@ import com.google.common.collect.Lists;
 import io.apiman.cli.command.api.model.Api;
 import io.apiman.cli.command.api.model.ApiConfig;
 import io.apiman.cli.command.api.model.ApiGateway;
+import io.apiman.cli.command.api.model.EndpointProperties;
 import io.apiman.cli.exception.CommandException;
 import io.apiman.cli.managerapi.command.api.ApiMixin;
 import io.apiman.cli.managerapi.command.api.VersionAgnosticApi;
@@ -32,6 +34,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.inject.Inject;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Create an API.
@@ -63,6 +68,10 @@ public class ApiCreateCommand extends AbstractApiCommand implements ApiMixin {
     @Parameter(names = {"--gateway", "-g"}, description = "Gateway")
     private String gateway = "TheGateway";
 
+    @DynamicParameter(names = {"--endpointProperty", "-ep"},
+            description = "Endpoint properties (-ep foo=bar -ep fizz=buzz)")
+    private Map<String, String> endpointProperties = new LinkedHashMap<>();
+
     @Inject
     public ApiCreateCommand(ManagementApiService managementApiService) {
         super(managementApiService);
@@ -82,6 +91,13 @@ public class ApiCreateCommand extends AbstractApiCommand implements ApiMixin {
                 endpointType,
                 publicApi,
                 Lists.newArrayList(new ApiGateway(gateway)));
+
+        if (!endpointProperties.isEmpty()) {
+            EndpointProperties endpointProperties = Optional.ofNullable(config.getEndpointProperties())
+                    .orElse(new EndpointProperties());
+            endpointProperties.setArbitraryFields(this.endpointProperties);
+            config.setEndpointProperties(endpointProperties);
+        }
 
         // create
         final VersionAgnosticApi apiClient = getManagerConfig()

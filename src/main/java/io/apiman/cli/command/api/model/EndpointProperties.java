@@ -16,14 +16,15 @@
 
 package io.apiman.cli.command.api.model;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.lang.reflect.Field;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
@@ -42,6 +43,8 @@ public class EndpointProperties {
 
     @JsonProperty("basic-auth.password")
     private String password;
+
+    private Map<String, String> arbitraryFields;
 
     public void setAuthorizationType(String authorizationType) {
         this.authorizationType = authorizationType;
@@ -72,5 +75,16 @@ public class EndpointProperties {
             }
         }
         return map;
+    }
+
+    @JsonAnyGetter
+    public Map<String, String> getArbitraryFields() {
+        return arbitraryFields;
+    }
+
+    @JsonAnyGetter
+    public EndpointProperties setArbitraryFields(Map<String, String> arbitraryFields) {
+        this.arbitraryFields = arbitraryFields;
+        return this;
     }
 }

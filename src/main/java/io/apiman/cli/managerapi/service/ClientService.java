@@ -19,14 +19,16 @@ package io.apiman.cli.managerapi.service;
 import io.apiman.cli.managerapi.command.common.model.ManagementApiVersion;
 
 /**
- * Manages APIs.
- *
- * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
 public interface ClientService {
     String STATE_READY = "READY";
+    String STATE_CREATED = "CREATED";
     String STATE_REGISTERED = "REGISTERED";
     String STATE_UNREGISTERED = "UNREGISTERED";
+
+    default boolean isUnpublished(String state) {
+        return state.equalsIgnoreCase(STATE_READY) || state.equalsIgnoreCase(STATE_CREATED);
+    }
 
     /**
      * Return the current state of the API.
