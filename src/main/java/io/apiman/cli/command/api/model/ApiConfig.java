@@ -60,8 +60,16 @@ public class ApiConfig {
         return gateways;
     }
 
+    public void setEndpoint(String endpoint) {
+        this.endpoint = endpoint;
+    }
+
     public String getEndpoint() {
         return endpoint;
+    }
+
+    public void setEndpointType(String endpointType) {
+        this.endpointType = endpointType;
     }
 
     public String getEndpointType() {

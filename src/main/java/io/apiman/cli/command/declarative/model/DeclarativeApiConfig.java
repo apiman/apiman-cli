@@ -46,6 +46,10 @@ public class DeclarativeApiConfig extends ApiConfig {
         this.gateway = gateway;
     }
 
+    public void setMakePublic(boolean makePublic) {
+        this.makePublic = makePublic;
+    }
+
     public boolean isMakePublic() {
         return makePublic;
     }

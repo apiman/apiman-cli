@@ -58,8 +58,20 @@ public class Api {
         this.initialVersion = initialVersion;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getName() {
         return name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public void setInitialVersion(String initialVersion) {
