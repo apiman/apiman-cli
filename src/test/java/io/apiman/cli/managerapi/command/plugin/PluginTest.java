@@ -47,7 +47,7 @@ import static org.junit.Assert.assertTrue;
 public class PluginTest extends BaseTest {
     private static final String PLUGIN_ARTIFACTID = "apiman-plugins-transformation-policy";
     private static final String PLUGIN_GROUPID = "io.apiman.plugins";
-    private static final String PLUGIN_VERSION = "1.3.1.Final";
+    private static final String PLUGIN_VERSION = "1.4.3.Final";
 
     /**
      * Determine if the given {@link Plugin} matches the expected Maven coordinates.

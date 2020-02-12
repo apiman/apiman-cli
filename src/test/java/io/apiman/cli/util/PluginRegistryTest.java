@@ -17,10 +17,10 @@ import org.junit.rules.ExpectedException;
 @Category(IntegrationTest.class)
 public class PluginRegistryTest {
     private PolicyResolver policyResolver;
-    private static final String TEST_PLUGIN_POLICYIMPL = "plugin:io.apiman.plugins:apiman-plugins-test-policy:1.3.1.Final:war/io.apiman.plugins.test_policy.TestPolicy";
+    private static final String TEST_PLUGIN_POLICYIMPL = "plugin:io.apiman.plugins:apiman-plugins-test-policy:1.4.3.Final:war/io.apiman.plugins.test_policy.TestPolicy";
     private static final PluginCoordinates TEST_PLUGIN_COORDS = new PluginCoordinates("io.apiman.plugins",
             "apiman-plugins-test-policy",
-            "1.3.1.Final");
+            "1.4.3.Final");
 
     @Rule
     public final ExpectedException exception = ExpectedException.none();
