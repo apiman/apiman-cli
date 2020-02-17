@@ -34,7 +34,7 @@ compileJava {
 
 ext {
     version_jcommander = '1.72'
-    version_log4j = '2.8.2'
+    version_log4j = '2.13.0'
     version_guava = '19.0'
     version_retrofit = '1.9.0'
     version_jackson = '1.9.0'
