@@ -40,8 +40,11 @@ public class ApiConfig {
     @JsonProperty
     private EndpointProperties endpointProperties;
 
+    /**
+     * Deliberate use of object instead of primitive, to allow nullity check.
+     */
     @JsonProperty("publicAPI")
-    private boolean publicApi;
+    private Boolean publicApi;
 
     @JsonProperty
     private List<ApiGateway> gateways;
@@ -84,11 +87,11 @@ public class ApiConfig {
         this.gateways = gateways;
     }
 
-    public void setPublicApi(boolean publicApi) {
+    public void setPublicApi(Boolean publicApi) {
         this.publicApi = publicApi;
     }
 
-    public boolean isPublicApi() {
+    public Boolean getPublicApi() {
         return publicApi;
     }
 

@@ -168,7 +168,7 @@ public class GatewayApiDataModel {
 
         DeclarativeApiConfig apiConfig = modelApi.getConfig();
         api.setEndpoint(apiConfig.getEndpoint());
-        api.setPublicAPI(apiConfig.isMakePublic()); // Why is this different to publicApi?
+        api.setPublicAPI(apiConfig.getMakePublic()); // Why is this different to publicApi?
         api.setEndpointType(apiConfig.getEndpointType());
 
         ofNullable(apiConfig.getSecurity()).ifPresent(declarativeEndpointProperties -> {

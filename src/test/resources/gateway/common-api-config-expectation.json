@@ -1,0 +1,19 @@
+{
+  "publicAPI" : true,
+  "organizationId" : "test",
+  "apiId" : "common-api-config",
+  "version" : "1.0",
+  "endpoint" : "http://example.com",
+  "endpointType" : "rest",
+  "endpointContentType" : null,
+  "endpointProperties" : { },
+  "parsePayload" : false,
+  "apiPolicies" : [ {
+    "policyJsonConfig" : "{\n  \"direction\" : \"both\"\n}",
+    "policyImpl" : "plugin:io.apiman.plugins:apiman-plugins-log-policy:1.4.3.Final:war/io.apiman.plugins.log_policy.LogHeadersPolicy"
+  }, {
+    "policyJsonConfig" : "{\n  \"ttl\" : 60\n}",
+    "policyImpl" : "class:io.apiman.gateway.engine.policies.CachingPolicy"
+  } ],
+  "maxPayloadBufferSize" : 0
+}

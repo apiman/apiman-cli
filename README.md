@@ -332,11 +332,9 @@ If you just want to run _apiman-cli_, use the _apiman_ or _apiman.bat_ (Windows)
 
 If you want to compile the JAR yourself, use:
 
-    ./gradlew clean build
-    
-Note: for distribution, _apiman-cli_ is built as a 'fat JAR' (aka 'shadow JAR'). To do this yourself, run:
-
     ./gradlew clean shadowJar
+    
+> Note: for distribution, _apiman-cli_ is built as a 'fat JAR' (aka 'shadow JAR').
 
 ...and look under the `build/libs` directory.
 

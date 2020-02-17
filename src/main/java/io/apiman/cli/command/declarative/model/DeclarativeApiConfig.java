@@ -32,8 +32,11 @@ public class DeclarativeApiConfig extends ApiConfig {
     @JsonProperty("gateway")
     private String gateway;
 
+    /**
+     * Deliberate use of object instead of primitive, to allow nullity check.
+     */
     @JsonProperty("public")
-    private boolean makePublic;
+    private Boolean makePublic;
 
     @JsonProperty("security")
     private DeclarativeEndpointSecurity security;
@@ -46,11 +49,11 @@ public class DeclarativeApiConfig extends ApiConfig {
         this.gateway = gateway;
     }
 
-    public void setMakePublic(boolean makePublic) {
+    public void setMakePublic(Boolean makePublic) {
         this.makePublic = makePublic;
     }
 
-    public boolean isMakePublic() {
+    public Boolean getMakePublic() {
         return makePublic;
     }
 
