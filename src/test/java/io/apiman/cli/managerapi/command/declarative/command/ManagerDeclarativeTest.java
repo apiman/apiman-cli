@@ -17,7 +17,7 @@
 package io.apiman.cli.managerapi.command.declarative.command;
 
 import com.google.common.collect.Lists;
-import io.apiman.cli.common.BaseTest;
+import io.apiman.cli.common.BaseIntegrationTest;
 import io.apiman.cli.common.IntegrationTest;
 import io.apiman.cli.managerapi.command.common.model.ManagementApiVersion;
 import io.apiman.cli.managerapi.declarative.command.ManagerApplyCommand;
@@ -37,7 +37,7 @@ import java.util.List;
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
 @Category(IntegrationTest.class)
-public class ManagerDeclarativeTest extends BaseTest {
+public class ManagerDeclarativeTest extends BaseIntegrationTest {
     private static final boolean LOG_DEBUG = true;
 
     @Inject

@@ -16,7 +16,7 @@
 
 package io.apiman.cli.command;
 
-import io.apiman.cli.common.BaseTest;
+import io.apiman.cli.common.BaseIntegrationTest;
 import io.apiman.cli.common.IntegrationTest;
 import io.apiman.cli.gatewayapi.GatewayApi;
 import io.apiman.cli.gatewayapi.command.factory.GatewayApiFactory;
@@ -37,7 +37,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @Category(IntegrationTest.class)
-public class GatewayDeclarativeTest extends BaseTest {
+public class GatewayDeclarativeTest extends BaseIntegrationTest {
     private static final boolean LOG_DEBUG = true;
 
     private GatewayApplyCommand command;

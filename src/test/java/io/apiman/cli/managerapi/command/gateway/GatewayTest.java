@@ -17,7 +17,7 @@
 package io.apiman.cli.managerapi.command.gateway;
 
 import io.apiman.cli.Cli;
-import io.apiman.cli.common.BaseTest;
+import io.apiman.cli.common.BaseIntegrationTest;
 import io.apiman.cli.common.IntegrationTest;
 import io.apiman.cli.util.AuthUtil;
 
@@ -31,7 +31,7 @@ import org.junit.runners.MethodSorters;
  */
 @Category(IntegrationTest.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class GatewayTest extends BaseTest {
+public class GatewayTest extends BaseIntegrationTest {
 
     @Test
     public void test1_test() {
