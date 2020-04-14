@@ -20,7 +20,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.jayway.restassured.response.Response;
 import io.apiman.cli.Cli;
 import io.apiman.cli.command.plugin.model.Plugin;
-import io.apiman.cli.common.BaseTest;
+import io.apiman.cli.common.BaseIntegrationTest;
 import io.apiman.cli.common.IntegrationTest;
 import io.apiman.cli.util.AuthUtil;
 import io.apiman.cli.util.MappingUtil;
@@ -44,7 +44,7 @@ import static org.junit.Assert.assertTrue;
  */
 @Category(IntegrationTest.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class PluginTest extends BaseTest {
+public class PluginTest extends BaseIntegrationTest {
     private static final String PLUGIN_ARTIFACTID = "apiman-plugins-transformation-policy";
     private static final String PLUGIN_GROUPID = "io.apiman.plugins";
     private static final String PLUGIN_VERSION = "1.4.3.Final";

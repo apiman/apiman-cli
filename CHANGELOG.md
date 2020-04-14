@@ -5,7 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
-- ...
+- Adds the ability to specify policies and configuration that should be present on every API.
 
 ## [0.3.2] - 2020-02-17
 ### Changed

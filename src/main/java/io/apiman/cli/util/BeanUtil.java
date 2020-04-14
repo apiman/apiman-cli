@@ -16,10 +16,14 @@
 
 package io.apiman.cli.util;
 
+import org.apache.commons.beanutils.BeanUtilsBean;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
@@ -78,5 +82,39 @@ public final class BeanUtil {
     public static <T> boolean safeEquals(T o1, T o2) {
         return (null == o1 && null == o2) ||
                 ofNullable(o1).filter(o -> o.equals(o2)).isPresent();
+    }
+
+    /**
+     * Shallow copy of fields from a source object to a target, subject to the following conditions:
+     * <ul>
+     *     <li>matching name</li>
+     *     <li>matching type per {@link BeanUtilsBean}</li>
+     *     <li>the target field is null</li>
+     * </ul>
+     *
+     * @param source the source object
+     * @param target the target object
+     */
+    public static void shallowCopyToNonNullFields(Object source, Object target) {
+        try {
+            final Set<String> nullTargetProperties = PropertyUtils.describe(target).entrySet().stream()
+                    .filter(dest -> dest.getValue() == null)
+                    .map(Map.Entry::getKey)
+                    .collect(Collectors.toSet());
+
+            final BeanUtilsBean propertyCopier = new BeanUtilsBean() {
+                @Override
+                public void copyProperty(Object target, String name, Object value) throws IllegalAccessException, InvocationTargetException {
+                    // only copy if target of the same name is null
+                    if (nullTargetProperties.contains(name)) {
+                        super.copyProperty(target, name, value);
+                    }
+                }
+            };
+            propertyCopier.copyProperties(target, source);
+
+        } catch (Exception e) {
+            throw new RuntimeException(String.format("Error copying fields from %s to %s", source, target), e);
+        }
     }
 }

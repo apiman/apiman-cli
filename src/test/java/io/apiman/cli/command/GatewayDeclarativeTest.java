@@ -16,7 +16,7 @@
 
 package io.apiman.cli.command;
 
-import io.apiman.cli.common.BaseTest;
+import io.apiman.cli.common.BaseIntegrationTest;
 import io.apiman.cli.common.IntegrationTest;
 import io.apiman.cli.gatewayapi.GatewayApi;
 import io.apiman.cli.gatewayapi.command.factory.GatewayApiFactory;
@@ -37,7 +37,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @Category(IntegrationTest.class)
-public class GatewayDeclarativeTest extends BaseTest {
+public class GatewayDeclarativeTest extends BaseIntegrationTest {
     private static final boolean LOG_DEBUG = true;
 
     private GatewayApplyCommand command;
@@ -107,5 +107,20 @@ public class GatewayDeclarativeTest extends BaseTest {
         // Verify
         verify(mGatewayApi).publishApi(Mockito.argThat(api -> EqualsBuilder.reflectionEquals(api, expected1)));
         verify(mGatewayApi).publishApi(Mockito.argThat(api -> EqualsBuilder.reflectionEquals(api, expected2)));
+    }
+
+    /**
+     * Common API configuration and policies that should be applied to all APIs in the organisation.
+     *
+     * @throws Exception any exception
+     */
+    @Test
+    public void testApplyDeclaration_CommonApiConfig() throws Exception {
+        command.setDeclarationFiles(getResourceAsPathList("/common-api-config.yml"));
+        Api expected = expectJson("/gateway/common-api-config-expectation.json", Api.class);
+        // Run
+        command.applyDeclarations();
+        // Verify
+        verify(mGatewayApi).publishApi(Mockito.argThat(api -> EqualsBuilder.reflectionEquals(api, expected)));
     }
 }

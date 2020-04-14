@@ -178,7 +178,7 @@ public final class MappingUtil {
         // PostConverter for ApiConfig -> ServiceConfig
         mapper.createTypeMap(ApiConfig.class, ServiceConfig.class).setPostConverter(context -> {
             final ServiceConfig serviceConfig = context.getDestination();
-            serviceConfig.setPublicService(context.getSource().isPublicApi());
+            serviceConfig.setPublicService(context.getSource().getPublicApi());
             return serviceConfig;
         });
 
@@ -194,7 +194,7 @@ public final class MappingUtil {
             final DeclarativeApiConfig declarativeApiConfig = context.getSource();
 
             final ApiConfig apiConfig = context.getDestination();
-            apiConfig.setPublicApi(declarativeApiConfig.isMakePublic());
+            apiConfig.setPublicApi(declarativeApiConfig.getMakePublic());
             apiConfig.setGateways(Lists.newArrayList(new ApiGateway(declarativeApiConfig.getGateway())));
 
             return apiConfig;

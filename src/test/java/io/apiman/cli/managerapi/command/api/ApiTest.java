@@ -17,7 +17,7 @@
 package io.apiman.cli.managerapi.command.api;
 
 import io.apiman.cli.Cli;
-import io.apiman.cli.common.BaseTest;
+import io.apiman.cli.common.BaseIntegrationTest;
 import io.apiman.cli.common.IntegrationTest;
 import io.apiman.cli.util.AuthUtil;
 import org.junit.FixMethodOrder;
@@ -30,7 +30,7 @@ import org.junit.runners.MethodSorters;
  */
 @Category(IntegrationTest.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class ApiTest extends BaseTest {
+public class ApiTest extends BaseIntegrationTest {
     private static final String ORG_NAME = "apitest";
 
     @Test

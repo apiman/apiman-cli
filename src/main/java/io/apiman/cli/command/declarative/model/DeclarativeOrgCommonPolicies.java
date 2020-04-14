@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Pete Cornish
+ * Copyright 2020 Pete Cornish
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,36 +19,34 @@ package io.apiman.cli.command.declarative.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import io.apiman.cli.command.org.model.Org;
 
 import java.util.List;
 
 /**
- * Declarative organisation representation.
+ * Represents policies present in every chain.
  *
  * @author Pete Cornish {@literal <outofcoffee@gmail.com>}
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class DeclarativeOrg extends Org {
+public class DeclarativeOrgCommonPolicies {
     /**
-     * Common elements for every API.
+     * Policies added to the beginning of every chain.
      */
     @JsonProperty
-    private DeclarativeOrgCommon common;
+    private List<DeclarativePolicy> first;
 
+    /**
+     * Policies added to the end of every chain.
+     */
     @JsonProperty
-    private List<DeclarativeApi> apis;
+    private List<DeclarativePolicy> last;
 
-    public DeclarativeOrgCommon getCommon() {
-        return common;
+    public List<DeclarativePolicy> getFirst() {
+        return first;
     }
 
-    public List<DeclarativeApi> getApis() {
-        return apis;
-    }
-
-    public void setApis(List<DeclarativeApi> apis) {
-        this.apis = apis;
+    public List<DeclarativePolicy> getLast() {
+        return last;
     }
 }

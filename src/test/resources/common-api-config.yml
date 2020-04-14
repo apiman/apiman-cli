@@ -1,0 +1,54 @@
+# Common configuration and policies across all APIs.
+---
+system:
+  gateways:
+    - name: "test-gw"
+      description: "Test Gateway"
+      type: "REST"
+      config:
+        endpoint: "http://localhost:8080/apiman-gateway-api"
+        username: "apimanager"
+        password: "apiman123!"
+  plugins:
+    - groupId: "io.apiman.plugins"
+      artifactId: "apiman-plugins-test-policy"
+      version: "1.4.3.Final"
+    - name: "log-policy"
+      groupId: "io.apiman.plugins"
+      artifactId: "apiman-plugins-log-policy"
+      version: "1.4.3.Final"
+shared:
+  policies:
+    - $id: "alwaysFirstPolicy"
+      plugin: "log-policy"
+      name: "log-headers-policy"
+      config:
+        direction: "both"
+    - $id: "alwaysLastPolicy"
+      name: "CachingPolicy"
+      config:
+        ttl: 60
+org:
+  name: "test"
+  description: "Test organisation"
+  # Configuration and policies in the common org section are applied to each API.
+  common:
+    # Common configuration is overridden by API specific values.
+    config:
+      endpointType: "rest"
+      public: true
+      gateway: "test-gw"
+    # Common policies are injected at either the start or the end of the policy chain for each API.
+    policies:
+      first:
+        - "alwaysFirstPolicy"
+      last:
+        - "alwaysLastPolicy"
+  apis:
+    - name: "common-api-config"
+      description: "Example API"
+      version: "1.0"
+      published: true
+      config:
+        endpoint: "http://example.com"
+      policies: []
