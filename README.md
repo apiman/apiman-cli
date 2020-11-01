@@ -130,6 +130,68 @@ The same goes for properties - you can define them in the _shared_ section and r
 
 See the [shared-properties.yml](examples/declarative/shared-properties.yml) example file.
 
+### Common policies for all APIs in an organisation
+
+You can ensure all APIs in an organisation have a particular set of policies using the `org/common/policies` block.
+
+Policies from the common block will be appended/prepended to the list of policies on each API in the organisation. Use the `first` and `last` lists to choose where to add the common policies in the policy chain.
+
+```
+org:
+  name: "test"
+  description: "Test organisation"
+  # Configuration and policies in the common org section are applied to each API.
+  common:
+    # Common policies are injected at either the start or the end of the policy chain for each API.
+    policies:
+      first:
+        - "alwaysFirstPolicy"
+      last:
+        - "alwaysLastPolicy"
+  apis:
+    - name: "example"
+      description: "Example API"
+      version: "1.0"
+      published: true
+      config:
+        endpoint: "http://example.com"
+        endpointType: "rest"
+        public: true
+        gateway: "test-gw"
+      # policies from the common block will be appended/prepended to this list
+      policies: []
+```
+
+See [examples/declarative/common-api-config.yaml] for an example.
+
+### Common configuration for all APIs in an organisation
+
+You can ensure all APIs in an organisation have particular configuration using the `org/common/config` block:
+
+```
+org:
+  name: "test"
+  description: "Test organisation"
+  # Configuration and policies in the common org section are applied to each API.
+  common:
+    # Common configuration is overridden by API specific values.
+    config:
+      endpointType: "rest"
+      public: true
+      gateway: "test-gw"
+  apis:
+    - name: "example"
+      description: "Example API"
+      version: "1.0"
+      published: true
+      config:
+        endpoint: "http://example.com"
+      policies:
+        # ... policies go here
+```
+
+See [examples/declarative/common-api-config.yaml] for an example.
+
 # Requirements
 
   * An instance of [apiman](http://apiman.io)

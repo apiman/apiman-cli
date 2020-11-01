@@ -51,4 +51,5 @@ org:
       published: true
       config:
         endpoint: "http://example.com"
+      # policies from the common block will be appended/prepended to this list
       policies: []

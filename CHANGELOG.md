@@ -3,7 +3,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [0.4.0] - 2020-11-01
 ### Added
 - Adds the ability to specify policies and configuration that should be present on every API.
 
